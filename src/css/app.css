@@ -185,3 +185,13 @@ body::-webkit-scrollbar {
   background-position: right 10px center; /* Dịch mũi tên vào 10px */
   padding-right: 30px; /* Điều chỉnh khoảng cách padding để không bị che khuất */
 }
+
+/* CSS to remove the spin buttons in number input */
+.no-spin::-webkit-outer-spin-button,
+.no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spin {
+  -moz-appearance: textfield; /* Firefox */
+}

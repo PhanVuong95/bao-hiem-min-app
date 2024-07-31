@@ -5,7 +5,7 @@ export type Widthheight = {
   url: string;
 };
 
-export type CityType = {
+export type Ward = {
   id: string;
   active: boolean;
   countryId: string;

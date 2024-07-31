@@ -7,9 +7,12 @@ import { CityType, District, Province } from "../models";
 const UserBuyerPage: React.FunctionComponent = (props) => {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
-  const [wards, setWards] = useState<Ward[]>([]);
+  const [wards, setWards] = useState<WritableStreamDefaultController[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<number>(0);
   const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
+
+  const [months, setMonths] = useState("");
+  const [supportBudget, setSupportBudget] = useState("33,000");
 
   useEffect(() => {
     axios

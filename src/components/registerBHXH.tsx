@@ -1,9 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Province } from "../models";
-import { District } from "../models/district";
-import { Ward } from "../models/ward";
+import { useForm } from "react-hook-form";
+import { Province, District, Ward } from "../models";
 import FooterPayPage from "./footerPay";
 import VoucherPage from "./cardVoucher";
 import instance from "../api/api-config";
@@ -15,10 +14,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const [selectedProvince, setSelectedProvince] = useState<number>(0);
   const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
   const [supportBudget, setSupportBudget] = useState<number>(0);
-  const [months, setMonths] = useState<number>(0);
   const [frontImageUrl, setFrontImageUrl] = useState<string>("");
   const [backImageUrl, setBackImageUrl] = useState<string>("");
 
+  const { register, handleSubmit, watch, setValue } = useForm();
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,26 +67,13 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   ) => {
     const provinceId = parseInt(event.target.value, 10);
     setSelectedProvince(provinceId);
-    calculateSupportBudget(provinceId, months);
+    calculateSupportBudget(provinceId, watch("months"));
   };
 
   const handleDistrictChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedDistrict(parseInt(event.target.value, 10));
-  };
-
-  const handleMonthsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const months = parseInt(event.target.value, 10);
-    setMonths(months);
-    calculateSupportBudget(selectedProvince, months);
-  };
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const charCode = event.which ? event.which : event.keyCode;
-    if (charCode < 48 || charCode > 57) {
-      event.preventDefault();
-    }
   };
 
   const calculateSupportBudget = (provinceId: number, months: number) => {
@@ -116,7 +102,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             },
           }
         );
-        setImageUrl(response.data.data[0]); // Assuming the API returns the URL of the uploaded image in the 'url' field
+        setImageUrl(response.data.data[0]);
         return response.data.data[0];
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -130,11 +116,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
     }
   };
 
-  console.log("ảnh:", frontImageUrl);
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
 
   return (
     <>
-      <div className="page-1 flex flex-col gap-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="page-1 flex flex-col gap-4"
+      >
         <div className="p-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
           <h3 className="text-[#0076B7] text-lg font-medium">
             Chụp ảnh giấy tờ tuỳ thân
@@ -220,7 +211,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   <div className="icon-1">
                     {backImageUrl ? (
                       <img
-                        src={`https://baohiem.dion.vn${frontImageUrl}`}
+                        src={`https://baohiem.dion.vn${backImageUrl}`}
                         alt="Mặt sau"
                       />
                     ) : (
@@ -296,9 +287,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="name"
+              {...register("name", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
-              required
             />
           </div>
           <div>
@@ -308,6 +299,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               value={selectedProvince}
+              {...register("province", { required: true })}
               onChange={handleProvinceChange}
               className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
                 !selectedProvince && "text-gray-500"
@@ -330,9 +322,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="cccd"
+              {...register("cccd", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số CCCD"
-              required
             />
           </div>
           <div>
@@ -342,9 +334,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="bhxh"
+              {...register("bhxh", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số Bảo hiểm Xã hội"
-              required
             />
           </div>
           <div>
@@ -354,9 +346,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="date"
               id="dob"
+              {...register("dob", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Chọn ngày sinh"
-              required
             />
           </div>
           <div>
@@ -365,6 +356,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               id="gender"
+              {...register("gender", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
               <option value="">Chọn giới tính</option>
@@ -380,9 +372,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               <input
                 type="text"
                 id="salary"
+                {...register("salary", { required: true })}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập mức lương"
-                required
               />
               <div className="absolute inset-y-0 start-[72%] top-0 flex items-center pointer-events-none">
                 <p className="text-base font-normal text-[#767A7F]">
@@ -399,13 +391,17 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               <input
                 type="text"
                 id="months"
+                {...register("months", { required: true })}
                 aria-describedby="helper-text-explanation"
                 className="bg-gray-50 border border-gray-300 text-[#0076B7] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập số tháng"
-                value={months}
-                onChange={handleMonthsChange}
-                onKeyPress={handleKeyPress}
-                required
+                onChange={(e) => {
+                  setValue("months", e.target.value);
+                  calculateSupportBudget(
+                    selectedProvince,
+                    parseInt(e.target.value, 10)
+                  );
+                }}
               />
               <div className="absolute inset-y-0 start-[83%] top-0 flex items-center pointer-events-none">
                 <p className="text-base font-normal text-[#767A7F]">tháng</p>
@@ -420,7 +416,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               <input
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Nhập ngân sách hỗ trợ"
                 value={supportBudget.toLocaleString("vi-VN")}
                 readOnly
               />
@@ -442,9 +437,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="phone"
+              {...register("phone", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Số điện thoại"
-              required
             />
           </div>
           <div>
@@ -454,9 +449,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="name"
+              {...register("buyerName", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
-              required
             />
           </div>
           <div>
@@ -466,9 +461,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="email"
               id="email"
+              {...register("email", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập email của bạn"
-              required
             />
           </div>
           <div>
@@ -476,12 +471,14 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               Tỉnh thành <samp className="text-red-600">*</samp>
             </label>
             <select
-              id=""
               value={selectedProvince}
+              {...register("buyerProvince", { required: true })}
               onChange={handleProvinceChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option selected>Chọn tỉnh thành phố</option>
+              <option value="" disabled hidden>
+                Chọn tỉnh thành phố
+              </option>
               {provinces.map((province) => (
                 <option key={province.id} value={province.id}>
                   {province.name}
@@ -494,12 +491,14 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               Quận huyện <samp className="text-red-600">*</samp>
             </label>
             <select
-              id=""
               value={selectedDistrict}
+              {...register("buyerDistrict", { required: true })}
               onChange={handleDistrictChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option selected>Chọn quận huyện</option>
+              <option value="" disabled hidden>
+                Chọn quận huyện
+              </option>
               {districts.map((district) => (
                 <option key={district.id} value={district.id}>
                   {district.name}
@@ -512,10 +511,12 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               Phường xã <samp className="text-red-600">*</samp>
             </label>
             <select
-              id=""
+              {...register("buyerWard", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option selected>Chọn phường xã</option>
+              <option value="" disabled hidden>
+                Chọn phường xã
+              </option>
               {wards.map((ward) => (
                 <option key={ward.id} value={ward.id}>
                   {ward.name}
@@ -530,9 +531,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="address"
+              {...register("address", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="VD: Số nhà, số đường,...."
-              required
             />
           </div>
           <Link to="#" className="text-[#0076B7] text-sm font-normal underline">
@@ -566,7 +567,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
           </div>
         </div>
-      </div>
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+          Submit
+        </button>
+      </form>
       <FooterPayPage h={""} w={""} url={"/buill-pay/1"} />
     </>
   );
