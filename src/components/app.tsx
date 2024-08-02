@@ -1,6 +1,7 @@
 // src/App.js
 
 import React from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { Route, Routes } from "react-router-dom";
 import { App, ZMPRouter, AnimationRoutes, SnackbarProvider } from "zmp-ui";
 import { RecoilRoot } from "recoil";
@@ -23,11 +24,13 @@ import HistoryUnpaidPage from "./historyUnpaid";
 import ListsHistoryPage from "../pages/listsHistoryPage";
 import HistoryUnpaid1Page from "./historyUnpaid1";
 import HistoryUnpaid2Page from "./historyUnpaid2";
+import { SpecificProvider } from "./SpecificContext";
 
 const MyApp = () => {
   return (
     <RecoilRoot>
       <App>
+        <ToastContainer />
         <SnackbarProvider>
           <ZMPRouter>
             <Routes>
@@ -39,7 +42,11 @@ const MyApp = () => {
               </Route>
               <Route
                 path="/social-insurance"
-                element={<ListSocialInsurance />}
+                element={
+                  <SpecificProvider>
+                    <ListSocialInsurance />
+                  </SpecificProvider>
+                }
               />
               <Route
                 path="/health-insurance"
@@ -55,10 +62,28 @@ const MyApp = () => {
               />
               <Route
                 path="/buill-pay/:id"
-                element={<BillPayPage w={""} h={""} url={""} />}
+                element={
+                  <SpecificProvider>
+                    <BillPayPage w={""} h={""} url={""} />
+                  </SpecificProvider>
+                }
               />
-              <Route path="/buill-detail/:id" element={<BuillDetailPage />} />
-              <Route path="/register-BHXH" element={<RegisterBHXH />} />
+              <Route
+                path="/buill-detail/:id"
+                element={
+                  <SpecificProvider>
+                    <BuillDetailPage />
+                  </SpecificProvider>
+                }
+              />
+              <Route
+                path="/register-BHXH"
+                element={
+                  <SpecificProvider>
+                    <RegisterBHXH />
+                  </SpecificProvider>
+                }
+              />
               <Route
                 path="/register-BHYT"
                 element={<RegisterBHYT w={""} h={""} url={""} />}

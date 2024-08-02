@@ -1,8 +1,52 @@
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import axios from "axios";
 import { Widthheight } from "../models";
 import FooterPayPage from "./footerPay";
-
+import { SpecificContext } from "./SpecificContext";
+import { Link } from "react-router-dom";
 const BillPayPage: React.FC<Widthheight> = ({ url }) => {
+  const specificContext = useContext(SpecificContext);
+  const { insuranceOrder, setInsuranceOrder } = specificContext;
+  const [provinceName, setProvinceName] = useState("");
+  const [districtName, setDistrictName] = useState("");
+  const [wardeName, setWardeName] = useState("");
+  const [selectedCheckbox, setSelectedCheckbox] = useState("");
+
+  const handleCheckboxChange = (value) => {
+    setSelectedCheckbox(value);
+  };
+  useEffect(() => {
+    axios
+      .get(
+        "https://baohiem.dion.vn/province/api/detail/" +
+          insuranceOrder.provinceId
+      )
+      .then((response) => {
+        setProvinceName(response.data.data[0].name);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    axios
+      .get(
+        "https://baohiem.dion.vn/district/api/detail/" +
+          insuranceOrder.districtId
+      )
+      .then((response) => {
+        setDistrictName(response.data.data[0].name);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    axios
+      .get("https://baohiem.dion.vn/ward/api/detail/" + insuranceOrder.wardId)
+      .then((response) => {
+        setWardeName(response.data.data[0].name);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <>
       <div className="page-1 flex flex-col gap-4 mb-4">
@@ -17,7 +61,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                Trần Đăng trung
+                {insuranceOrder.fullName}
               </p>
             </div>
           </div>
@@ -28,7 +72,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                Trungtran@gmail.com
+                {insuranceOrder.email}
               </p>
             </div>
           </div>
@@ -41,7 +85,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                0364 123 456
+                {insuranceOrder.phone}
               </p>
             </div>
           </div>
@@ -52,7 +96,8 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                Số 8 Phạm Hùng, Mễ Trì, Nam Từ Liêm. Hà Nội
+                {insuranceOrder.addressDetail}, {wardeName}, {districtName},{" "}
+                {provinceName}
               </p>
             </div>
           </div>
@@ -69,7 +114,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                Trần Đăng trung
+                {insuranceOrder.listInsuredPerson[0].fullName}
               </p>
             </div>
           </div>
@@ -80,7 +125,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                015098005123
+                {insuranceOrder.listInsuredPerson[0].citizenId}
               </p>
             </div>
           </div>
@@ -91,7 +136,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                DN 123 456 789
+                {insuranceOrder.listInsuredPerson[0].socialInsuranceNumber}
               </p>
             </div>
           </div>
@@ -102,7 +147,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                20/05/1996
+                {insuranceOrder.listInsuredPerson[0].doB}
               </p>
             </div>
           </div>
@@ -113,7 +158,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                Nam
+                {insuranceOrder.listInsuredPerson[0].gender}
               </p>
             </div>
           </div>
@@ -124,7 +169,10 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-                7.000.000 vnđ
+                {insuranceOrder.listInsuredPerson[0].wage.toLocaleString(
+                  "vi-VN"
+                )}{" "}
+                vnđ
               </p>
             </div>
           </div>
@@ -137,7 +185,10 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                396.000 vnđ
+                {insuranceOrder.listInsuredPerson[0].supportBudget.toLocaleString(
+                  "vi-VN"
+                )}{" "}
+                vnđ
               </p>
             </div>
           </div>
@@ -150,7 +201,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                12 tháng
+                {insuranceOrder.listInsuredPerson[0].monthInsured} tháng
               </p>
             </div>
           </div>
@@ -161,13 +212,13 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-                18.084.000 vnđ
+                {insuranceOrder.finalPrice.toLocaleString("vi-VN")} vnđ
               </p>
             </div>
           </div>
         </div>
         <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
-          <h3 className="text-[#0076B7] text-lg font-medium">
+          {/* <h3 className="text-[#0076B7] text-lg font-medium">
             Danh mục sản phẩm
           </h3>
           <div className="flex gap-[10px]">
@@ -181,59 +232,85 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
                 22<samp className="text-[#646464] text-sm font-normal">%</samp>
               </span>
             </div>
-          </div>
+          </div> */}
 
-          <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
+          {/* <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr> */}
 
           <div className="flex flex-col gap-2">
             <h3 className="text-[#0076B7] text-lg font-medium">
               Phương thức thanh toán
             </h3>
-            <div className="flex gap-3">
+            {/* <div className="flex gap-3">
               <input
                 type="checkbox"
                 className="relative appearance-none bg-white w-5 h-5 border rounded-full border-red-400 cursor-pointer checked:bg-[#0076B7]"
-                id="unchecked-circular-checkbox"
+                checked={selectedCheckbox === "vietqr"}
+                onChange={() => handleCheckboxChange("vietqr")}
+                id="vietqr-checkbox"
               />
               <label
-                for="unchecked-circular-checkbox"
+                htmlFor="vietqr-checkbox"
                 className="text-sm font-normal text-[#000] w-[96%]"
               >
                 VietQR (Chuyển khoản ngân hàng, MOMO, Zalopay, Viettelpay)
               </label>
-            </div>
+            </div> */}
 
             <div className="flex gap-3">
               <input
                 type="checkbox"
                 className="relative appearance-none bg-white w-5 h-5 border rounded-full border-red-400 cursor-pointer checked:bg-[#0076B7]"
-                id="unchecked-circular-checkbox"
+                checked={true}
+                onChange={() => handleCheckboxChange("vnpay")}
+                id="vnpay-checkbox"
               />
               <label
-                for="unchecked-circular-checkbox"
+                htmlFor="vnpay-checkbox"
                 className="text-sm font-normal text-[#000] w-[96%]"
               >
                 Thanh toán VNPAY (Powered ChaiPay)
               </label>
             </div>
 
-            <div className="flex gap-3">
+            {/* <div className="flex gap-3">
               <input
                 type="checkbox"
                 className="relative appearance-none bg-white w-5 h-5 border rounded-full border-red-400 cursor-pointer checked:bg-[#0076B7]"
-                id="unchecked-circular-checkbox"
+                checked={selectedCheckbox === "khac"}
+                onChange={() => handleCheckboxChange("khac")}
+                id="khac-checkbox"
               />
               <label
-                for="unchecked-circular-checkbox"
+                htmlFor="khac-checkbox"
                 className="text-sm font-normal text-[#000] w-[96%]"
               >
                 Khác
               </label>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
-      <FooterPayPage w={""} h={""} url={"/buill-detail/1"} />
+      {/* <FooterPayPage w={""} h={""} url={"/buill-detail/1"} /> */}
+      <div className="page-2 bg-white">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-row content-center justify-between">
+            <p className="block text-sm font-normal text-gray-900">
+              Tổng thanh toán:
+            </p>
+            <h3 className="text-base font-medium text-[#0076B7]">
+              {insuranceOrder.finalPrice.toLocaleString("vi-VN")} VND
+            </h3>
+          </div>
+          <div className="flex flex-row content-center justify-center items-center">
+            <Link
+              to={"/buill-detail/l"}
+              className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+            >
+              Tiếp tục
+            </Link>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

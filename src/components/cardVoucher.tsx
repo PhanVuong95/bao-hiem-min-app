@@ -17,7 +17,6 @@ const VoucherPage: React.FunctionComponent = (props) => {
             id="phone"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[72%] p-3"
             placeholder="Nhập mã E-voucher"
-            required
           />
           <button className="p-3 rounded-lg bg-[#0076B7] text-base font-normal text-white ">
             Áp dụng
