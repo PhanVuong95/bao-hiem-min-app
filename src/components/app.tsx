@@ -1,6 +1,6 @@
 // src/App.js
 
-import React from "react";
+import React, { Suspense } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Route, Routes } from "react-router-dom";
 import { App, ZMPRouter, AnimationRoutes, SnackbarProvider } from "zmp-ui";
@@ -29,85 +29,87 @@ import { SpecificProvider } from "./SpecificContext";
 const MyApp = () => {
   return (
     <RecoilRoot>
-      <App>
-        <ToastContainer />
-        <SnackbarProvider>
-          <ZMPRouter>
-            <Routes>
-              <Route path="/" element={<LayoutPage />}>
-                <Route index element={<HomePage />} />
-                <Route path="contract" element={<ContractPage />} />
-                <Route path="history" element={<HistoryPage />} />
-                <Route path="user" element={<UserPage />} />
-              </Route>
-              <Route
-                path="/social-insurance"
-                element={
-                  <SpecificProvider>
-                    <ListSocialInsurance />
-                  </SpecificProvider>
-                }
-              />
-              <Route
-                path="/health-insurance"
-                element={<ListHealthInsurance />}
-              />
-              <Route
-                path="/product-detail/:id"
-                element={<ProductDetailPage />}
-              />
-              <Route
-                path="/product-detail-1/:id"
-                element={<ProductDetailPage1 />}
-              />
-              <Route
-                path="/buill-pay/:id"
-                element={
-                  <SpecificProvider>
-                    <BillPayPage w={""} h={""} url={""} />
-                  </SpecificProvider>
-                }
-              />
-              <Route
-                path="/buill-detail/:id"
-                element={
-                  <SpecificProvider>
-                    <BuillDetailPage />
-                  </SpecificProvider>
-                }
-              />
-              <Route
-                path="/register-BHXH"
-                element={
-                  <SpecificProvider>
-                    <RegisterBHXH />
-                  </SpecificProvider>
-                }
-              />
-              <Route
-                path="/register-BHYT"
-                element={<RegisterBHYT w={""} h={""} url={""} />}
-              />
-              <Route
-                path="/lists-history"
-                element={<ListsHistoryPage w={""} h={""} url={""} />}
-              />
-              <Route
-                path="/history-unpaid/:id"
-                element={<HistoryUnpaidPage />}
-              />
-              <Route
-                path="/history-unpaid-1/:id"
-                element={<HistoryUnpaid1Page />}
-              />
-              <Route
-                path="/history-unpaid-2/:id"
-                element={<HistoryUnpaid2Page />}
-              />
-            </Routes>
-          </ZMPRouter>
-        </SnackbarProvider>
-      </App>
+      <Suspense fallback={<div>Đang tải...</div>}>
+        <App>
+          <ToastContainer />
+          <SnackbarProvider>
+            <ZMPRouter>
+              <Routes>
+                <Route path="/" element={<LayoutPage />}>
+                  <Route index element={<HomePage />} />
+                  <Route path="contract" element={<ContractPage />} />
+                  <Route path="history" element={<HistoryPage />} />
+                  <Route path="user" element={<UserPage />} />
+                </Route>
+                <Route
+                  path="/social-insurance"
+                  element={
+                    <SpecificProvider>
+                      <ListSocialInsurance />
+                    </SpecificProvider>
+                  }
+                />
+                <Route
+                  path="/health-insurance"
+                  element={<ListHealthInsurance />}
+                />
+                <Route
+                  path="/product-detail/:id"
+                  element={<ProductDetailPage />}
+                />
+                <Route
+                  path="/product-detail-1/:id"
+                  element={<ProductDetailPage1 />}
+                />
+                <Route
+                  path="/buill-pay/:id"
+                  element={
+                    <SpecificProvider>
+                      <BillPayPage w={""} h={""} url={""} />
+                    </SpecificProvider>
+                  }
+                />
+                <Route
+                  path="/buill-detail/:id"
+                  element={
+                    <SpecificProvider>
+                      <BuillDetailPage />
+                    </SpecificProvider>
+                  }
+                />
+                <Route
+                  path="/register-BHXH"
+                  element={
+                    <SpecificProvider>
+                      <RegisterBHXH />
+                    </SpecificProvider>
+                  }
+                />
+                <Route
+                  path="/register-BHYT"
+                  element={<RegisterBHYT w={""} h={""} url={""} />}
+                />
+                <Route
+                  path="/lists-history"
+                  element={<ListsHistoryPage w={""} h={""} url={""} />}
+                />
+                <Route
+                  path="/history-unpaid/:id"
+                  element={<HistoryUnpaidPage />}
+                />
+                <Route
+                  path="/history-unpaid-1/:id"
+                  element={<HistoryUnpaid1Page />}
+                />
+                <Route
+                  path="/history-unpaid-2/:id"
+                  element={<HistoryUnpaid2Page />}
+                />
+              </Routes>
+            </ZMPRouter>
+          </SnackbarProvider>
+        </App>
+      </Suspense>
     </RecoilRoot>
   );
 };

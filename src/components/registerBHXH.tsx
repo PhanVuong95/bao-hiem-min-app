@@ -991,7 +991,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           <div className="flex gap-2">
             <input
               type="checkbox"
-              className="relative appearance-none bg-white w-5 h-5 border rounded-full border-red-400 cursor-pointer checked:bg-[#0076B7]"
+              className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
               id="unchecked-circular-checkbox"
               required
             />

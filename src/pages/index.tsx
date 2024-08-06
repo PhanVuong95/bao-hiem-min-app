@@ -7,12 +7,19 @@ import UserCard from "../components/user-card";
 import HeaderPage from "../components/headerPage";
 import CardNewPage from "../components/cardNew";
 import { Link } from "react-router-dom";
+import HeaderBase from "../components/headerBase";
 
 const HomePage: React.FunctionComponent = () => {
   const user = useRecoilValue(userState);
 
   return (
     <div className="home-page min-h-[100vh] pb-[120px]">
+      <div className="">
+        <HeaderBase
+          isHome={true}
+        />
+      </div>
+
       <div className="banner-top h-full ">
         <img src="https://dion.vn/wp-content/uploads/2024/07/image-1001.png" />
         <div className="flex justify-between items-center user-home">

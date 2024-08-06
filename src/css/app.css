@@ -195,3 +195,15 @@ body::-webkit-scrollbar {
 .no-spin {
   -moz-appearance: textfield; /* Firefox */
 }
+
+
+.selectCustom {
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  -moz-appearance: none;
+  background-image: url('https://www.svgrepo.com/show/80156/down-arrow.svg');
+  background-repeat: no-repeat;
+  background-size: 10px 10px;
+  background-position: calc(100% - 10px);
+}

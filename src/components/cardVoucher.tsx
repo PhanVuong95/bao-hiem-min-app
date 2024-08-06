@@ -8,7 +8,7 @@ const VoucherPage: React.FunctionComponent = (props) => {
         Thêm người được bảo hiểm
       </h3>
       <div className="flex flex-col">
-        <p className="block text-sm font-normal text-gray-900">
+        <p className="block text-sm font-normal pb-2 text-gray-900">
           Voucher giảm giá
         </p>
         <div className="flex flex-row items-center justify-between gap-1">
