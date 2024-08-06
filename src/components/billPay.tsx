@@ -303,7 +303,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <Link
-              to={"/buill-detail/l"}
+              to={"/buill-detail/" + insuranceOrder.id}
               className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
             >
               Tiếp tục

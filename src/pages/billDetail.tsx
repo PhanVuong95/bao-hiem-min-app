@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { SpecificContext } from "../components/SpecificContext";
 import html2canvas from "html2canvas";
+import { toast } from "react-toastify";
 const BuillDetailPage: React.FunctionComponent = (props) => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const specificContext = useContext(SpecificContext);
   const { insuranceOrder, setInsuranceOrder } = specificContext;
@@ -14,6 +16,11 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   const [expiryDateString, setExpiryDateString] = useState("");
   const orderRef = useRef<HTMLDivElement>(null);
 
+  const [orderDetail, setOrderDetail] = useState<any>();
+  const [insuredPerson, setInsuredPerson] = useState<any>();
+
+  const STATUS_DONE_ID = 1002;
+  const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
   const handleDownload = async () => {
     if (orderRef.current) {
       const canvas = await html2canvas(orderRef.current);
@@ -28,36 +35,47 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   };
   useEffect(() => {
     axios
-      .get(
-        "https://baohiem.dion.vn/province/api/detail/" +
-          insuranceOrder.provinceId
-      )
+      .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
-        setProvinceName(response.data.data[0].name);
+        setOrderDetail(response.data.data[0]);
+        setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
       })
       .catch((error) => {
         console.error(error);
       });
-    axios
-      .get(
-        "https://baohiem.dion.vn/district/api/detail/" +
-          insuranceOrder.districtId
-      )
-      .then((response) => {
-        setDistrictName(response.data.data[0].name);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    axios
-      .get("https://baohiem.dion.vn/ward/api/detail/" + insuranceOrder.wardId)
-      .then((response) => {
-        setWardeName(response.data.data[0].name);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  }, [id]);
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       "https://baohiem.dion.vn/province/api/detail/" +
+  //         insuranceOrder.provinceId
+  //     )
+  //     .then((response) => {
+  //       setProvinceName(response.data.data[0].name);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  //   axios
+  //     .get(
+  //       "https://baohiem.dion.vn/district/api/detail/" +
+  //         insuranceOrder.districtId
+  //     )
+  //     .then((response) => {
+  //       setDistrictName(response.data.data[0].name);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  //   axios
+  //     .get("https://baohiem.dion.vn/ward/api/detail/" + insuranceOrder.wardId)
+  //     .then((response) => {
+  //       setWardeName(response.data.data[0].name);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
   const GetQrCode = async () => {
     const token = localStorage.token;
     // const formData = new FormData();
@@ -65,7 +83,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     try {
       const response = await axios.post(
         "https://baohiem.dion.vn/insuranceorder/api/create-payment?orderId=" +
-          insuranceOrder.id,
+          id,
         {
           headers: {
             "Content-Type": "application/json",
@@ -94,10 +112,100 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     const year = date.getFullYear();
 
     // Định dạng thời gian theo 'hh:mm dd/mm/yyyy'
-    return `${hours}:${minutes} ${day}/${month}/${year}`;
+    return `${hours}:${minutes} - ${day}/${month}/${year}`;
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      axios
+        .get(
+          "https://baohiem.dion.vn/insuranceorder/api/check-order-status/" + id
+        )
+        .then((response) => {
+          if (response.data.data[0] === STATUS_DONE_ID) {
+            setIsPaymentSuccessful(true); // Hiển thị modal
+            clearInterval(interval);
+          } else {
+            // const notify1 = () => toast("Có lỗi xảy ra! Xin vui lòng thử lại");
+            // notify1();
+          }
+        })
+        .catch((error) => {
+          const notify1 = () => toast("Có lỗi xảy ra! Xin vui lòng thử lại");
+          notify1();
+        });
+    }, 5000);
+
+    // Set timeout to clear the interval after 30 minutes
+    const timeout = setTimeout(() => clearInterval(interval), 1800000);
+
+    // Cleanup interval and timeout on component unmount
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [insuranceOrder.id]);
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       "https://baohiem.dion.vn/insuranceorder/api/check-order-status/" + 1056
+  //     )
+  //     .then((response) => {
+  //       if (response.data.data[0] == STATUS_DONE_ID) {
+  //         console.log("DONE");
+  //       } else {
+  //         console.log("NOT DONE");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
+  if (!orderDetail || !orderDetail) {
+    return;
+  }
   return (
     <>
+      {isPaymentSuccessful && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+          <div className="bg-white p-8 rounded-lg text-center w-4/5">
+            <svg
+              className="mx-auto"
+              width="100"
+              height="100"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="50"
+                cy="50"
+                r="27.8571"
+                fill="#0544E8"
+                stroke="#DEE7FE"
+                stroke-width="4.28571"
+              />
+              <circle cx="50" cy="50" r="37.5" stroke="#0544E8" />
+              <circle cx="50" cy="50" r="44.5" stroke="#DEE7FE" />
+              <path
+                d="M44.1641 63.4375L32.4922 51.7656C31.7891 51.0625 31.7891 49.8672 32.4922 49.1641L35.0234 46.6328C35.7266 45.9297 36.8516 45.9297 37.5547 46.6328L45.5 54.5078L62.375 37.6328C63.0781 36.9297 64.2031 36.9297 64.9062 37.6328L67.4375 40.1641C68.1406 40.8672 68.1406 42.0625 67.4375 42.7656L46.7656 63.4375C46.0625 64.1406 44.8672 64.1406 44.1641 63.4375Z"
+                fill="white"
+              />
+            </svg>
+            <h2 className="text-lg font-bold">Thanh toán thành công</h2>
+            <p>
+              Cảm ơn bạn tham gia <br /> Bảo hiểm Xã hội tự nguyện
+            </p>
+            <button
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+              onClick={() =>
+                (window.location.href = "/history-unpaid/" + insuranceOrder.id)
+              } // Điều hướng về trang chủ
+            >
+              Xem chi tiết
+            </button>
+          </div>
+        </div>
+      )}
       <div className="page-1 flex flex-col gap-4 mb-[32px]">
         <h3 className="text-[#0076B7] text-lg font-medium text-center">
           Hệ thống đang ghi nhận thanh toán
@@ -119,7 +227,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                #{insuranceOrder.id}
+                #{orderDetail.id}
               </p>
             </div>
           </div>
@@ -131,7 +239,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#FAAD14] text-sm font-semibold max-w-[190px] text-right">
-                Chưa thanh toán
+                {orderDetail.insuranceOrderStatusName}
               </p>
             </div>
           </div>
@@ -141,7 +249,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                {insuranceOrder.fullName}
+                {orderDetail.fullName}
               </p>
             </div>
           </div>
@@ -151,7 +259,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.email}
+                {orderDetail.email}
               </p>
             </div>
           </div>
@@ -163,7 +271,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                {insuranceOrder.phone}
+                {orderDetail.phone}
               </p>
             </div>
           </div>
@@ -173,8 +281,8 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.addressDetail}, {wardeName}, {districtName},{" "}
-                {provinceName}
+                {orderDetail.addressDetail}, {orderDetail.wardName},{" "}
+                {orderDetail.districtName}, {orderDetail.provinceName}
               </p>
             </div>
           </div>
@@ -204,7 +312,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#0076B7] text-sm font-semibold max-w-[142px] text-right">
-                {insuranceOrder.finalPrice.toLocaleString("vi-VN")} vnđ
+                {orderDetail.finalPrice.toLocaleString("vi-VN")} vnđ
               </p>
             </div>
           </div>

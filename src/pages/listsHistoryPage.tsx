@@ -73,7 +73,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
           <div className="flex flex-col gap-4">
             {listOrder?.map((item, index) => {
               return (
-                <Link to="/history-unpaid/1" key={index}>
+                <Link to={"/history-unpaid/" + item.id} key={index}>
                   <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
                     <div className="flex gap-[10px]">
                       <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
@@ -152,7 +152,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
           <div className="flex flex-col gap-4">
             {listOrder?.map((item, index) => {
               return (
-                <Link to="/history-unpaid/1" key={index}>
+                <Link to={"/history-unpaid/" + item.id} key={index}>
                   <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
                     <div className="flex gap-[10px]">
                       <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
