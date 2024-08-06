@@ -14,7 +14,7 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
   }, []);
 
   return (
-    <>
+    <div className="pt-20">
       <HeaderBase
         isHome={false}
         title={"Giới thiệu BHYT tự nguyện"}
@@ -47,7 +47,7 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
           )}
         </div>
       </Page>
-    </>
+    </div>
 
   );
 };

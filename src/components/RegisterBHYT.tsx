@@ -1,33 +1,113 @@
-import React, { useState } from "react";
-import { Widthheight } from "../models";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useNavigate } from "zmp-ui";
+import { registerInfoBHYT } from "../pages/listHealthInsurance";
+import { isValidEmail, isValidEmptyString, isValidFullName, isValidPhone } from "../utils/validateString";
 import UserBeneficiaryBHYTPage from "./cardUserBeneficiaryBHYT";
 import UserBuyerPage from "./cardUserBuyer";
 import VoucherPage from "./cardVoucher";
-import FooterPayPage from "./footerPay";
 import HeaderBase from "./headerBase";
 
-const RegisterBHYT: React.FC<Widthheight> = (props) => {
+const RegisterBHYT = ({ }) => {
   const [beneficiaries, setBeneficiaries] = useState([{ id: 1 }]);
-
+  const { state } = useLocation();
+  const navigate = useNavigate();
 
   const addBeneficiary = () => {
     setBeneficiaries([...beneficiaries, { id: beneficiaries.length + 1 }]);
   };
 
+  const validateForm = () => {
+    console.log(registerInfoBHYT);
+
+    // Validate số điện thoại
+    if (!isValidEmptyString(registerInfoBHYT["phone"])) {
+      toast.warn(
+        "Số điện thoại không được để trống",
+      );
+      return false;
+    }
+    if (!isValidPhone(registerInfoBHYT["phone"])) {
+      toast.warn(
+        "Số điện thoại không hợp lệ",
+      );
+      return false;
+    }
+
+    // Validate họ và tên
+    if (!isValidEmptyString(registerInfoBHYT["fullName"])) {
+      toast.warn(
+        "Họ và tên không được để trống",
+      );
+      return false;
+    }
+
+    if (!isValidFullName(registerInfoBHYT["fullName"])) {
+      toast.warn(
+        "Họ và tên không hợp lệ",
+      );
+      return false;
+    }
+
+    // Validate email
+    if (isValidEmptyString(registerInfoBHYT["email"])) {
+      if (!isValidEmail(registerInfoBHYT["email"])) {
+        toast.warn(
+          "Email không hợp lệ",
+        );
+        return false;
+      }
+    }
+
+    // Validate địa chỉ
+    if (registerInfoBHYT["provinceId"] == 0) {
+      toast.warn(
+        "Vui lòng lựa chọn Thành phố",
+      );
+      return false;
+    }
+
+    if (registerInfoBHYT["districtId"] == 0) {
+      toast.warn(
+        "Vui lòng lựa chọn Quận huyện",
+      );
+      return false;
+    }
+
+    if (registerInfoBHYT["wardId"] == 0) {
+      toast.warn(
+        "Vui lòng lựa chọn Phường xã",
+      );
+      return false;
+    }
+
+    if (!isValidEmptyString(registerInfoBHYT["addressDetail"])) {
+      toast.warn(
+        "Địa chỉ cụ thể không được để trống",
+      );
+      return false;
+    }
+
+    console.log(registerInfoBHYT);
+
+
+    // return true;
+  }
+
   return (
-    <>
+    <div className="pt-20">
       <HeaderBase
         isHome={false}
         title={"Đăng ký BHYT tự nguyện"}
       />
       <div className="page-1 flex flex-col gap-4">
-        <UserBuyerPage />
-        {beneficiaries.map((beneficiary) => (
+        <UserBuyerPage data={state.data} />
+        {beneficiaries.map((beneficiary, index) => (
           <UserBeneficiaryBHYTPage
+            index={index}
+            price={state.data.price}
             key={beneficiary.id}
-            w={""}
-            h={""}
-            url={""}
           />
         ))}
         <button
@@ -46,7 +126,6 @@ const RegisterBHYT: React.FC<Widthheight> = (props) => {
               fill="none"
             >
               <path
-                fillRule="evenodd"
                 fillRule="evenodd"
                 d="M1.25122 12C1.25122 6.08579 6.08701 1.25 12.0012 1.25C17.9154 1.25 22.7512 6.08579 22.7512 12C22.7512 17.9142 17.9154 22.75 12.0012 22.75C6.08701 22.75 1.25122 17.9142 1.25122 12ZM12.0012 2.75C6.91543 2.75 2.75122 6.91421 2.75122 12C2.75122 17.0858 6.91543 21.25 12.0012 21.25C17.087 21.25 21.2512 17.0858 21.2512 12C21.2512 6.91421 17.087 2.75 12.0012 2.75ZM7.25122 12C7.25122 11.5858 7.58701 11.25 8.00122 11.25H11.2512V8C11.2512 7.58579 11.587 7.25 12.0012 7.25C12.4154 7.25 12.7512 7.58579 12.7512 8V11.25H16.0012C16.4154 11.25 16.7512 11.5858 16.7512 12C16.7512 12.4142 16.4154 12.75 16.0012 12.75H12.7512V16C12.7512 16.4142 12.4154 16.75 12.0012 16.75C11.587 16.75 11.2512 16.4142 11.2512 16V12.75H8.00122C7.58701 12.75 7.25122 12.4142 7.25122 12Z"
                 fill="#0076B7"
@@ -73,7 +152,6 @@ const RegisterBHYT: React.FC<Widthheight> = (props) => {
                   fill="none"
                 >
                   <path
-                    fillRule="evenodd"
                     fillRule="evenodd"
                     d="M1.75134 12.7915C1.75134 6.87729 6.58713 2.0415 12.5013 2.0415C18.4156 2.0415 23.2513 6.87729 23.2513 12.7915C23.2513 18.7057 18.4156 23.5415 12.5013 23.5415C6.58713 23.5415 1.75134 18.7057 1.75134 12.7915ZM12.5013 3.5415C7.41556 3.5415 3.25134 7.70572 3.25134 12.7915C3.25134 17.8773 7.41556 22.0415 12.5013 22.0415C17.5871 22.0415 21.7513 17.8773 21.7513 12.7915C21.7513 7.70572 17.5871 3.5415 12.5013 3.5415ZM7.75134 12.7915C7.75134 12.3773 8.08713 12.0415 8.50134 12.0415H11.7513V8.7915C11.7513 8.37729 12.0871 8.0415 12.5013 8.0415C12.9156 8.0415 13.2513 8.37729 13.2513 8.7915V12.0415H16.5013C16.9156 12.0415 17.2513 12.3773 17.2513 12.7915C17.2513 13.2057 16.9156 13.5415 16.5013 13.5415H13.2513V16.7915C13.2513 17.2057 12.9156 17.5415 12.5013 17.5415C12.0871 17.5415 11.7513 17.2057 11.7513 16.7915V13.5415H8.50134C8.08713 13.5415 7.75134 13.2057 7.75134 12.7915Z"
                     fill="#0076B7"
@@ -164,8 +242,33 @@ const RegisterBHYT: React.FC<Widthheight> = (props) => {
           </div>
         </div>
       </div>
-      <FooterPayPage url={"/buill-pay/1"} w={""} h={""} />
-    </>
+
+      <div className="page-2 bg-white">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-row content-center justify-between">
+            <p className="block text-sm font-normal text-gray-900">
+              Tổng thanh toán:
+            </p>
+            <h3 className="text-base font-medium text-[#0076B7]">
+              18.084.000 VND
+            </h3>
+          </div>
+          <div className="flex flex-row content-center justify-center items-center">
+            <button type="button"
+              onClick={() => {
+                if (validateForm()) {
+                  navigate('/bill-pay-bhyt/')
+                }
+              }}
+              className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+            >
+
+              Tiếp tục
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

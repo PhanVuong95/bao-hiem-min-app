@@ -6,9 +6,7 @@ import { SpecificContext } from "./SpecificContext";
 import { Link } from "react-router-dom";
 import HeaderBase from "./headerBase";
 
-const BillPayPage: React.FC<Widthheight> = ({ url }) => {
-  const specificContext = useContext(SpecificContext);
-  const { insuranceOrder, setInsuranceOrder } = specificContext;
+const BillPayBHYTPage: React.FC<Widthheight> = ({ url }) => {
   const [provinceName, setProvinceName] = useState("");
   const [districtName, setDistrictName] = useState("");
   const [wardeName, setWardeName] = useState("");
@@ -21,7 +19,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/province/api/detail/" +
-          insuranceOrder.provinceId
+        0
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);
@@ -32,7 +30,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/district/api/detail/" +
-          insuranceOrder.districtId
+        0
       )
       .then((response) => {
         setDistrictName(response.data.data[0].name);
@@ -41,7 +39,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
         console.error(error);
       });
     axios
-      .get("https://baohiem.dion.vn/ward/api/detail/" + insuranceOrder.wardId)
+      .get("https://baohiem.dion.vn/ward/api/detail/" + 0)
       .then((response) => {
         setWardeName(response.data.data[0].name);
       })
@@ -50,9 +48,12 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
       });
   }, []);
   return (
-    <>
-      <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
-      <div className=" !pt-[95px] page-1 flex flex-col gap-4 mb-4 ">
+    <div className="pt-20">
+      <HeaderBase
+        isHome={false}
+        title={"BHYT tự nguyện"}
+      />
+      <div className="page-1 flex flex-col gap-4 mb-4">
         <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
           <h3 className="text-base font-medium text-[#0076B7]">
             Người mua bảo hiểm
@@ -64,7 +65,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                {insuranceOrder.fullName}
+                {'Trần Đăng trung'}
               </p>
             </div>
           </div>
@@ -75,7 +76,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.email}
+                {'Trungtran@gmail.com'}
               </p>
             </div>
           </div>
@@ -88,7 +89,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                {insuranceOrder.phone}
+                {'0364 123 456'}
               </p>
             </div>
           </div>
@@ -99,8 +100,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.addressDetail}, {wardeName}, {districtName},{" "}
-                {provinceName}
+                {'Số 8 Phạm Hùng, Mễ Trì, Nam Từ Liêm. Hà Nội'}
               </p>
             </div>
           </div>
@@ -117,7 +117,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                {insuranceOrder.listInsuredPerson[0].fullName}
+                {'Trần Đăng trung'}
               </p>
             </div>
           </div>
@@ -128,7 +128,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.listInsuredPerson[0].citizenId}
+                {'015098005123'}
               </p>
             </div>
           </div>
@@ -139,7 +139,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                {insuranceOrder.listInsuredPerson[0].socialInsuranceNumber}
+                {'015098005123'}
               </p>
             </div>
           </div>
@@ -150,7 +150,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.listInsuredPerson[0].doB}
+                {'Trần Đăng trung'}
               </p>
             </div>
           </div>
@@ -161,7 +161,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.listInsuredPerson[0].gender}
+                {'Nam'}
               </p>
             </div>
           </div>
@@ -172,9 +172,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.listInsuredPerson[0].wage.toLocaleString(
-                  "vi-VN"
-                )}{" "}
+                {'1.263.600'}
                 vnđ
               </p>
             </div>
@@ -188,9 +186,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.listInsuredPerson[0].supportBudget.toLocaleString(
-                  "vi-VN"
-                )}{" "}
+
                 vnđ
               </p>
             </div>
@@ -204,7 +200,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.listInsuredPerson[0].monthInsured} tháng
+                tháng
               </p>
             </div>
           </div>
@@ -215,7 +211,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
             </div>
             <div>
               <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-                {insuranceOrder.finalPrice.toLocaleString("vi-VN")} vnđ
+                vnđ
               </p>
             </div>
           </div>
@@ -301,12 +297,12 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
               Tổng thanh toán:
             </p>
             <h3 className="text-base font-medium text-[#0076B7]">
-              {insuranceOrder.finalPrice.toLocaleString("vi-VN")} VND
+              VND
             </h3>
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <Link
-              to={"/buill-detail/" + insuranceOrder.id}
+              to={"/buill-detail/l"}
               className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
             >
               Tiếp tục
@@ -314,8 +310,8 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default BillPayPage;
+export default BillPayBHYTPage;
