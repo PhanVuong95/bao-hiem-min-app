@@ -3,10 +3,8 @@
 import React, { Suspense } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Route, Routes } from "react-router-dom";
-import { App, ZMPRouter, AnimationRoutes, SnackbarProvider } from "zmp-ui";
+import { App, ZMPRouter, SnackbarProvider } from "zmp-ui";
 import { RecoilRoot } from "recoil";
-import { FaHeadset } from "react-icons/fa";
-
 import HomePage from "../pages";
 import LayoutPage from "../layout/layuot";
 import ContractPage from "../pages/contractPage";
@@ -16,6 +14,7 @@ import ListSocialInsurance from "../pages/listSocialInsurance";
 import ListHealthInsurance from "../pages/listHealthInsurance";
 import ProductDetailPage from "./productDetail";
 import BillPayPage from "./billPay";
+import BillPayBHYTPage from './billPayBHYT';
 import BuillDetailPage from "../pages/billDetail";
 import RegisterBHXH from "./registerBHXH";
 import RegisterBHYT from "./RegisterBHYT";
@@ -31,7 +30,28 @@ const MyApp = () => {
     <RecoilRoot>
       <Suspense fallback={<div>Đang tải...</div>}>
         <App>
-          <ToastContainer />
+          <ToastContainer
+            style={{
+              width: "80%",
+              borderRadius: '20px',
+              marginTop: '40px',
+              marginLeft: '10%',
+              marginRight: '10%',
+            }}
+            toastStyle={{
+              borderRadius: '7px'
+            }}
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
           <SnackbarProvider>
             <ZMPRouter>
               <Routes>
@@ -70,6 +90,12 @@ const MyApp = () => {
                   }
                 />
                 <Route
+                  path="/bill-pay-bhyt/"
+                  element={
+                    <BillPayBHYTPage w={""} h={""} url={""} />
+                  }
+                />
+                <Route
                   path="/buill-detail/:id"
                   element={
                     <SpecificProvider>
@@ -86,8 +112,8 @@ const MyApp = () => {
                   }
                 />
                 <Route
-                  path="/register-BHYT"
-                  element={<RegisterBHYT w={""} h={""} url={""} />}
+                  path="/register-BHYT/"
+                  element={<RegisterBHYT />}
                 />
                 <Route
                   path="/lists-history"

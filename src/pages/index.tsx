@@ -13,14 +13,14 @@ const HomePage: React.FunctionComponent = () => {
   const user = useRecoilValue(userState);
 
   return (
-    <div className="home-page min-h-[100vh] pb-[120px]">
+    <div className="home-page min-h-[100vh] pb-[120px] pt-[80px]">
       <div className="">
         <HeaderBase
           isHome={true}
         />
       </div>
 
-      <div className="banner-top h-full ">
+      <div className="banner-top h-full">
         <img src="https://dion.vn/wp-content/uploads/2024/07/image-1001.png" />
         <div className="flex justify-between items-center user-home">
           <UserCard user={user.userInfo} />

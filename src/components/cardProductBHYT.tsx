@@ -1,9 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Widthheight } from "../models";
+import { useNavigate } from "zmp-ui";
 import { formatMoneyVND } from "../utils/validateString";
 
 const CardProductBHYT = ({ url, data }) => {
+  const navigate = useNavigate();
 
   return (
     <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
@@ -15,7 +15,7 @@ const CardProductBHYT = ({ url, data }) => {
           </h3>
           <p className="text-[#646464] text-sm font-normal">{data?.monthDuration} tháng</p>
           <span className="text-[#0076B7] text-lg font-bold">
-            {formatMoneyVND(data?.price)}<samp className="text-[#646464] text-sm font-normal"> / năm</samp>
+            {formatMoneyVND(data?.price)} đ<samp className="text-[#646464] text-sm font-normal"> / năm</samp>
           </span>
         </div>
       </div>
@@ -93,23 +93,23 @@ const CardProductBHYT = ({ url, data }) => {
         )}
       </div>
 
-      <div className="flex flex-row justify-between items-center gap-[10px] my-4 ">
-        <div>
-          <Link
-            to="/product-detail-1/2"
-            className="px-[38px] py-3 rounded-full bg-[#DEE7FE] text-[15px] font-medium text-[#0076B7]"
-          >
-            Xem chi tiết
-          </Link>
-        </div>
-        <div>
-          <Link
-            to={url}
-            className="px-[38px] py-3 rounded-full bg-[#0076B7] text-[15px] font-medium text-[#fff]"
-          >
-            Mua ngay
-          </Link>
-        </div>
+      <div className="flex flex-row justify-between items-center gap-[10px] my-2 ">
+        <button type="button"
+          onClick={() => {
+            navigate('/product-detail-1/2')
+          }}
+          className="px-[10px] py-3 w-[46%] rounded-full bg-[#DEE7FE] text-[15px] font-medium text-[#0076B7]"
+        >
+          Xem chi tiết
+        </button>
+        <button type="button"
+          onClick={() => {
+            navigate('/register-BHYT/', { state: { data: data } })
+          }}
+          className="px-[10px] py-3 w-[46%] rounded-full bg-[#0076B7] text-[15px] font-medium text-[#fff]"
+        >
+          Mua ngay
+        </button>
       </div>
     </div>
   );

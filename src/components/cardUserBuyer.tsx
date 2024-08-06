@@ -1,24 +1,26 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchCity } from "../api";
-import { CityType, District, Province } from "../models";
+import { District, Province } from "../models";
+import { registerInfoBHYT } from "../pages/listHealthInsurance";
 
-
-export let userForm = {
-  "id": "hollo"
+interface Props {
+  data: any
 }
 
-const UserBuyerPage: React.FunctionComponent = (props) => {
+const UserBuyerPage = (props: Props) => {
+  const { data } = props;
+  const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
+  const [selectedProvince, setSelectedProvince] = useState<number>(0);
+  const [selectedWard, setSelectedWard] = useState<number>(0);
+  const [wards, setWards] = useState<WritableStreamDefaultController[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
-  const [wards, setWards] = useState<WritableStreamDefaultController[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<number>(0);
-  const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
+  const [addressDetail, setAddressDetail] = useState("");
 
-
-  const [months, setMonths] = useState("");
-  const [supportBudget, setSupportBudget] = useState("33,000");
 
   useEffect(() => {
     axios
@@ -63,13 +65,25 @@ const UserBuyerPage: React.FunctionComponent = (props) => {
   const handleProvinceChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setSelectedProvince(parseInt(event.target.value, 10));
+    const id = parseInt(event.target.value, 10);
+    setSelectedProvince(id);
+    registerInfoBHYT["provinceId"] = id;
   };
 
   const handleDistrictChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setSelectedDistrict(parseInt(event.target.value, 10));
+    const id = parseInt(event.target.value, 10);
+    setSelectedDistrict(id);
+    registerInfoBHYT["districtId"] = id;
+  };
+
+  const handlEwardChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const id = parseInt(event.target.value, 10);
+    setSelectedWard(id);
+    registerInfoBHYT["wardId"] = id;
   };
 
   return (
@@ -84,6 +98,11 @@ const UserBuyerPage: React.FunctionComponent = (props) => {
         <input
           type="text"
           id="phone"
+          value={phone}
+          onChange={(e) => {
+            setPhone(e.target.value);
+            registerInfoBHYT["phone"] = e.target.value;
+          }}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Số điện thoại"
           required
@@ -96,6 +115,11 @@ const UserBuyerPage: React.FunctionComponent = (props) => {
         <input
           type="text"
           id="name"
+          value={fullName}
+          onChange={(e) => {
+            setFullName(e.target.value);
+            registerInfoBHYT["fullName"] = e.target.value;
+          }}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Nhập tên của bạn"
           required
@@ -106,6 +130,11 @@ const UserBuyerPage: React.FunctionComponent = (props) => {
         <input
           type="email"
           id="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            registerInfoBHYT["email"] = e.target.value;
+          }}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Nhập email của bạn"
           required
@@ -156,6 +185,8 @@ const UserBuyerPage: React.FunctionComponent = (props) => {
         </label>
         <select
           id=""
+          value={selectedWard}
+          onChange={handlEwardChange}
           name="view_type_sorting"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
         >
@@ -175,6 +206,11 @@ const UserBuyerPage: React.FunctionComponent = (props) => {
         <input
           type="text"
           id="address"
+          value={addressDetail}
+          onChange={(e) => {
+            setAddressDetail(e.target.value);
+            registerInfoBHYT["addressDetail"] = e.target.value;
+          }}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="VD: Số nhà, số đường,...."
           required
