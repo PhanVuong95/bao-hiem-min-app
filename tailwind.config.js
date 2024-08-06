@@ -1,9 +1,14 @@
 module.exports = {
   purge: {
     enabled: true,
-    content: ['./src/**/*.{js,jsx,ts,tsx,vue}'],
+    content: ["./src/**/*.{js,jsx,ts,tsx,vue}"],
   },
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        warning: "#FAAD14",
+      },
+    },
   },
+  safelist: ["bg-[#FAAD14]"],
 };

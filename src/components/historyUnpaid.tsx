@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FooterPayPage from "./footerPay";
+import HeaderBase from "./headerBase";
 
 const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [orderDetail, setOrderDetail] = useState<any>();
   const [insuredPerson, setInsuredPerson] = useState<any>();
   const [orderStatusId, setOrderStatusId] = useState<number>(0);
@@ -75,7 +77,12 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   }
   return (
     <div>
-      <div>
+      <HeaderBase
+        isHome={false}
+        onBack={() => navigate("/lists-history")}
+        title={"BHYT tự nguyện"}
+      />
+      <div className="pt-20">
         <div
           className={`bg-[${orderStatusId == PENDING ? "#FAAD14" : ""}${
             orderStatusId == CANCELED ? "#F00" : ""

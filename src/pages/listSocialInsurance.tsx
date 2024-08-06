@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import CardProduct from "../components/cardProduct";
+import HeaderBase from "../components/headerBase";
 import SelectCategory from "../components/selectCategory";
 import { SpecificContext } from "../components/SpecificContext";
 
@@ -53,10 +54,13 @@ const ListSocialInsurance: React.FunctionComponent = (props) => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-[16px] px-4 py-[24px]">
-      <SelectCategory />
-      <div className="flex flex-col gap-8">
-        <CardProduct w={""} h={""} url={"/register-BHXH"} />
+    <div className="">
+      <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
+      <div className="px-4 mt-8 pt-[60px] gap-[16px] py-[24px] flex flex-col ">
+        <SelectCategory />
+        <div className="flex flex-col gap-8">
+          <CardProduct w={""} h={""} url={"/register-BHXH"} />
+        </div>
       </div>
     </div>
   );

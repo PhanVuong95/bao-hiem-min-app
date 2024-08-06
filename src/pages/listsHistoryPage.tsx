@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Widthheight } from "../models";
 import axios from "axios";
+import HeaderBase from "../components/headerBase";
 const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
+  const navigate = useNavigate();
+
   const PENDING = 1001;
   const DONE = 1002;
   const CANCELED = 1003;
@@ -48,179 +51,186 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
     return `${hours}:${minutes} - ${day}/${month}/${year}`;
   }
   return (
-    <div className="page-1">
-      <div className="max-w-md mx-auto">
-        <div className="mb-4 flex space-x-4 p-1 bg-white rounded-lg shadow-md">
-          <button
-            onClick={() => setOpenTab(1)}
-            className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${
-              openTab === 1 ? "bg-blue-600 text-white" : ""
-            }`}
-          >
-            Đang mua
-          </button>
-          <button
-            onClick={() => setOpenTab(2)}
-            className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${
-              openTab === 2 ? "bg-blue-600 text-white" : ""
-            }`}
-          >
-            Đã mua
-          </button>
+    <>
+      <HeaderBase
+        isHome={false}
+        onBack={() => navigate("/history")}
+        title={"BHYT tự nguyện"}
+      />
+      <div className="page-1 !pb-2 !pt-24">
+        <div className="max-w-md mx-auto">
+          <div className="mb-4 flex space-x-4 p-1 bg-white rounded-lg shadow-md">
+            <button
+              onClick={() => setOpenTab(1)}
+              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${
+                openTab === 1 ? "bg-blue-600 text-white" : ""
+              }`}
+            >
+              Đang mua
+            </button>
+            <button
+              onClick={() => setOpenTab(2)}
+              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${
+                openTab === 2 ? "bg-blue-600 text-white" : ""
+              }`}
+            >
+              Đã mua
+            </button>
+          </div>
+
+          {openTab === 1 && (
+            <div className="flex flex-col gap-4">
+              {listOrder?.map((item, index) => {
+                return (
+                  <Link to={"/history-unpaid/" + item.id} key={index}>
+                    <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
+                      <div className="flex gap-[10px]">
+                        <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+                        <div className="title-product flex flex-col">
+                          <h3 className="text-[#0076B7] text-lg font-medium">
+                            BH Xã Hội Tự nguyện
+                          </h3>
+                          <p className="text-[#646464] text-sm font-normal">
+                            {item.monthInsured} tháng
+                          </p>
+                          <span className="text-[#0076B7] text-lg font-bold">
+                            {item.finalPrice.toLocaleString("vi-VN")} VND
+                          </span>
+                        </div>
+                      </div>
+
+                      <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="flex flex-row justify-between w-full">
+                          <div>
+                            <p className="text-[#646464] text-sm font-normal">
+                              Trạng thái
+                            </p>
+                          </div>
+                          <div>
+                            <p
+                              className={`text-[${
+                                item.insuranceOrderStatusId == PENDING
+                                  ? "#FAAD14"
+                                  : ""
+                              }${
+                                item.insuranceOrderStatusId == CANCELED
+                                  ? "#F00"
+                                  : ""
+                              }] text-sm font-semibold max-w-[142px] text-right`}
+                            >
+                              {item.insuranceOrderStatusName}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-row justify-between w-full">
+                          <div>
+                            <p className="text-[#646464] text-sm font-normal">
+                              Ngày đăng ký
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
+                              {formatDateTime(item.createdTime)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-row justify-between w-full">
+                          <div>
+                            <p className="text-[#646464] text-sm font-normal">
+                              Người mua
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
+                              {item.fullName}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+          {openTab === 2 && (
+            <div className="flex flex-col gap-4">
+              {listOrder?.map((item, index) => {
+                return (
+                  <Link to={"/history-unpaid/" + item.id} key={index}>
+                    <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
+                      <div className="flex gap-[10px]">
+                        <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+                        <div className="title-product flex flex-col">
+                          <h3 className="text-[#0076B7] text-lg font-medium">
+                            BH Xã Hội Tự nguyện
+                          </h3>
+                          <p className="text-[#646464] text-sm font-normal">
+                            {item.monthInsured} tháng
+                          </p>
+                          <span className="text-[#0076B7] text-lg font-bold">
+                            {item.finalPrice.toLocaleString("vi-VN")} VND
+                          </span>
+                        </div>
+                      </div>
+
+                      <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="flex flex-row justify-between w-full">
+                          <div>
+                            <p className="text-[#646464] text-sm font-normal">
+                              Trạng thái
+                            </p>
+                          </div>
+                          <div>
+                            <p
+                              className={`text-[#00BA00] text-sm font-semibold max-w-[142px] text-right`}
+                            >
+                              {item.insuranceOrderStatusName}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-row justify-between w-full">
+                          <div>
+                            <p className="text-[#646464] text-sm font-normal">
+                              Ngày đăng ký
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
+                              {formatDateTime(item.createdTime)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-row justify-between w-full">
+                          <div>
+                            <p className="text-[#646464] text-sm font-normal">
+                              Người mua
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
+                              {item.fullName}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
-
-        {openTab === 1 && (
-          <div className="flex flex-col gap-4">
-            {listOrder?.map((item, index) => {
-              return (
-                <Link to={"/history-unpaid/" + item.id} key={index}>
-                  <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
-                    <div className="flex gap-[10px]">
-                      <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
-                      <div className="title-product flex flex-col">
-                        <h3 className="text-[#0076B7] text-lg font-medium">
-                          BH Xã Hội Tự nguyện
-                        </h3>
-                        <p className="text-[#646464] text-sm font-normal">
-                          {item.monthInsured} tháng
-                        </p>
-                        <span className="text-[#0076B7] text-lg font-bold">
-                          {item.finalPrice.toLocaleString("vi-VN")} VND
-                        </span>
-                      </div>
-                    </div>
-
-                    <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
-
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-row justify-between w-full">
-                        <div>
-                          <p className="text-[#646464] text-sm font-normal">
-                            Trạng thái
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            className={`text-[${
-                              item.insuranceOrderStatusId == PENDING
-                                ? "#FAAD14"
-                                : ""
-                            }${
-                              item.insuranceOrderStatusId == CANCELED
-                                ? "#F00"
-                                : ""
-                            }] text-sm font-semibold max-w-[142px] text-right`}
-                          >
-                            {item.insuranceOrderStatusName}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-row justify-between w-full">
-                        <div>
-                          <p className="text-[#646464] text-sm font-normal">
-                            Ngày đăng ký
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                            {formatDateTime(item.createdTime)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-row justify-between w-full">
-                        <div>
-                          <p className="text-[#646464] text-sm font-normal">
-                            Người mua
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                            {item.fullName}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-        {openTab === 2 && (
-          <div className="flex flex-col gap-4">
-            {listOrder?.map((item, index) => {
-              return (
-                <Link to={"/history-unpaid/" + item.id} key={index}>
-                  <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
-                    <div className="flex gap-[10px]">
-                      <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
-                      <div className="title-product flex flex-col">
-                        <h3 className="text-[#0076B7] text-lg font-medium">
-                          BH Xã Hội Tự nguyện
-                        </h3>
-                        <p className="text-[#646464] text-sm font-normal">
-                          {item.monthInsured} tháng
-                        </p>
-                        <span className="text-[#0076B7] text-lg font-bold">
-                          {item.finalPrice.toLocaleString("vi-VN")} VND
-                        </span>
-                      </div>
-                    </div>
-
-                    <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
-
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-row justify-between w-full">
-                        <div>
-                          <p className="text-[#646464] text-sm font-normal">
-                            Trạng thái
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            className={`text-[#00BA00] text-sm font-semibold max-w-[142px] text-right`}
-                          >
-                            {item.insuranceOrderStatusName}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-row justify-between w-full">
-                        <div>
-                          <p className="text-[#646464] text-sm font-normal">
-                            Ngày đăng ký
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                            {formatDateTime(item.createdTime)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-row justify-between w-full">
-                        <div>
-                          <p className="text-[#646464] text-sm font-normal">
-                            Người mua
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                            {item.fullName}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
       </div>
-    </div>
+    </>
   );
 };
 

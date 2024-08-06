@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { SpecificContext } from "../components/SpecificContext";
 import html2canvas from "html2canvas";
 import { toast } from "react-toastify";
+import HeaderBase from "../components/headerBase";
 const BuillDetailPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -165,8 +166,9 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   }
   return (
     <>
+      <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
       {isPaymentSuccessful && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg text-center w-4/5">
             <svg
               className="mx-auto"
@@ -197,16 +199,14 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </p>
             <button
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-              onClick={() =>
-                (window.location.href = "/history-unpaid/" + insuranceOrder.id)
-              } // Điều hướng về trang chủ
+              onClick={() => navigate("/history-unpaid/" + orderDetail.id)} // Điều hướng về trang chi tiết
             >
               Xem chi tiết
             </button>
           </div>
         </div>
       )}
-      <div className="page-1 flex flex-col gap-4 mb-[32px]">
+      <div className="page-1 flex flex-col gap-4 mb-[32px] !pt-[100px]">
         <h3 className="text-[#0076B7] text-lg font-medium text-center">
           Hệ thống đang ghi nhận thanh toán
         </h3>

@@ -5,7 +5,7 @@ import FooterPayPage from "./footerPay";
 import { SpecificContext } from "./SpecificContext";
 import { Link } from "react-router-dom";
 import { userForm } from "./cardUserBuyer";
-
+import HeaderBase from "./headerBase";
 
 const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const specificContext = useContext(SpecificContext);
@@ -15,11 +15,9 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const [wardeName, setWardeName] = useState("");
   const [selectedCheckbox, setSelectedCheckbox] = useState("");
 
-
   useEffect(() => {
-    userForm['id'] = '123213213'
-  })
-
+    userForm["id"] = "123213213";
+  });
 
   const handleCheckboxChange = (value) => {
     setSelectedCheckbox(value);
@@ -28,7 +26,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/province/api/detail/" +
-        insuranceOrder.provinceId
+          insuranceOrder.provinceId
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);
@@ -39,7 +37,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/district/api/detail/" +
-        insuranceOrder.districtId
+          insuranceOrder.districtId
       )
       .then((response) => {
         setDistrictName(response.data.data[0].name);
@@ -58,7 +56,8 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   }, []);
   return (
     <>
-      <div className="page-1 flex flex-col gap-4 mb-4">
+      <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
+      <div className=" !pt-[95px] page-1 flex flex-col gap-4 mb-4 ">
         <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
           <h3 className="text-base font-medium text-[#0076B7]">
             Người mua bảo hiểm
