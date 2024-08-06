@@ -31,7 +31,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       </div>
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Số BHXH
         </label>
         <div className="relative">
@@ -64,7 +64,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       </div>
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Số CCCD
         </label>
         <input
@@ -79,7 +79,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       <ScanPhotosPage w={"118"} h={"81"} p={"9px"} url={""} />
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Họ và tên <samp className="text-red-600">*</samp>
         </label>
         <input
@@ -92,7 +92,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       </div>
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Ngày sinh <samp className="text-red-600">*</samp>
         </label>
         <input
@@ -105,12 +105,12 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       </div>
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Giới tính <samp className="text-red-600">*</samp>
         </label>
         <select
           id="countries"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
         >
           <option selected>Chọn giới tính</option>
           <option value="US">Nam</option>
@@ -119,12 +119,12 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       </div>
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Đân tộc <samp className="text-red-600">*</samp>
         </label>
         <select
           id="countries"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
         >
           <option selected>Chọn giới tính</option>
           <option value="US">Nam</option>
@@ -141,7 +141,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
 
         <div className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal pb-2 text-gray-900">
               Ngày hiệu lực * <samp className="text-red-600">*</samp>
             </label>
             <input
@@ -154,7 +154,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
           </div>
 
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal pb-2 text-gray-900">
               Ngày hết hiệu lực
             </label>
             <input
@@ -180,7 +180,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
 
         <div className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal pb-2 text-gray-900">
               Ngày hiệu lực * <samp className="text-red-600">*</samp>
             </label>
             <input
@@ -193,7 +193,7 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
           </div>
 
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal pb-2 text-gray-900">
               Ngày hết hiệu lực
             </label>
             <input
@@ -210,13 +210,13 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Thành phố đăng ký khám chữa bệnh
           <samp className="text-red-600"> *</samp>
         </label>
         <select
           id="countries"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="bg-gray-50 border border-gray-300  text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
         >
           <option selected>Chọn tỉnh thành phố</option>
           <option value="US">Nam</option>
@@ -225,13 +225,13 @@ const UserBeneficiaryBHYTPage: React.FC<Widthheight> = (props) => {
       </div>
 
       <div>
-        <label className="block text-sm font-normal text-gray-900">
+        <label className="block text-sm font-normal pb-2 text-gray-900">
           Bệnh viện đăng ký khám chữa bệnh
           <samp className="text-red-600"> *</samp>
         </label>
         <select
           id="countries"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
         >
           <option selected>Chọn bệnh viện</option>
           <option value="US">Nam</option>

@@ -4,6 +4,9 @@ import { Widthheight } from "../models";
 import FooterPayPage from "./footerPay";
 import { SpecificContext } from "./SpecificContext";
 import { Link } from "react-router-dom";
+import { userForm } from "./cardUserBuyer";
+
+
 const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const specificContext = useContext(SpecificContext);
   const { insuranceOrder, setInsuranceOrder } = specificContext;
@@ -12,6 +15,12 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const [wardeName, setWardeName] = useState("");
   const [selectedCheckbox, setSelectedCheckbox] = useState("");
 
+
+  useEffect(() => {
+    userForm['id'] = '123213213'
+  })
+
+
   const handleCheckboxChange = (value) => {
     setSelectedCheckbox(value);
   };
@@ -19,7 +28,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/province/api/detail/" +
-          insuranceOrder.provinceId
+        insuranceOrder.provinceId
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);
@@ -30,7 +39,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/district/api/detail/" +
-          insuranceOrder.districtId
+        insuranceOrder.districtId
       )
       .then((response) => {
         setDistrictName(response.data.data[0].name);
