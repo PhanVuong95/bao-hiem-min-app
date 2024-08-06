@@ -1,20 +1,23 @@
 {
   "app": {
-    "title": "Nộp BHXH",
-    "headerTitle": "Nộp BHXH",
-    "headerColor": "#1843EF",
+    "title": "Nộp BHYT",
+    "headerTitle": "Bảo hiểm Việt",
+    "headerColor": "#286dd9",
     "textColor": {
       "light": "white",
       "dark": "white"
     },
     "textAlign": "left",
-    "statusBarColor": "#1843EF",
+    "statusBarColor": {
+      "light": "#286dd9",
+      "dark": "#286dd9"
+    },
     "leftButton": "back",
-    "statusBar": "normal",
+    "statusBar": "transparent",
     "actionBarHidden": false,
-    "hideAndroidBottomNavigationBar": false,
+    "hideAndroidBottomNavigationBar": true,
     "hideIOSSafeAreaBottom": false,
-    "selfControlLoading": false
+    "selfControlLoading": true
   },
   "debug": false,
   "pages": [],
