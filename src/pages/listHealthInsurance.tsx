@@ -44,7 +44,6 @@ export let registerInfoBHYT = {
 }
 
 const ListHealthInsurance: React.FunctionComponent = () => {
-
   const [isLoading, setIsLoading] = useState(true);
   const [listProduct, setListProduct] = useState([]);
 
@@ -89,10 +88,11 @@ const ListHealthInsurance: React.FunctionComponent = () => {
     }
   });
 
-
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002")
+      .get(
+        "https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002"
+      )
       .then((response) => {
         setListProduct(response.data.data);
         setIsLoading(false);
@@ -105,28 +105,25 @@ const ListHealthInsurance: React.FunctionComponent = () => {
 
   return (
     <div className="pt-20">
-      <HeaderBase
-        isHome={false}
-        title={"BHYT tự nguyện"}
-      />
+      <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
       <div className="flex flex-col gap-[16px] px-4 py-[15px]">
         <SelectCategory />
         <div className="flex flex-col gap-8">
-
           {/* Danh sách bảo hiểm y tế tự nguyện */}
-          {
-            isLoading ? 'Loading' : listProduct.map((item: any) => {
-              return <CardProductBHYT
-                key={`${item?.id}_card_product_bhyt`}
-                url={"/register-BHYT"}
-                data={item}
-              />
-            })
-          }
+          {isLoading
+            ? "Loading"
+            : listProduct.map((item: any) => {
+              return (
+                <CardProductBHYT
+                  key={`${item?.id}_card_product_bhyt`}
+                  url={"/register-BHYT"}
+                  data={item}
+                />
+              );
+            })}
         </div>
       </div>
     </div>
-
   );
 };
 

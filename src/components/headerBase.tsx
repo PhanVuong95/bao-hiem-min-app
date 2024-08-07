@@ -3,9 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "zmp-ui";
 
 interface Props {
-  isHome?: boolean,
-  title?: String,
-  onClose?: () => void,
+  isHome?: boolean;
+  title?: String;
+  onClose?: () => void;
   onActions?: () => void;
   onBack?: () => void;
 }
@@ -21,16 +21,19 @@ const HeaderBase = (props: Props) => {
       <div className="absolute z-10 top-10 flex left-4 right-4 justify-between items-center">
         <div className="flex">
           <div>
-            {isHome ?
-              <img src="../../assets-src/logo.png" className="w-7 h-7" /> :
-              <button type="button" onClick={() => onBack ? onBack : navigate(-1)}>
+            {isHome ? (
+              <img src="../../assets-src/logo.png" className="w-7 h-7" />
+            ) : (
+              <button
+                type="button"
+                onClick={onBack ? onBack : () => navigate(-1)}
+              >
                 <img src="../../assets-src/back.png" className="w-7 h-7" />
               </button>
-            }
-
+            )}
           </div>
           <div className="text-[#ffffff] ml-3 font-medium text-lg line-clamp-1">
-            {isHome ? 'Bảo hiểm Việt' : title}
+            {isHome ? "Bảo hiểm Việt" : title}
           </div>
         </div>
 

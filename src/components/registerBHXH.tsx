@@ -9,6 +9,7 @@ import instance from "../api/api-config";
 import { SpecificContext } from "./SpecificContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import HeaderBase from "./headerBase";
 const RegisterBHXH: React.FunctionComponent = (props) => {
   const navigate = useNavigate();
   const [personName, setPersonName] = useState<string>("");
@@ -323,21 +324,19 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       inputRef.current.click();
     }
   };
+
   // const ()
   const onSubmit = (data: any) => {
     if (
       insuranceOrder.photoCitizenFront == "" ||
       insuranceOrder.photoCitizenBack == ""
     ) {
-      const notify1 = () => toast("Vui lòng tải lên đầy đủ ảnh CCCD");
-      notify1();
+      toast.warn("Vui lòng tải lên đầy đủ ảnh CCCD");
       return;
     } else if (wage.current == 0) {
-      const notify2 = () => toast("Vui lòng nhập mức lương cơ bản");
-      notify2();
+      toast.warn("Vui lòng nhập mức lương cơ bản");
     } else if (monthCount.current == 0) {
-      const notify3 = () => toast("Vui lòng nhập số tháng");
-      notify3();
+      toast.warn("Vui lòng nhập số tháng");
     }
     if (insuranceOrder.id == 0) {
       AddInsuranceOrder();
@@ -413,7 +412,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   };
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className=" flex flex-col gap-4">
+      <HeaderBase isHome={false} title={"BHXH tự nguyện"} />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className=" flex flex-col gap-4 pt-[75px]"
+      >
         <div className="p-4 mx-4 mt-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
           <h3 className="text-[#0076B7] text-lg font-medium">
             Chụp ảnh giấy tờ tuỳ thân
@@ -676,7 +679,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               {...register("dob", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
-            { }
           </div>
           <div>
             <label className="block text-sm font-normal text-gray-900">

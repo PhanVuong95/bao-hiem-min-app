@@ -4,7 +4,7 @@ import { Widthheight } from "../models";
 import FooterPayPage from "./footerPay";
 import { SpecificContext } from "./SpecificContext";
 import { Link } from "react-router-dom";
-
+import HeaderBase from "./headerBase";
 
 const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const specificContext = useContext(SpecificContext);
@@ -14,7 +14,6 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const [wardeName, setWardeName] = useState("");
   const [selectedCheckbox, setSelectedCheckbox] = useState("");
 
-
   const handleCheckboxChange = (value) => {
     setSelectedCheckbox(value);
   };
@@ -22,7 +21,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/province/api/detail/" +
-        insuranceOrder.provinceId
+          insuranceOrder.provinceId
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);
@@ -33,7 +32,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/district/api/detail/" +
-        insuranceOrder.districtId
+          insuranceOrder.districtId
       )
       .then((response) => {
         setDistrictName(response.data.data[0].name);
@@ -52,7 +51,8 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   }, []);
   return (
     <>
-      <div className="page-1 flex flex-col gap-4 mb-4">
+      <HeaderBase isHome={false} title={"BHXH tự nguyện"} />
+      <div className=" !pt-[95px] page-1 flex flex-col gap-4 mb-4 ">
         <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
           <h3 className="text-base font-medium text-[#0076B7]">
             Người mua bảo hiểm
@@ -306,7 +306,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <Link
-              to={"/buill-detail/l"}
+              to={"/buill-detail/" + insuranceOrder.id}
               className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
             >
               Tiếp tục
