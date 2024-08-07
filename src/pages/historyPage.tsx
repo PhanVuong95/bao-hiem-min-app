@@ -10,7 +10,7 @@ const HistoryPage: React.FunctionComponent = (props) => {
       <HeaderBase
         isHome={false}
         onBack={() => navigate("/")}
-        title={"BHYT tự nguyện"}
+        title={"Hoạt động"}
       />
       <div className="bg-white page min-h-[100vh] flex flex-col gap-4 !pt-[90px]">
         <Link to="/lists-history">

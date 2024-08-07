@@ -5,6 +5,8 @@ import { SpecificContext } from "../components/SpecificContext";
 import html2canvas from "html2canvas";
 import { toast } from "react-toastify";
 import HeaderBase from "../components/headerBase";
+import { PulseLoader } from "react-spinners";
+import { saveImageToGallery } from "zmp-sdk";
 const BuillDetailPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,14 +24,41 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
 
   const STATUS_DONE_ID = 1002;
   const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
-  const handleDownload = async () => {
-    if (orderRef.current) {
-      const canvas = await html2canvas(orderRef.current);
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
-      link.download = "order-info.png";
-      link.click();
-    }
+  // const handleDownload = async () => {
+  //   if (orderRef.current) {
+  //     const canvas = await html2canvas(orderRef.current);
+  //     const link = document.createElement("a");
+  //     link.href = canvas.toDataURL("image/png");
+  //     link.download = "order-info.png";
+  //     link.click();
+  //   }
+  // };
+  const handleDownload = () => {
+    // Capture the entire .invitation-ticket-full element
+    html2canvas(orderRef.current as HTMLElement, {
+      allowTaint: true,
+      useCORS: true,
+    }).then((canvas) => {
+      // Convert canvas to image
+      const imageURL = canvas.toDataURL("image/png"); // Change "imagepng" to "image/png"
+      // Save the image to gallery
+      saveImageToGallery({
+        imageUrl: imageURL,
+        success: (res) => {
+          // Handle success
+          // console.log(imageURL);
+          console.log("Image saved successfully");
+          toast.success("Lưu ảnh thành công!");
+        },
+        fail: (error) => {
+          // Handle failure
+          console.log("Error saving image:", error);
+          toast.warn(
+            "Lưu ảnh không thành công. Vui lòng chụp ảnh màn hình đơn!"
+          );
+        },
+      });
+    });
   };
   const handleBack = () => {
     navigate(-1);
@@ -161,12 +190,19 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   //       console.error(error);
   //     });
   // }, []);
-  if (!orderDetail || !orderDetail) {
-    return;
+  if (!orderDetail || !base64QRCode) {
+    return (
+      <>
+        <HeaderBase isHome={false} title={"Chi tiết thanh toán"} />
+        <div className="fixed inset-0 flex items-center justify-center">
+          <PulseLoader size={15} loading={true} color="#0076B7" />
+        </div>
+      </>
+    );
   }
   return (
     <>
-      <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
+      <HeaderBase isHome={false} title={"Chi tiết thanh toán"} />
       {isPaymentSuccessful && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg text-center w-4/5">

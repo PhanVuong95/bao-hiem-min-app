@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link, useNavigate } from "react-router-dom";
+import { PulseLoader } from "react-spinners";
 import FooterPayPage from "./footerPay";
 import HeaderBase from "./headerBase";
 
@@ -73,14 +74,25 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
     return `${day}/${month}/${year}`;
   }
   if (!orderDetail || !insuredPerson || !orderStatusId) {
-    return;
+    return (
+      <>
+        <HeaderBase
+          isHome={false}
+          onBack={() => navigate("/lists-history")}
+          title={"Chi tiết"}
+        />
+        <div className="fixed inset-0 flex items-center justify-center">
+          <PulseLoader size={15} loading={true} color="#0076B7" />
+        </div>
+      </>
+    );
   }
   return (
     <div>
       <HeaderBase
         isHome={false}
         onBack={() => navigate("/lists-history")}
-        title={"BHYT tự nguyện"}
+        title={"Chi tiết"}
       />
       <div className="pt-20">
         <div
@@ -97,10 +109,26 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         </div>
         <div className="page-1 flex flex-col gap-4 mb-4">
           <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
-            <h3 className="text-base font-medium text-[#0076B7]">
-              Người mua bảo hiểm
-            </h3>
-
+            <div className="flex justify-between items-center">
+              <h3 className="text-base font-medium text-[#0076B7]">
+                Người mua bảo hiểm
+              </h3>
+              <button className="text-sm text-[#0076B7] underline">
+                Chỉnh sửa
+              </button>
+            </div>
+            <div className="flex flex-row justify-between w-full">
+              <div>
+                <p className="text-[#646464] text-sm font-normal">
+                  Mã đơn hàng
+                </p>
+              </div>
+              <div>
+                <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
+                  #{orderDetail.id}
+                </p>
+              </div>
+            </div>
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Họ và tên</p>

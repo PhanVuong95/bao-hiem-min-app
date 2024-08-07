@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Widthheight } from "../models";
 import axios from "axios";
 import HeaderBase from "../components/headerBase";
+import { PulseLoader } from "react-spinners";
 const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
   const navigate = useNavigate();
 
@@ -50,12 +51,28 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
 
     return `${hours}:${minutes} - ${day}/${month}/${year}`;
   }
+
+  if (!listOrder) {
+    return (
+      <>
+        <HeaderBase
+          isHome={false}
+          onBack={() => navigate("/history")}
+          title={"BHXH tự nguyện"}
+        />
+        <div className="fixed inset-0 flex items-center justify-center">
+          <PulseLoader size={15} loading={true} />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <HeaderBase
         isHome={false}
         onBack={() => navigate("/history")}
-        title={"BHYT tự nguyện"}
+        title={"BHXH tự nguyện"}
       />
       <div className="page-1 !pb-2 !pt-24">
         <div className="max-w-md mx-auto">
