@@ -19,7 +19,28 @@ export let registerInfoBHYT = {
   "wardId": 0,
   "finalPrice": 0,
   "addressDetail": "",
-  "listInsuredPerson": []
+  "listInsuredPerson": [
+    {
+      "id": 0,
+      "insuranceProvinceId": 0,
+      "medicalProvinceId": 0,
+      "socialInsuranceNumber": "",
+      "citizenId": "",
+      "photoCitizenFront": "",
+      "photoCitizenBack": "",
+      "fullName": "",
+      "doB": "",
+      "gender": "",
+      "supportBudget": 0,
+      "wage": 0,
+      "monthInsured": 0,
+      "ethnic": "",
+      "oldCardStartDate": "",
+      "oldCardEndDate": "",
+      "newCardEndDate": "",
+      "newCardStartDate": ""
+    }
+  ]
 }
 
 const ListHealthInsurance: React.FunctionComponent = () => {
@@ -43,7 +64,28 @@ const ListHealthInsurance: React.FunctionComponent = () => {
       "wardId": 0,
       "finalPrice": 0,
       "addressDetail": "",
-      "listInsuredPerson": []
+      "listInsuredPerson": [
+        {
+          "id": 0,
+          "insuranceProvinceId": 0,
+          "medicalProvinceId": 0,
+          "socialInsuranceNumber": "",
+          "citizenId": "",
+          "photoCitizenFront": "",
+          "photoCitizenBack": "",
+          "fullName": "",
+          "doB": "",
+          "gender": "",
+          "supportBudget": 0,
+          "wage": 0,
+          "monthInsured": 0,
+          "ethnic": "",
+          "oldCardStartDate": "",
+          "oldCardEndDate": "",
+          "newCardEndDate": "",
+          "newCardStartDate": ""
+        }
+      ]
     }
   });
 

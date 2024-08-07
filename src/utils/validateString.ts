@@ -13,7 +13,7 @@ export const formatDate = (date: any) => {
     let month = (temp.getMonth() + 1).toString().padStart(2, '0');
     let day = temp.getDate().toString().padStart(2, '0');
 
-    return `${day}-${month}-${year}`;
+    return `${day}/${month}/${year}`;
   } catch {
     return ''
   }
@@ -101,4 +101,14 @@ export const formatPhoneNumber = (phoneNumber) => {
   } catch (error) {
     return ''
   }
+}
+
+export const isValidSocialInsuranceNumber = (data: string) => {
+  const socialInsuranceNumberCheck = /^[0-9]{10}$/;
+  return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
+}
+
+export const isValidCitizenId = (data: string) => {
+  const citizenIdCheck = /^[0-9]{12}$/;
+  return /^\d+$/.test(data) && citizenIdCheck.test(data);
 }

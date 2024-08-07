@@ -216,6 +216,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const handleDobChange = (event) => {
     const { value } = event.target;
     setDateValue(value);
+
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
       listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
@@ -675,7 +676,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               {...register("dob", { required: true })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
-            {}
+            { }
           </div>
           <div>
             <label className="block text-sm font-normal text-gray-900">
@@ -730,9 +731,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       (person, index) =>
                         index === 0
                           ? {
-                              ...person,
-                              wage: wage.current,
-                            }
+                            ...person,
+                            wage: wage.current,
+                          }
                           : person
                     ),
                   }));
@@ -783,9 +784,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       (person, index) =>
                         index === 0
                           ? {
-                              ...person,
-                              monthInsured: parseInt(e.target.value),
-                            }
+                            ...person,
+                            monthInsured: parseInt(e.target.value),
+                          }
                           : person
                     ),
                   }));

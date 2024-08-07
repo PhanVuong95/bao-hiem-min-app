@@ -86,11 +86,16 @@ const UserBuyerPage = (props: Props) => {
     registerInfoBHYT["wardId"] = id;
   };
 
-  return (
-    <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
+  const renderTextHeader = () => {
+    return (
       <h3 className="text-[#0076B7] text-lg font-medium">
         Thông tin người mua
       </h3>
+    )
+  }
+
+  const renderInputPhone = () => {
+    return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
           Số điện thoại <samp className="text-red-600">*</samp>
@@ -98,6 +103,7 @@ const UserBuyerPage = (props: Props) => {
         <input
           type="text"
           id="phone"
+          maxLength={10}
           value={phone}
           onChange={(e) => {
             setPhone(e.target.value);
@@ -108,6 +114,11 @@ const UserBuyerPage = (props: Props) => {
           required
         />
       </div>
+    )
+  }
+
+  const renderFullName = () => {
+    return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
           Họ và tên <samp className="text-red-600">*</samp>
@@ -115,6 +126,7 @@ const UserBuyerPage = (props: Props) => {
         <input
           type="text"
           id="name"
+          maxLength={35}
           value={fullName}
           onChange={(e) => {
             setFullName(e.target.value);
@@ -125,12 +137,18 @@ const UserBuyerPage = (props: Props) => {
           required
         />
       </div>
+    )
+  }
+
+  const renderEmail = () => {
+    return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">Email</label>
         <input
           type="email"
           id="email"
           value={email}
+          maxLength={35}
           onChange={(e) => {
             setEmail(e.target.value);
             registerInfoBHYT["email"] = e.target.value;
@@ -140,7 +158,11 @@ const UserBuyerPage = (props: Props) => {
           required
         />
       </div>
+    )
+  }
 
+  const renderProvince = () => {
+    return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
           Tỉnh thành <samp className="text-red-600">*</samp>
@@ -159,7 +181,11 @@ const UserBuyerPage = (props: Props) => {
           ))}
         </select>
       </div>
+    )
+  }
 
+  const renderDistrict = () => {
+    return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
           Quận huyện <samp className="text-red-600">*</samp>
@@ -178,7 +204,11 @@ const UserBuyerPage = (props: Props) => {
           ))}
         </select>
       </div>
+    )
+  }
 
+  const renderWard = () => {
+    return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
           Phường xã <samp className="text-red-600">*</samp>
@@ -198,7 +228,11 @@ const UserBuyerPage = (props: Props) => {
           ))}
         </select>
       </div>
+    )
+  }
 
+  const renderAddressDetail = () => {
+    return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
           Địa chỉ cụ thể <samp className="text-red-600">*</samp>
@@ -207,6 +241,7 @@ const UserBuyerPage = (props: Props) => {
           type="text"
           id="address"
           value={addressDetail}
+          maxLength={200}
           onChange={(e) => {
             setAddressDetail(e.target.value);
             registerInfoBHYT["addressDetail"] = e.target.value;
@@ -216,6 +251,27 @@ const UserBuyerPage = (props: Props) => {
           required
         />
       </div>
+    )
+  }
+
+  return (
+    <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
+      {renderTextHeader()}
+
+      {renderInputPhone()}
+
+      {renderFullName()}
+
+      {renderEmail()}
+
+      {renderProvince()}
+
+      {renderDistrict()}
+
+      {renderWard()}
+
+      {renderAddressDetail()}
+
       <Link to="#" className="text-[#0076B7] text-sm font-normal underline">
         Xem hướng dẫn sử dụng trên VssID
       </Link>
