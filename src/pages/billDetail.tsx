@@ -114,7 +114,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     try {
       const response = await axios.post(
         "https://baohiem.dion.vn/insuranceorder/api/create-payment?orderId=" +
-          id,
+        id,
         {
           headers: {
             "Content-Type": "application/json",
@@ -207,7 +207,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
       case 1001:
         return navigate("/history-unpaid/" + orderDetail.id);
       case 1002:
-        return navigate("/history-unpaid/" + orderDetail.id);
+        return navigate("/info-detail-bhyt/" + orderDetail.id);
       default:
         break;
     }

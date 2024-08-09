@@ -1,5 +1,10 @@
 export const formatMoneyVND = (amount) => {
-  return amount.toLocaleString('vi-VN', { currency: 'VND' });
+  try {
+    return amount.toLocaleString('vi-VN', { currency: 'VND' });
+  } catch (error) {
+    return 0
+  }
+
 };
 
 export function isValidDate(date: any) {
@@ -55,7 +60,7 @@ export const formatTime = (dates: string) => {
   var date = dates.split('T')[0]?.split('-')
   var time = dates.split('T')[1]?.split(':')
   if (date) {
-    return `${time[0]}:${time[1]} ${date[2]}/${date[1]}/${date[0]}`
+    return `${time[0]}:${time[1]} - ${date[2]}/${date[1]}/${date[0]}`
   }
   return ''
 }

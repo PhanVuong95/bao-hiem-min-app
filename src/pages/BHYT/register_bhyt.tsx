@@ -17,6 +17,7 @@ const RegisterBHYT = ({ }) => {
   const navigate = useNavigate();
   const [provinces, setProvinces] = useState<Province[]>([]);
 
+
   const userBuyerPageRefs = {
     phone: useRef<any>(null),
     fullName: useRef<any>(null),
@@ -448,7 +449,8 @@ const RegisterBHYT = ({ }) => {
     return (
       <HeaderBase
         isHome={false}
-        title={"Đăng ký BHYT tự nguyện"}
+        title={state.type == "register" ? "Đăng ký BHYT tự nguyện" : "Cập nhật BHYT tự nguyện"
+        }
       />
     )
   }
@@ -617,7 +619,7 @@ const RegisterBHYT = ({ }) => {
     }
 
     toast.success(
-      "Đăng ký BBHYT tự nguyện thành công",
+      "Đăng ký BBHYT tự nguyện thành công"
     );
 
     navigate(`/bill-pay-bhyt/${registerInfoBHYT["id"]}`)
@@ -635,7 +637,6 @@ const RegisterBHYT = ({ }) => {
       }
     );
 
-    console.log(response.data);
     if (response.data.message == "CREATED" && response.data.status == "201") {
       registerInfoBHYT["id"] = response.data.data[0]
     }

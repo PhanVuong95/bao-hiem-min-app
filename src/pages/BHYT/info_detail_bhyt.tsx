@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "../../components/headerBase";
 import { useParams } from "react-router-dom";
-import { formatDate, formatMoneyVND, formatPhoneNumber, isValidEmptyString } from "../../utils/validateString";
+import { formatDate, formatMoneyVND, formatPhoneNumber, formatTime, isValidEmptyString } from "../../utils/validateString";
+import { registerInfoBHYT } from "./list_health_insurance";
 
 const InfoDetailBHYT: React.FunctionComponent = () => {
   const { id } = useParams();
   const [billPay, setBillPay] = useState<any>();
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate();
-  const [selectedCheckbox, setSelectedCheckbox] = useState("");
+  const [insuranceid, setInsuranceId] = useState(0)
+  const insurance = useRef()
 
   const PENDING = 1001;
   const DONE = 1002;
@@ -29,18 +31,40 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
     }
   }
 
-  const handleCheckboxChange = (value) => {
-    setSelectedCheckbox(value);
-  };
-
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/detail-by-vm/" + id)
       .then((response) => {
-        setBillPay(response.data.data[0]);
+        const data = response.data.data[0]
+        setBillPay(data);
         setLoading(false);
-        console.log(response.data);
+        console.log(data);
 
+        setInsuranceId(data?.insuranceId)
+        registerInfoBHYT["id"] = data?.id;
+        registerInfoBHYT["insuranceId"] = data?.insuranceId;
+        registerInfoBHYT["citizenId"] = data?.citizenId;
+        registerInfoBHYT["photoCitizenFront"] = data?.photoCitizenFront;
+        registerInfoBHYT["photoCitizenBack"] = data?.photoCitizenBack;
+        registerInfoBHYT["phone"] = data?.phone.trim();
+        registerInfoBHYT["fullName"] = data?.fullName.trim();
+        registerInfoBHYT["email"] = data?.email.trim();
+        registerInfoBHYT["provinceId"] = data?.provinceId;
+        registerInfoBHYT["districtId"] = data?.districtId;
+        registerInfoBHYT["wardId"] = data?.wardId;
+        registerInfoBHYT["finalPrice"] = data?.finalPrice;
+        registerInfoBHYT["addressDetail"] = data?.addressDetail;
+
+
+        registerInfoBHYT["listInsuredPerson"] = data?.listInsuredPerson.map(item => {
+          const obj = Object.assign({}, item);
+          obj["doB"] = formatDate(item["doB"]);
+          obj["newCardEndDate"] = formatDate(item["newCardEndDate"]);
+          obj["newCardStartDate"] = formatDate(item["newCardStartDate"]);
+          obj["oldCardEndDate"] = formatDate(item["oldCardEndDate"]);
+          obj["oldCardStartDate"] = formatDate(item["oldCardStartDate"]);
+          return obj;
+        })
       })
       .catch((error) => {
         console.error(error);
@@ -48,12 +72,42 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       });
   }, [])
 
+  useEffect(() => {
+    axios
+      .get(
+        "https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002"
+      )
+      .then((response) => {
+        const data = response.data.data.filter((item) => item.id == insuranceid)[0]
+
+        insurance.current = data;
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [insuranceid != 0]);
+
   const boxBuyer = () => {
     return (
-      <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
-        <h3 className="text-base font-medium text-[#0076B7]">
-          Người mua bảo hiểm
-        </h3>
+      <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
+        <div className="flex justify-between">
+          <h3 className="text-base font-medium text-[#0076B7]">
+            Người mua bảo hiểm
+          </h3>
+
+          {billPay?.insuranceOrderStatusId == PENDING &&
+            <button
+              onClick={() => {
+                navigate("/register-BHYT/", { state: { data: insurance.current, type: 'updated' } });
+              }}
+              className="text-sm text-[#0076B7] underline"
+            >
+              Chỉnh sửa
+            </button>
+          }
+        </div>
+
 
         <div className="flex flex-row justify-between w-full">
           <div>
@@ -100,15 +154,22 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
             </p>
           </div>
         </div>
+
+        {loading ? <div></div> :
+          billPay.listInsuredPerson.map((item, index) => {
+            return boxBeneficiary(item, index)
+          })}
       </div>
     )
   }
 
   const boxBeneficiary = (item, index) => {
     return (
-      <div className="p-4 bg-white rounded-xl flex flex-col gap-6 mt-4">
+      <div className="bg-white rounded-xl flex flex-col gap-6 mt-4">
+        {line()}
+
         <h3 className="text-base font-medium text-[#0076B7]">
-          `Thông tin người số {index + 1} được bảo hiểm`
+          Thông tin người số {index + 1} được bảo hiểm
         </h3>
 
         <div className="flex flex-row justify-between w-full">
@@ -212,28 +273,110 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
     )
   }
 
-  const methodPayment = () => {
-    return (
 
+  const boxInfo = () => {
+    return (
       <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-[#0076B7] text-lg font-medium">
-            Phương thức thanh toán
-          </h3>
-          <div className="flex gap-3">
-            <input
-              type="checkbox"
-              className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
-              checked={true}
-              onChange={() => handleCheckboxChange("vnpay")}
-              id="vnpay-checkbox"
-            />
-            <label
-              htmlFor="vnpay-checkbox"
-              className="text-sm font-normal text-[#000] w-[96%]"
+        <h3 className="text-[#0076B7] text-lg font-medium">
+          Danh mục sản phẩm
+        </h3>
+        <div className="flex gap-[10px]">
+          <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+          <div className="title-product flex flex-col">
+            <h3 className="text-[#0076B7] text-lg font-medium">
+              {billPay?.insuranceOrderStatusName}
+            </h3>
+            <p className="text-[#646464] text-sm font-normal">{billPay?.listInsuredPerson[0].monthInsured} tháng</p>
+            <span className="text-[#0076B7] text-lg font-bold">
+              {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} vnđ
+            </span>
+          </div>
+        </div>
+
+        <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-row justify-between w-full">
+            <div>
+              <p className="text-[#646464] text-sm font-normal">
+                Phương thức thanh toán
+              </p>
+            </div>
+            <div>
+              <p className="text-[#2E2E2E] text-sm font-normal max-w-[180px] text-right">
+                Thanh toán VNPAY (Powered ChaiPay)
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-row justify-between w-full">
+            <div>
+              <p className="text-[#646464] text-sm font-normal">
+                Ngày đăng ký
+              </p>
+            </div>
+            <div>
+              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+                {billPay?.createdTime ? formatTime(billPay?.createdTime) : 'Đang tải'}
+              </p>
+            </div>
+          </div>
+
+          {/* <div className="flex flex-row justify-between w-full">
+            <div>
+              <p className="text-[#646464] text-sm font-normal">
+                Ngày xét duyệt
+              </p>
+            </div>
+            <div>
+              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+                10:00 - 12/07/2024
+              </p>
+            </div>
+          </div> */}
+        </div>
+      </div>
+    )
+  }
+
+  const boxFooterPayment = () => {
+    return (
+      <div className="page-2 bg-white">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-row content-center justify-between">
+            <p className="block text-sm font-normal text-gray-900">
+              Tổng thanh toán:
+            </p>
+            <h3 className="text-base font-medium text-[#0076B7]">
+              {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} VND
+            </h3>
+          </div>
+          <div className="flex flex-row content-center justify-center items-center">
+            <Link
+              to={`/buill-detail/${id}`}
+              className="px-[20px] py-2 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-lg font-normal text-white text-center"
             >
-              Thanh toán VNPAY (Powered ChaiPay)
-            </label>
+              Tiếp tục
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const lookUpAgain = () => {
+    return (
+      <div className="page-2 bg-white">
+        <div className="flex flex-col">
+          <div className="flex flex-row content-center justify-center items-center">
+            <button
+              onClick={() => {
+                navigate("/register-BHYT/", { state: { data: insurance.current, type: 'updated' } });
+              }}
+              className="px-[20px] py-2 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-lg font-normal text-white text-center"
+            >
+              Tra cứu lại
+            </button>
           </div>
         </div>
       </div>
@@ -258,37 +401,20 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         <div className="">
           {boxBuyer()}
           {line()}
-          {loading ? <div></div> :
-            billPay.listInsuredPerson.map((item, index) => {
-              return boxBeneficiary(item, index)
-            })}
+
         </div >
 
-        {billPay?.insuranceOrderStatusId == PENDING && methodPayment()}
+        {boxInfo()}
+
       </div>
+
+
       {billPay?.insuranceOrderStatusId == PENDING &&
-        (
-          <div className="page-2 bg-white">
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-row content-center justify-between">
-                <p className="block text-sm font-normal text-gray-900">
-                  Tổng thanh toán:
-                </p>
-                <h3 className="text-base font-medium text-[#0076B7]">
-                  {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} VND
-                </h3>
-              </div>
-              <div className="flex flex-row content-center justify-center items-center">
-                <Link
-                  to={`/buill-detail/${id}`}
-                  className="px-[20px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
-                >
-                  Tiếp tục
-                </Link>
-              </div>
-            </div>
-          </div>
-        )
+        boxFooterPayment()
+      }
+
+      {billPay?.insuranceOrderStatusId == CANCELED &&
+        lookUpAgain()
       }
     </div>
   );

@@ -181,7 +181,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-              {item?.healthInsuranceNumber.trim() == "" ? "Chưa cập nhật" : item?.healthInsuranceNumber.trim()}
+              {item?.healthInsuranceNumber == "" ? "Chưa cập nhật" : item?.healthInsuranceNumber}
             </p>
           </div>
         </div>
