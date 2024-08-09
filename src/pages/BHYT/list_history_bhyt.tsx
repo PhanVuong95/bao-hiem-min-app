@@ -24,21 +24,18 @@ const ListHistoryBHYT = ({ }) => {
         },
       })
       .then((response) => {
-        console.log(response);
-
-        switch (openTab) {
-          case 1:
-            setListOrder(response.data.data.filter((item) => item.insuranceOrderStatusId == PENDING));
-            break;
-          case 2:
-            setListOrder(response.data.data.filter((item) => item.insuranceOrderStatusId == DONE));
-            break;
-          case 3:
-            setListOrder(response.data.data.filter((item) => item.insuranceOrderStatusId == CANCELED));
-            break;
-          default:
-            break;
-        }
+        let fillteredOrders: any = [];
+        response.data.data.forEach((item) => {
+          if (item.insuranceOrderStatusId == DONE && openTab == 2) {
+            fillteredOrders.push(item);
+          } else if (
+            (item.insuranceOrderStatusId == PENDING && openTab == 1) ||
+            (item.insuranceOrderStatusId == CANCELED && openTab == 1)
+          ) {
+            fillteredOrders.push(item);
+          }
+        });
+        setListOrder(fillteredOrders);
       })
       .catch((error) => {
         console.error(error);
@@ -52,7 +49,7 @@ const ListHistoryBHYT = ({ }) => {
     const minutes = String(date.getMinutes()).padStart(2, "0");
 
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
 
     return `${hours}:${minutes} - ${day}/${month}/${year}`;
@@ -98,26 +95,26 @@ const ListHistoryBHYT = ({ }) => {
           <div className="mb-4 flex space-x-4 p-1 bg-white rounded-lg shadow-md">
             <button
               onClick={() => setOpenTab(1)}
-              className={`flex-1 py-2 px-[10px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 1 ? "bg-blue-600 text-white" : ""
+              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 1 ? "bg-blue-600 text-white" : ""
                 }`}
             >
               Đang mua
             </button>
             <button
               onClick={() => setOpenTab(2)}
-              className={`flex-1 py-2 px-[10px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 2 ? "bg-blue-600 text-white" : ""
+              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 2 ? "bg-blue-600 text-white" : ""
                 }`}
             >
               Đã mua
             </button>
 
-            <button
+            {/* <button
               onClick={() => setOpenTab(3)}
               className={`flex-1 py-2 px-[10px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 3 ? "bg-blue-600 text-white" : ""
                 }`}
             >
               Đã hủy
-            </button>
+            </button> */}
           </div>
 
 

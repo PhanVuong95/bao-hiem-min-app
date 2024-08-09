@@ -142,6 +142,9 @@ const ListHealthInsurance: React.FunctionComponent = () => {
       .then((response) => {
         setListProduct(response.data.data);
         setIsLoading(false);
+
+        console.log(response.data.data);
+
       })
       .catch((error) => {
         console.error(error);
@@ -153,7 +156,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
     <div className="pt-20">
       <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
       <div className="flex flex-col gap-[16px] px-4 py-[15px]">
-        <SelectCategory />
+        {/* <SelectCategory /> */}
         <div className="flex flex-col gap-8">
           {/* Danh sách bảo hiểm y tế tự nguyện */}
           {isLoading

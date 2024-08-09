@@ -83,7 +83,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           `https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${medicalProvinceId}`
         ).then((response) => {
           setListHospitals(response.data.data);
-          console.log(response.data);
         })
         .catch((error) => {
           setListHospitals([])

@@ -104,7 +104,7 @@ const CardProductBHYT = ({ url, data }) => {
         </button>
         <button type="button"
           onClick={() => {
-            navigate('/register-BHYT/', { state: { data: data } })
+            navigate('/register-BHYT/', { state: { data: data, type: 'register' } })
           }}
           className="px-[10px] py-3 w-[46%] rounded-full bg-[#0076B7] text-[15px] font-medium text-[#fff]"
         >
