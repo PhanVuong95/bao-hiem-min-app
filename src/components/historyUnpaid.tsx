@@ -79,7 +79,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         <HeaderBase
           isHome={false}
           onBack={() => navigate("/lists-history")}
-          title={"Chi tiết"}
+          title={"Thông tin chi tiết"}
         />
         <div className="fixed inset-0 flex items-center justify-center">
           <PulseLoader size={15} loading={true} color="#0076B7" />
@@ -92,7 +92,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
       <HeaderBase
         isHome={false}
         onBack={() => navigate("/lists-history")}
-        title={"Chi tiết"}
+        title={"Thông tin chi tiết"}
       />
       <div className="pt-20">
         <div
@@ -113,9 +113,18 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
               <h3 className="text-base font-medium text-[#0076B7]">
                 Người mua bảo hiểm
               </h3>
-              <button className="text-sm text-[#0076B7] underline">
-                Chỉnh sửa
-              </button>
+              {orderStatusId == PENDING ? (
+                <button
+                  onClick={() => {
+                    navigate("/update-bhxh/" + id);
+                  }}
+                  className="text-sm text-[#0076B7] underline"
+                >
+                  Chỉnh sửa
+                </button>
+              ) : (
+                <></>
+              )}
             </div>
             <div className="flex flex-row justify-between w-full">
               <div>
@@ -353,6 +362,20 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                   className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
                 >
                   Tiếp tục
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+        {orderStatusId == CANCELED && (
+          <div className="page-2 bg-white">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-row content-center justify-center items-center">
+                <Link
+                  to={"/update-bhxh/" + id}
+                  className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+                >
+                  Tra cứu lại
                 </Link>
               </div>
             </div>

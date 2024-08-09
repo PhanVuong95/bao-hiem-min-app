@@ -1,147 +1,68 @@
 import axios from "axios";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Province, District, Ward } from "../models";
-import FooterPayPage from "./footerPay";
-import VoucherPage from "./cardVoucher";
-import instance from "../api/api-config";
-import { SpecificContext } from "./SpecificContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import HeaderBase from "./headerBase";
+import HeaderBase from "../components/headerBase";
 import {
   isValidEmail,
   isValidEmptyString,
   isValidPhone,
 } from "../utils/validateString";
-const RegisterBHXH: React.FunctionComponent = (props) => {
-  const navigate = useNavigate();
-  const [personName, setPersonName] = useState<string>("");
-  const [citizenId, setCitizenId] = useState<string>("");
-  const [socialInsuranceId, setSocialInsuranceId] = useState<string>("");
-  // const [dob, setDob] = useState<string>("");
-  const [gender, setGender] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [buyerName, setBuyerName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [addressDetail, setAddressDetail] = useState<string>("");
 
-  const [temp, setTemp] = useState(false);
+const UpdateBHXH: React.FunctionComponent = (props) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [orderDetail, setOrderDetail] = useState<any>();
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
-
   const [wards, setWards] = useState<Ward[]>([]);
-  const [selectedBuyerProvince, setSelectedBuyerProvince] = useState<number>(0);
-  const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
-  const [selectedWard, setSelectedWard] = useState<number>(0);
-
-  // const [selectedProvince, setSelectedProvince] = useState<number>(0);
-  const selectedProvince = useRef<number>(0);
+  const [selectedBuyerProvince, setSelectedBuyerProvince] =
+    useState<number>(1001);
+  const [selectedDistrict, setSelectedDistrict] = useState<number>(1001);
+  const [selectedWard, setSelectedWard] = useState<number>(1001);
+  const provinceId = useRef(0);
+  const districtId = useRef(0);
+  const wardId = useRef(0);
+  const selectedProvince = useRef<number>(1001);
   const [supportBudget, setSupportBudget] = useState<number>(0);
-  // const [wage, setWage] = useState<number>(0);
   const wage = useRef<number>(0);
-  // const [monthCount, setMonthCount] = useState<number>(0);
   const monthCount = useRef<number>(0);
   const [frontImageUrl, setFrontImageUrl] = useState<string>("");
   const [backImageUrl, setBackImageUrl] = useState<string>("");
   const [dateValue, setDateValue] = useState("");
-
+  const finalPrice = useRef(0);
   const { register, handleSubmit, watch, setValue } = useForm();
-  // const [finalPrice, setFinalPrice] = useState<number>(0);
-  const finalPrice = useRef<number>(0);
-  const specificContext = useContext(SpecificContext);
-  const [displayValue, setDisplayValue] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
-  const {
-    // frontCitizenidPhoto,
-    // backCitizenidPhoto,
-    // setFrontCitizenidPhoto,
-    // setBackCitizenidPhoto,
-    // insuranceOrderId,
-    // setInsuranceOrderId,
-    insuranceOrder,
-    setInsuranceOrder,
-  } = specificContext;
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
+  const [displayValue, setDisplayValue] = useState("");
+  const [temp, setTemp] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   useEffect(() => {
-    if (insuranceOrder.id != 0) {
-      setPersonName(insuranceOrder.listInsuredPerson[0].fullName);
-      setValue("name", insuranceOrder.listInsuredPerson[0].fullName);
-      selectedProvince.current =
-        insuranceOrder.listInsuredPerson[0].insuranceProvinceId;
-      setValue(
-        "province",
-        insuranceOrder.listInsuredPerson[0].insuranceProvinceId
-      );
-      setCitizenId(insuranceOrder.listInsuredPerson[0].citizenId);
-      setValue("cccd", insuranceOrder.listInsuredPerson[0].citizenId);
-      setSocialInsuranceId(
-        insuranceOrder.listInsuredPerson[0].socialInsuranceNumber
-      );
-      setValue(
-        "bhxh",
-        insuranceOrder.listInsuredPerson[0].socialInsuranceNumber
-      );
-      setDateValue(formatDateToISO(insuranceOrder.listInsuredPerson[0].doB));
-      setValue("dob", formatDateToISO(insuranceOrder.listInsuredPerson[0].doB));
-      setGender(insuranceOrder.listInsuredPerson[0].gender);
-      setValue("gender", insuranceOrder.listInsuredPerson[0].gender);
-      wage.current = insuranceOrder.listInsuredPerson[0].wage;
-      setValue("salary", insuranceOrder.listInsuredPerson[0].wage);
-      monthCount.current = insuranceOrder.listInsuredPerson[0].monthInsured;
-      setValue("months", insuranceOrder.listInsuredPerson[0].monthInsured);
-      setSupportBudget(insuranceOrder.listInsuredPerson[0].supportBudget);
-
-      setPhone(insuranceOrder.phone);
-      setValue("phone", insuranceOrder.phone);
-      setBuyerName(insuranceOrder.fullName);
-      setValue("buyerName", insuranceOrder.fullName);
-      setEmail(insuranceOrder.email);
-      setValue("email", insuranceOrder.email);
-      setSelectedBuyerProvince(insuranceOrder.provinceId);
-      setSelectedDistrict(insuranceOrder.districtId);
-      setValue("buyerDistrict", Number(insuranceOrder.districtId));
-      setSelectedWard(insuranceOrder.wardId);
-      setValue("buyerWard", Number(insuranceOrder.wardId));
-      //setValue("province", Number(insuranceOrder);
-      setAddressDetail(insuranceOrder.addressDetail);
-      setValue("address", insuranceOrder.addressDetail);
-      setDisplayValue(
-        insuranceOrder.listInsuredPerson[0].wage.toLocaleString("vi-VN")
-      );
-      finalPrice.current = insuranceOrder.finalPrice;
-    }
-  }, []);
-  useEffect(() => {
-    setFrontImageUrl(insuranceOrder.photoCitizenFront);
-    setBackImageUrl(insuranceOrder.photoCitizenBack);
-  }, [insuranceOrder.photoCitizenFront, insuranceOrder.photoCitizenBack]);
-  const calculateFinalPrice = () => {
-    const budgetPerMonth = selectedProvince.current === 1001 ? 66000 : 33000;
-    if (wage.current != 0 && monthCount.current != 0) {
-      finalPrice.current =
-        (wage.current * 0.22 - budgetPerMonth) * monthCount.current;
-      setInsuranceOrder((prevOrder) => ({
-        ...prevOrder,
-        finalPrice: finalPrice.current,
-      }));
-      setTemp(!temp);
-    } else {
-      finalPrice.current = 0;
-      setInsuranceOrder((prevOrder) => ({
-        ...prevOrder,
-        finalPrice: finalPrice.current,
-      }));
-      setTemp(!temp);
-    }
-  };
-  useEffect(() => {
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      insuranceId: 1001,
-    }));
+    axios
+      .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
+      .then((response) => {
+        console.log(response.data.data[0]);
+        setOrderDetail(response.data.data[0]);
+        setDisplayValue(
+          response.data.data[0].listInsuredPerson[0].wage.toLocaleString(
+            "vi-VN"
+          )
+        );
+        wage.current = response.data.data[0].wage;
+        monthCount.current =
+          response.data.data[0].listInsuredPerson[0].monthInsured;
+        provinceId.current = response.data.data[0].provinceId;
+        districtId.current = response.data.data[0].districtId;
+        wardId.current = response.data.data[0].wardId;
+        setSelectedBuyerProvince(response.data.data[0].provinceId);
+        setSelectedDistrict(response.data.data[0].districtId);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   useEffect(() => {
@@ -149,12 +70,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       .get("https://baohiem.dion.vn/province/api/list")
       .then((response) => {
         setProvinces(response.data.data);
-        setWards([]);
-        setDistricts([]);
-        //setSelectedBuyerProvince(Number(response.data.data[0].id));
-        //selectedProvince.current = Number(response.data.data[0].id);
-        //setValue("province", Number(response.data.data[0].id));
-        //setValue("buyerProvince", Number(response.data.data[0].id));
+        setSelectedBuyerProvince(Number(response.data.data[0].id));
+        selectedProvince.current = Number(response.data.data[0].id);
+        setValue("province", Number(response.data.data[0].id));
+        setValue("buyerProvince", Number(response.data.data[0].id));
         setTemp(!temp);
       })
       .catch((error) => {
@@ -170,14 +89,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         )
         .then((response) => {
           setDistricts(response.data.data);
-          setWards([]);
-          //setSelectedDistrict(Number(response.data.data[0].id));
-          //setValue("buyerDistrict", Number(response.data.data[0].id));
-          // setInsuranceOrder((prevOrder) => ({
-          //   ...prevOrder,
-          //   districtId: Number(response.data.data[0].id),
-          // }));
-          setTemp(!temp);
+          if (!orderDetail) {
+            setSelectedDistrict(Number(response.data.data[0].id));
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -193,118 +107,91 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         )
         .then((response) => {
           setWards(response.data.data);
-          // setSelectedWard(Number(response.data.data[0].id));
-          // setValue("buyerWard", Number(response.data.data[0].id));
-          // setInsuranceOrder((prevOrder) => ({
-          //   ...prevOrder,
-          //   wardId: Number(response.data.data[0].id),
-          // }));
-          setTemp(!temp);
+          if (!orderDetail) {
+            setSelectedWard(Number(response.data.data[0].id));
+          }
         })
         .catch((error) => {
           console.error(error);
         });
     }
   }, [selectedDistrict]);
-  function formatDateString(dateString: string): string {
-    // Chuyển chuỗi ngày tháng thành đối tượng Date
-    const date = new Date(dateString);
 
+  function handleInputChange(field: string, value: any) {
+    setOrderDetail((prevDetail) => ({
+      ...prevDetail,
+      [field]: value,
+    }));
+  }
+
+  function handleInsuredPersonChange(field: string, value: any) {
+    setOrderDetail((prevDetail) => ({
+      ...prevDetail,
+      listInsuredPerson: [
+        {
+          ...prevDetail.listInsuredPerson[0],
+          [field]: value,
+        },
+      ],
+    }));
+  }
+
+  function formatDateString(dateString: string): string {
+    const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return "Invalid date";
     }
-
     let day: number | string = date.getDate();
-    let month: number | string = date.getMonth() + 1; // Tháng bắt đầu từ 0 nên cần +1
+    let month: number | string = date.getMonth() + 1;
     const year: number = date.getFullYear();
-
-    // Đảm bảo ngày và tháng có 2 chữ số
     if (day < 10) {
       day = "0" + day;
     }
     if (month < 10) {
       month = "0" + month;
     }
-
     return `${day}/${month}/${year}`;
   }
-  const handleDobChange = (event) => {
-    const { value } = event.target;
-    setDateValue(value);
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
-        index === 0 ? { ...person, doB: formatDateString(value) } : person
-      ),
+  const handleUpdateFrontImage = (url) => {
+    setFrontImageUrl(url);
+    setOrderDetail((prevState) => ({
+      ...prevState,
+      photoCitizenFront: url,
+    }));
+    setOrderDetail((prevState) => ({
+      // Sao chép đối tượng hiện tại
+      // const updatedOrderDetail = { ...prevState };
+      // // Sao chép mảng listInsuredPerson và cập nhật phần tử đầu tiên
+      // updatedOrderDetail.listInsuredPerson = [
+      //   {
+      //     ...prevState.listInsuredPerson[0],
+      //     photoCitizenBack: url,
+      //   },
+      // ];
+      // return updatedOrderDetail;
+      ...prevState,
+      ...(prevState.listInsuredPerson[0].photoCitizenFront = url),
     }));
   };
-  // const convertToISODate = (date) => {
-  //   const [day, month, year] = date.split('/');
-  //   return `${year}-${month}-${day}`;
-  // };
-  const handleProvinceChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const provinceId = parseInt(event.target.value);
-    selectedProvince.current = provinceId;
-    calculateSupportBudget(provinceId, watch("months"));
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
-        index === 0 ? { ...person, insuranceProvinceId: provinceId } : person
-      ),
+  const handleUpdateBackImage = (url) => {
+    setBackImageUrl(url);
+    setOrderDetail((prevState) => ({
+      ...prevState,
+      photoCitizenBack: url,
     }));
-    calculateFinalPrice();
-  };
-
-  const handleDistrictChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSelectedDistrict(parseInt(event.target.value, 10));
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      districtId: parseInt(event.target.value, 10),
-    }));
-    // setInsuranceOrder((prevOrder) => ({
-    //   ...prevOrder,
-    //   wardId: 0,
-    // }));
-  };
-
-  const calculateSupportBudget = (provinceId: number, months: number) => {
-    const budgetPerMonth = provinceId === 1001 ? 66000 : 33000;
-    setSupportBudget(budgetPerMonth * months);
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
-        index === 0
-          ? { ...person, supportBudget: budgetPerMonth * months }
-          : person
-      ),
-    }));
-  };
-  const updateFrontCitizenPhoto = (img) => {
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
-        index === 0 ? { ...person, photoCitizenFront: img } : person
-      ),
-    }));
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      photoCitizenFront: img,
-    }));
-  };
-  const updateBackCitizenPhoto = (img) => {
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
-        index === 0 ? { ...person, photoCitizenBack: img } : person
-      ),
-    }));
-    setInsuranceOrder((prevOrder) => ({
-      ...prevOrder,
-      photoCitizenBack: img,
+    setOrderDetail((prevState) => ({
+      // Sao chép đối tượng hiện tại
+      // const updatedOrderDetail = { ...prevState };
+      // // Sao chép mảng listInsuredPerson và cập nhật phần tử đầu tiên
+      // updatedOrderDetail.listInsuredPerson = [
+      //   {
+      //     ...prevState.listInsuredPerson[0],
+      //     photoCitizenBack: url,
+      //   },
+      // ];
+      // return updatedOrderDetail;
+      ...prevState,
+      ...(prevState.listInsuredPerson[0].photoCitizenBack = url),
     }));
   };
   const handleImageUpload = async (
@@ -316,7 +203,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
-
       try {
         const response = await axios.post(
           "https://baohiem.dion.vn/account/api/upload-file",
@@ -335,82 +221,136 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       }
     }
   };
-
   const handleCardClick = (inputRef: React.RefObject<HTMLInputElement>) => {
     if (inputRef.current) {
       inputRef.current.click();
     }
   };
+  const calculateFinalPrice = () => {
+    const budgetPerMonth = selectedProvince.current === 1001 ? 66000 : 33000;
+    if (wage.current != 0 && monthCount.current != 0) {
+      finalPrice.current =
+        (wage.current * 0.22 - budgetPerMonth) * monthCount.current;
+      setOrderDetail((prevDetail) => ({
+        ...prevDetail,
+        finalPrice: finalPrice.current,
+      }));
+      setTemp(!temp);
+    } else {
+      finalPrice.current = 0;
+      setOrderDetail((prevDetail) => ({
+        ...prevDetail,
+        finalPrice: 0,
+      }));
+      setTemp(!temp);
+    }
+  };
+
+  const handleDobChange = (event) => {
+    const { value } = event.target;
+    setDateValue(value);
+    handleInsuredPersonChange("doB", value);
+  };
+
+  const handleProvinceChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const provinceId = parseInt(event.target.value, 10);
+    selectedProvince.current = provinceId;
+    calculateSupportBudget(provinceId, watch("months"));
+    calculateFinalPrice();
+    handleInsuredPersonChange("insuranceProvinceId", provinceId);
+  };
+
+  const handleDistrictChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedDistrict(parseInt(event.target.value, 10));
+    handleInsuredPersonChange(
+      "insuranceDistrictId",
+      parseInt(event.target.value, 10)
+    );
+  };
+
+  const handleWardChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedWard(parseInt(event.target.value));
+    handleInsuredPersonChange("insuranceWardId", parseInt(event.target.value));
+  };
+
+  const calculateSupportBudget = (provinceId: number, months: number) => {
+    const budgetPerMonth = provinceId === 1001 ? 66000 : 33000;
+    setSupportBudget(budgetPerMonth * months);
+    setOrderDetail((prevDetail) => ({
+      ...prevDetail,
+      listInsuredPerson: [
+        {
+          ...prevDetail.listInsuredPerson[0],
+          supportBudget: budgetPerMonth * months,
+        },
+      ],
+    }));
+  };
   const validate = () => {
     if (
-      !isValidEmptyString(frontImageUrl) ||
-      !isValidEmptyString(backImageUrl)
+      !isValidEmptyString(orderDetail.photoCitizenFront) ||
+      !isValidEmptyString(orderDetail.photoCitizenBack)
     ) {
       toast.warn("Ảnh giấy tờ tùy thân không được để trống");
       return false;
     }
-    if (!isValidEmptyString(personName)) {
+    if (!isValidEmptyString(orderDetail.listInsuredPerson[0].fullName)) {
       toast.warn("Họ và tên người tham gia không được để trống");
       return false;
     }
-    if (selectedProvince.current == 0) {
-      toast.warn("Vui lòng chọn tỉnh thành nơi tham gia BHXH");
-      return false;
-    }
-    if (!isValidEmptyString(citizenId)) {
+    if (
+      !isValidEmptyString(orderDetail.listInsuredPerson[0].citizenId.trim())
+    ) {
       toast.warn("Số CCCD không được để trống");
       return false;
-    } else if (citizenId.length > 12) {
+    } else if (orderDetail.listInsuredPerson[0].citizenId.trim().length > 12) {
       toast.warn("Số CCCD không hợp lệ");
       return false;
     }
-    if (socialInsuranceId.length > 0 && socialInsuranceId.length != 10) {
+    if (
+      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length >
+        0 &&
+      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length !==
+        10
+    ) {
       toast.warn("Số BHXH không hợp lệ");
       return false;
     }
-    if (!isValidEmptyString(dateValue)) {
+    if (!isValidEmptyString(orderDetail.listInsuredPerson[0].doB)) {
       toast.warn("Ngày sinh không được để trống");
       return false;
     }
-    if (!isValidEmptyString(gender)) {
+    if (!isValidEmptyString(orderDetail.listInsuredPerson[0].gender)) {
       toast.warn("Giới tính không được để trống");
       return false;
     }
-    if (Number(wage.current) == 0 || Number(wage.current) < 0) {
+    if (Number(orderDetail.listInsuredPerson[0].wage) <= 0) {
       toast.warn("Mức lương không hợp lệ");
       return false;
     }
-    if (Number(monthCount.current) == 0 || Number(monthCount.current) < 0) {
+    if (Number(orderDetail.listInsuredPerson[0].monthInsured) <= 0) {
       toast.warn("Số tháng tham gia không hợp lệ");
       return false;
     }
-    if (!isValidPhone(phone)) {
+    if (!isValidPhone(orderDetail.phone.trim())) {
       toast.warn("Số điện thoại không hợp lệ");
       return false;
     }
-    if (!isValidEmptyString(buyerName)) {
+    if (!isValidEmptyString(orderDetail.fullName.trim())) {
       toast.warn("Họ và tên người mua không được để trống");
       return false;
     }
-    if (Number(selectedBuyerProvince) == 0) {
-      toast.warn("Vui lòng chọn tỉnh thành");
-      return false;
-    }
-    if (Number(selectedDistrict) == 0) {
-      toast.warn("Vui lòng chọn quận huyện");
-      return false;
-    }
-    if (Number(selectedWard) == 0) {
-      toast.warn("Vui lòng chọn phường xã");
-      return false;
-    }
-    if (isValidEmptyString(email)) {
-      if (!isValidEmail(email)) {
+    if (isValidEmptyString(orderDetail.email.trim())) {
+      if (!isValidEmail(orderDetail.email.trim())) {
         toast.warn("Email không hợp lệ");
         return false;
       }
     }
-    if (!isValidEmptyString(addressDetail)) {
+    if (!isValidEmptyString(orderDetail.addressDetail.trim())) {
       toast.warn("Địa chỉ cụ thể không được để trống");
       return false;
     }
@@ -418,56 +358,53 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       toast.warn("Vui lòng xác nhận đã đọc chính sách và điều khoản");
       return false;
     }
-
     return true;
   };
-  // const ()
+
   const onSubmit = (data: any) => {
     if (validate()) {
-      console.log(insuranceOrder.id);
-      if (insuranceOrder.id == 0) {
-        AddInsuranceOrder();
-      } else {
-        UpdateInsuranceOrder();
-      }
+      //UpdateInsuranceOrder();
+      const updateOrder = {
+        id: Number(orderDetail.id),
+        insuranceId: Number(orderDetail.insuranceId),
+        accountId: Number(orderDetail.accountId),
+        citizenId: orderDetail.citizenId.trim(),
+        photoCitizenFront: orderDetail.photoCitizenFront,
+        photoCitizenBack: orderDetail.photoCitizenBack,
+        phone: orderDetail.phone.trim(),
+        fullName: orderDetail.fullName.trim(),
+        email: orderDetail.email.trim(),
+        provinceId: Number(orderDetail.provinceId),
+        districtId: Number(orderDetail.districtId),
+        wardId: Number(orderDetail.wardId),
+        finalPrice: Number(orderDetail.finalPrice),
+        addressDetail: orderDetail.addressDetail.trim(),
+        listInsuredPerson: orderDetail.listInsuredPerson.map((person) => ({
+          id: person.id,
+          insuranceProvinceId: Number(person.insuranceProvinceId),
+          socialInsuranceNumber: person.socialInsuranceNumber.trim(),
+          citizenId: person.citizenId.trim(),
+          photoCitizenFront: person.photoCitizenFront,
+          photoCitizenBack: person.photoCitizenBack,
+          fullName: person.fullName.trim(),
+          doB: formatDateString(person.doB),
+          gender: person.gender,
+          supportBudget: Number(person.supportBudget),
+          wage: Number(person.wage),
+          monthInsured: Number(person.monthInsured),
+        })),
+      };
+
+      UpdateInsuranceOrder(updateOrder);
     }
   };
-  const AddInsuranceOrder = async () => {
+
+  const UpdateInsuranceOrder = async (updateOrder) => {
     const token = localStorage.token;
-    // const formData = new FormData();
-    //   formData.append("file", file);
-    try {
-      const response = await axios.post(
-        "https://baohiem.dion.vn/insuranceorder/api/add-order",
-        insuranceOrder,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // return response.data.data[0];
-      console.log(response.data);
-      if (response.data.status == "201") {
-        setInsuranceOrder((prevOrder) => ({
-          ...prevOrder,
-          id: response.data.data[0],
-        }));
-        navigate("/buill-pay/1");
-      }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
-  };
-  const UpdateInsuranceOrder = async () => {
-    const token = localStorage.token;
-    // const formData = new FormData();
-    //   formData.append("file", file);
     try {
       const response = await axios.post(
         "https://baohiem.dion.vn/insuranceorder/api/update-order",
-        insuranceOrder,
+        updateOrder,
         {
           headers: {
             "Content-Type": "application/json",
@@ -475,29 +412,66 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           },
         }
       );
-      // return response.data.data[0];
-      console.log(response.data);
       if (response.data.status == "200") {
-        navigate("/buill-pay/1");
+        toast.success("Cập nhật đơn đăng ký BHXH thành công!");
+        setTimeout(() => {
+          navigate(-1);
+        }, 1000);
+      } else {
+        toast.error("Có lỗi xảy ra. Vui lòng thử lại!");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
     }
   };
+
   const formatDateToISO = (dateString: string): string => {
-    // Tách ngày, tháng, năm từ chuỗi đầu vào
     const [day, month, year] = dateString.split("/").map(Number);
-
-    // Tạo đối tượng Date từ các thành phần ngày, tháng, năm
     const date = new Date(year, month - 1, day);
-
-    // Định dạng ngày theo định dạng yyyy-MM-dd
     const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
     const dd = String(date.getDate()).padStart(2, "0");
-
     return `${yyyy}-${mm}-${dd}`;
   };
+
+  function formatDate(input: string): string {
+    const date = new Date(input);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  useEffect(() => {
+    if (orderDetail) {
+      setSelectedBuyerProvince(orderDetail.provinceId);
+      setSelectedDistrict(orderDetail.districtId);
+      setSelectedWard(orderDetail.wardId);
+    }
+  }, [orderDetail]);
+
+  if (!orderDetail) {
+    return;
+  }
+  // const calculateFinalPrice = () => {
+  //   const budgetPerMonth = selectedProvince.current === 1001 ? 66000 : 33000;
+  //   if (wage.current != 0 && monthCount.current != 0) {
+  //     finalPrice.current =
+  //       (wage.current * 0.22 - budgetPerMonth) * monthCount.current;
+  //     setInsuranceOrder((prevOrder) => ({
+  //       ...prevOrder,
+  //       finalPrice: finalPrice.current,
+  //     }));
+  //     setTemp(!temp);
+  //   } else {
+  //     finalPrice.current = 0;
+  //     setInsuranceOrder((prevOrder) => ({
+  //       ...prevOrder,
+  //       finalPrice: finalPrice.current,
+  //     }));
+  //     setTemp(!temp);
+  //   }
+  // };
   return (
     <>
       <HeaderBase isHome={false} title={"Đăng ký BHXH Tự nguyện"} />
@@ -517,9 +491,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   onClick={() => handleCardClick(frontImageInputRef)}
                 >
                   <div className="icon-1">
-                    {frontImageUrl ? (
+                    {orderDetail ? (
                       <img
-                        src={`https://baohiem.dion.vn${frontImageUrl}`}
+                        src={`https://baohiem.dion.vn${orderDetail.photoCitizenFront}`}
                         alt="Mặt trước"
                       />
                     ) : (
@@ -550,7 +524,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                     )}
                   </div>
                   <div className="icon-2">
-                    {frontImageUrl ? (
+                    {orderDetail ? (
                       <></>
                     ) : (
                       <svg
@@ -582,7 +556,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   ref={frontImageInputRef}
                   style={{ display: "none" }}
                   onChange={(event) =>
-                    handleImageUpload(event, updateFrontCitizenPhoto)
+                    handleImageUpload(event, handleUpdateFrontImage)
                   }
                 />
               </div>
@@ -592,9 +566,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   onClick={() => handleCardClick(backImageInputRef)}
                 >
                   <div className="icon-1">
-                    {backImageUrl ? (
+                    {orderDetail ? (
                       <img
-                        src={`https://baohiem.dion.vn${backImageUrl}`}
+                        src={`https://baohiem.dion.vn${orderDetail.photoCitizenBack}`}
                         alt="Mặt sau"
                       />
                     ) : (
@@ -625,7 +599,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                     )}
                   </div>
                   <div className="icon-2">
-                    {backImageUrl ? (
+                    {orderDetail ? (
                       <></>
                     ) : (
                       <svg
@@ -655,7 +629,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   ref={backImageInputRef}
                   style={{ display: "none" }}
                   onChange={(event) =>
-                    handleImageUpload(event, updateBackCitizenPhoto)
+                    handleImageUpload(event, handleUpdateBackImage)
                   }
                 />
               </div>
@@ -673,22 +647,12 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="name"
-              value={personName}
-              {...register("name", { required: false })}
+              value={orderDetail.listInsuredPerson[0].fullName}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
-              onChange={(e) => {
-                setPersonName(e.target.value);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  listInsuredPerson: prevOrder.listInsuredPerson.map(
-                    (person, index) =>
-                      index === 0
-                        ? { ...person, fullName: e.target.value }
-                        : person
-                  ),
-                }));
-              }}
+              onChange={(e) =>
+                handleInsuredPersonChange("fullName", e.target.value)
+              }
             />
           </div>
           <div>
@@ -698,12 +662,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               id="insuranceProvince"
-              value={selectedProvince.current}
-              {...register("province", { required: false })}
+              value={orderDetail.listInsuredPerson[0].insuranceProvinceId}
               onChange={handleProvinceChange}
-              className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow`}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
-              <option selected className="" value="0">
+              <option value="" disabled hidden>
                 Chọn tỉnh thành phố
               </option>
               {provinces.map((province) => (
@@ -720,25 +683,12 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="cccd"
-              value={citizenId}
-              {...register("cccd", { required: false })}
+              value={orderDetail.listInsuredPerson[0].citizenId.trim()}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số CCCD"
               onChange={(e) => {
-                // Lọc ra chỉ các ký tự số
                 const filteredValue = e.target.value.replace(/\D/g, "");
-
-                // Cập nhật giá trị của input và trạng thái citizenId
-                setCitizenId(filteredValue);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  listInsuredPerson: prevOrder.listInsuredPerson.map(
-                    (person, index) =>
-                      index === 0
-                        ? { ...person, citizenId: filteredValue }
-                        : person
-                  ),
-                }));
+                handleInsuredPersonChange("citizenId", filteredValue);
               }}
             />
           </div>
@@ -749,22 +699,15 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="bhxh"
-              {...register("bhxh", { required: false })}
-              value={socialInsuranceId}
+              value={orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim()}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số Bảo hiểm Xã hội"
-              onChange={(e) => {
-                setSocialInsuranceId(e.target.value);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  listInsuredPerson: prevOrder.listInsuredPerson.map(
-                    (person, index) =>
-                      index === 0
-                        ? { ...person, socialInsuranceNumber: e.target.value }
-                        : person
-                  ),
-                }));
-              }}
+              onChange={(e) =>
+                handleInsuredPersonChange(
+                  "socialInsuranceNumber",
+                  e.target.value
+                )
+              }
             />
           </div>
           <div>
@@ -774,9 +717,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="date"
               id="dob"
-              value={dateValue}
+              value={formatDate(orderDetail.listInsuredPerson[0].doB)}
               onInput={handleDobChange}
-              {...register("dob", { required: false })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
@@ -786,21 +728,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               id="gender"
-              value={gender}
-              {...register("gender", { required: false })}
+              value={orderDetail.listInsuredPerson[0].gender}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-              onChange={(e) => {
-                setGender(e.target.value);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  listInsuredPerson: prevOrder.listInsuredPerson.map(
-                    (person, index) =>
-                      index === 0
-                        ? { ...person, gender: e.target.value }
-                        : person
-                  ),
-                }));
-              }}
+              onChange={(e) =>
+                handleInsuredPersonChange("gender", e.target.value)
+              }
             >
               <option value="">Chọn giới tính</option>
               <option value="Nam">Nam</option>
@@ -815,35 +747,15 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               <input
                 type="text"
                 id="salary"
-                {...register("salary", { required: false })}
                 value={displayValue}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập mức lương"
                 onChange={(e) => {
-                  // Lấy giá trị từ input và loại bỏ dấu phân cách hàng nghìn (dấu chấm)
                   let rawValue = e.target.value.replace(/\D/g, "");
-                  // Chuyển đổi giá trị thành số, nếu rỗng thì đặt thành 0
                   let numericValue = rawValue !== "" ? Number(rawValue) : 0;
-                  // Cập nhật giá trị wage
                   wage.current = numericValue;
-                  // Cập nhật giá trị trong insuranceOrder
-                  setInsuranceOrder((prevOrder) => ({
-                    ...prevOrder,
-                    listInsuredPerson: prevOrder.listInsuredPerson.map(
-                      (person, index) =>
-                        index === 0
-                          ? {
-                              ...person,
-                              wage: wage.current,
-                            }
-                          : person
-                    ),
-                  }));
-
-                  // Hiển thị giá trị định dạng với phân cách hàng nghìn
                   setDisplayValue(numericValue.toLocaleString("vi-VN"));
-
-                  // Tính toán giá cuối cùng
+                  handleInsuredPersonChange("wage", numericValue);
                   calculateFinalPrice();
                 }}
               />
@@ -862,33 +774,19 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               <input
                 type="text"
                 id="months"
-                {...register("months", { required: false })}
-                value={monthCount.current}
+                value={orderDetail.listInsuredPerson[0].monthInsured}
                 aria-describedby="helper-text-explanation"
                 className="bg-gray-50 border border-gray-300 text-[#0076B7] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập số tháng"
                 onChange={(e) => {
                   let numberValue = e.target.value.replace(/\D/g, "");
                   if (e.target.value != "") {
-                    // console.log(e.target.value);
                     monthCount.current = Number(numberValue);
                     setValue("months", numberValue);
                     calculateSupportBudget(
                       selectedProvince.current,
                       parseInt(numberValue, 10)
                     );
-                    setInsuranceOrder((prevOrder) => ({
-                      ...prevOrder,
-                      listInsuredPerson: prevOrder.listInsuredPerson.map(
-                        (person, index) =>
-                          index === 0
-                            ? {
-                                ...person,
-                                monthInsured: parseInt(numberValue),
-                              }
-                            : person
-                      ),
-                    }));
                   } else {
                     monthCount.current = 0;
                     setValue("months", 0);
@@ -897,7 +795,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       parseInt("1", 10)
                     );
                   }
-
+                  handleInsuredPersonChange("monthInsured", numberValue);
                   calculateFinalPrice();
                 }}
               />
@@ -914,7 +812,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               <input
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                value={supportBudget.toLocaleString("vi-VN")}
+                value={orderDetail.listInsuredPerson[0].supportBudget.toLocaleString(
+                  "vi-VN"
+                )}
                 readOnly
               />
               <div className="absolute inset-y-0 start-[83%] top-0 flex items-center pointer-events-none">
@@ -934,18 +834,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="phone"
-              value={phone}
-              {...register("phone", { required: false })}
+              value={orderDetail.phone.trim()}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Số điện thoại"
-              onChange={(e) => {
-                let numberValue = e.target.value.replace(/\D/g, "");
-                setPhone(numberValue);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  phone: numberValue,
-                }));
-              }}
+              onChange={(e) => handleInputChange("phone", e.target.value)}
             />
           </div>
           <div>
@@ -955,17 +847,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="name"
-              value={buyerName}
-              {...register("buyerName", { required: false })}
+              value={orderDetail.fullName.trim()}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
-              onChange={(e) => {
-                setBuyerName(e.target.value);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  fullName: e.target.value,
-                }));
-              }}
+              onChange={(e) => handleInputChange("fullName", e.target.value)}
             />
           </div>
           <div>
@@ -975,17 +860,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="email"
               id="email"
-              {...register("email", { required: false })}
-              value={email}
+              value={orderDetail.email.trim()}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập email của bạn"
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  email: e.target.value,
-                }));
-              }}
+              onChange={(e) => handleInputChange("email", e.target.value)}
             />
           </div>
           <div>
@@ -993,34 +871,15 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               Tỉnh thành <samp className="text-red-600">*</samp>
             </label>
             <select
-              value={selectedBuyerProvince}
-              {...register("buyerProvince", { required: false })}
+              value={orderDetail.provinceId}
               onChange={(e) => {
                 let provinceId: number = Number(e.target.value);
-                console.log(provinceId);
-                if (provinceId == 0) {
-                  setDistricts([]);
-                  setWards([]);
-                }
                 setSelectedBuyerProvince(provinceId);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  provinceId: provinceId,
-                }));
-                // setInsuranceOrder((prevOrder) => ({
-                //   ...prevOrder,
-                //   districtId: 0,
-                // }));
-                // setInsuranceOrder((prevOrder) => ({
-                //   ...prevOrder,
-                //   wardId: 0,
-                // }));
-                setSelectedWard(0);
-                setSelectedDistrict(0);
+                handleInputChange("provinceId", provinceId);
               }}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
-              <option selected className="" value="0">
+              <option value="0" selected>
                 Chọn tỉnh thành phố
               </option>
               {provinces.map((province) => (
@@ -1036,11 +895,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               value={selectedDistrict}
-              {...register("buyerDistrict", { required: false })}
               onChange={handleDistrictChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
-              <option selected className="" value="0">
+              <option value="0" disabled hidden>
                 Chọn quận huyện
               </option>
               {districts.map((district) => (
@@ -1055,20 +913,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               Phường xã <samp className="text-red-600">*</samp>
             </label>
             <select
-              {...register("buyerWard", { required: false })}
               value={selectedWard}
+              onChange={handleWardChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-              onChange={(e) => {
-                {
-                  setSelectedWard(parseInt(e.target.value));
-                  setInsuranceOrder((prevOrder) => ({
-                    ...prevOrder,
-                    wardId: parseInt(e.target.value, 10),
-                  }));
-                }
-              }}
             >
-              <option selected className="" value="0">
+              <option value="0" disabled hidden>
                 Chọn phường xã
               </option>
               {wards.map((ward) => (
@@ -1085,28 +934,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="address"
-              {...register("address", { required: false })}
-              value={addressDetail}
+              value={orderDetail.addressDetail}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="VD: Số nhà, số đường,...."
-              onChange={(e) => {
-                setAddressDetail(e.target.value);
-                setInsuranceOrder((prevOrder) => ({
-                  ...prevOrder,
-                  addressDetail: e.target.value,
-                }));
-              }}
+              onChange={(e) =>
+                handleInputChange("addressDetail", e.target.value)
+              }
             />
           </div>
         </div>
         <div className="flex mx-4 flex-col gap-2 pb-4">
-          {/* <div>
-            <p className="text-sm font-normal text-[#000]">
-              Thông tin BHXH sẽ được cập nhật trên ứng dụng{" "}
-              <strong className="text-[#0076B7] font-bold">VSSID </strong>
-              trong 15 ngày làm việc.
-            </p>
-          </div> */}
           <div className="flex gap-2">
             <input
               type="checkbox"
@@ -1129,8 +966,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
           </div>
         </div>
-        {/* <FooterPayPage h={""} w={""} url={"/buill-pay/1"} /> */}
-        {/* Đưa fotter trực tiếp vào đây để tiện xử lý */}
         <div className="page-2 bg-white">
           <div className="flex flex-col gap-3">
             <div className="flex flex-row content-center justify-between">
@@ -1138,7 +973,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                 Tổng thanh toán:
               </p>
               <h3 className="text-base font-medium text-[#0076B7]">
-                {finalPrice.current.toLocaleString("vi-VN")} VND
+                {orderDetail.finalPrice.toLocaleString("vi-VN")} VND
               </h3>
             </div>
             <div className="flex flex-row content-center justify-center items-center">
@@ -1146,14 +981,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                 className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
                 type="submit"
               >
-                Tiếp tục
+                Gửi lại thông tin
               </button>
-              {/* <Link
-                to={"/buill-pay/1"}
-                className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
-              >
-                Tiếp tục  
-              </Link> */}
             </div>
           </div>
         </div>
@@ -1162,4 +991,4 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   );
 };
 
-export default RegisterBHXH;
+export default UpdateBHXH;

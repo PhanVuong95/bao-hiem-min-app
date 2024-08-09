@@ -202,7 +202,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   }
   return (
     <>
-      <HeaderBase isHome={false} title={"Chi tiết thanh toán"} />
+      <HeaderBase isHome={false} title={""} />
       {isPaymentSuccessful && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg text-center w-4/5">

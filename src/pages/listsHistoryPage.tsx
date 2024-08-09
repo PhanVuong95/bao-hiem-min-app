@@ -12,15 +12,18 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
   const CANCELED = 1003;
 
   const [openTab, setOpenTab] = useState(1);
-  const [listOrder, setListOrder] = useState([]);
+  const [listOrder, setListOrder] = useState<any>([]);
   const token = localStorage.token;
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insuranceorder/api/list-by-accountId", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .get(
+        "https://baohiem.dion.vn/insuranceorder/api/list-by-insuranceId?insuranceId=1001",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         let fillteredOrders: any = [];
         response.data.data.forEach((item) => {
@@ -58,7 +61,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
         <HeaderBase
           isHome={false}
           onBack={() => navigate("/history")}
-          title={"BHXH tự nguyện"}
+          title={"Lịch sử đăng ký BHXH TN"}
         />
         <div className="fixed inset-0 flex items-center justify-center">
           <PulseLoader size={15} loading={true} />
@@ -72,7 +75,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
       <HeaderBase
         isHome={false}
         onBack={() => navigate("/history")}
-        title={"BHXH tự nguyện"}
+        title={"Lịch sử đăng ký BHXH TN"}
       />
       <div className="page-1 !pb-2 !pt-24">
         <div className="max-w-md mx-auto">
@@ -105,7 +108,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
                         <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
                         <div className="title-product flex flex-col">
                           <h3 className="text-[#0076B7] text-lg font-medium">
-                            BH Xã Hội Tự nguyện
+                            {item.insuranceName}
                           </h3>
                           <p className="text-[#646464] text-sm font-normal">
                             {item.monthInsured} tháng

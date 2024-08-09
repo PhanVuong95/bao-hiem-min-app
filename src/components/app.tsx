@@ -14,7 +14,7 @@ import ListSocialInsurance from "../pages/listSocialInsurance";
 import ListHealthInsurance from "../pages/listHealthInsurance";
 import ProductDetailPage from "./productDetail";
 import BillPayPage from "./billPay";
-import BillPayBHYTPage from './billPayBHYT';
+import BillPayBHYTPage from "./billPayBHYT";
 import BuillDetailPage from "../pages/billDetail";
 import RegisterBHXH from "./registerBHXH";
 import RegisterBHYT from "./RegisterBHYT";
@@ -24,6 +24,7 @@ import ListsHistoryPage from "../pages/listsHistoryPage";
 import HistoryUnpaid1Page from "./historyUnpaid1";
 import HistoryUnpaid2Page from "./historyUnpaid2";
 import { SpecificProvider } from "./SpecificContext";
+import UpdateBHXH from "../pages/updateBHXH";
 
 const MyApp = () => {
   return (
@@ -33,13 +34,13 @@ const MyApp = () => {
           <ToastContainer
             style={{
               width: "80%",
-              borderRadius: '20px',
-              marginTop: '40px',
-              marginLeft: '10%',
-              marginRight: '10%',
+              borderRadius: "20px",
+              marginTop: "40px",
+              marginLeft: "10%",
+              marginRight: "10%",
             }}
             toastStyle={{
-              borderRadius: '7px'
+              borderRadius: "7px",
             }}
             position="top-center"
             autoClose={3000}
@@ -91,9 +92,7 @@ const MyApp = () => {
                 />
                 <Route
                   path="/bill-pay-bhyt/"
-                  element={
-                    <BillPayBHYTPage w={""} h={""} url={""} />
-                  }
+                  element={<BillPayBHYTPage w={""} h={""} url={""} />}
                 />
                 <Route
                   path="/buill-detail/:id"
@@ -111,10 +110,8 @@ const MyApp = () => {
                     </SpecificProvider>
                   }
                 />
-                <Route
-                  path="/register-BHYT/"
-                  element={<RegisterBHYT />}
-                />
+                <Route path="/update-BHXH/:id" element={<UpdateBHXH />} />
+                <Route path="/register-BHYT/" element={<RegisterBHYT />} />
                 <Route
                   path="/lists-history"
                   element={<ListsHistoryPage w={""} h={""} url={""} />}
