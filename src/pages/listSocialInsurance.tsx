@@ -173,7 +173,7 @@ const ListSocialInsurance: React.FunctionComponent = (props) => {
             <div className="flex flex-row justify-between items-center gap-[10px] my-4 ">
               <div>
                 <Link
-                  to="/product-detail/1"
+                  to={"/product-detail/" + 1001}
                   className="px-[38px] py-3 rounded-full bg-[#DEE7FE] text-[15px] font-medium text-[#0076B7]"
                 >
                   Xem chi tiết
