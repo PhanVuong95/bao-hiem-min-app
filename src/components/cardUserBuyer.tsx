@@ -1,8 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { District, Province } from "../models";
-import { registerInfoBHYT } from "../pages/listHealthInsurance";
+import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
 
 interface Props {
   data: any

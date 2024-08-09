@@ -70,7 +70,7 @@ export const formatTimeSql = (dates: string) => {
 
 
 export const isValidEmptyString = (data: string) => {
-  if (data.length === 0 || data === "" || data === undefined) {
+  if (data === undefined || data === null || data === "" || data.length === 0) {
     return false
   }
   return true

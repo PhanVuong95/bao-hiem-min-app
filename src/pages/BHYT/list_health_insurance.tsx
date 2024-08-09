@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import CardProductBHYT from "../components/cardProductBHYT";
-import HeaderBase from "../components/headerBase";
-import SelectCategory from "../components/selectCategory";
+import CardProductBHYT from "../../components/cardProductBHYT";
+import HeaderBase from "../../components/headerBase";
+import SelectCategory from "../../components/selectCategory";
 
 export let registerInfoBHYT = {
   "id": 0,

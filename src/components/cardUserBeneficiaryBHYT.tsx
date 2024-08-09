@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { registerInfoBHYT } from "../pages/listHealthInsurance";
+import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
 import { listEthnics } from "../utils/constants";
 import { formatDate, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
 

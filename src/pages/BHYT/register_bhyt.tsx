@@ -3,13 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "zmp-ui";
-import { Province } from "../models";
-import { registerInfoBHYT } from "../pages/listHealthInsurance";
-import { compareTwoDateString, formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../utils/validateString";
-import UserBeneficiaryBHYTPage from "./cardUserBeneficiaryBHYT";
-import UserBuyerPage from "./cardUserBuyer";
-import VoucherPage from "./cardVoucher";
-import HeaderBase from "./headerBase";
+import { Province } from "../../models";
+import { registerInfoBHYT } from "./list_health_insurance";
+import { compareTwoDateString, formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../../utils/validateString";
+import UserBeneficiaryBHYTPage from "../../components/cardUserBeneficiaryBHYT";
+import UserBuyerPage from "../../components/cardUserBuyer";
+import VoucherPage from "../../components/cardVoucher";
+import HeaderBase from "../../components/headerBase";
 
 const RegisterBHYT = ({ }) => {
 

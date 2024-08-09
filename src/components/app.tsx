@@ -11,19 +11,21 @@ import ContractPage from "../pages/contractPage";
 import HistoryPage from "../pages/historyPage";
 import UserPage from "../pages/user";
 import ListSocialInsurance from "../pages/listSocialInsurance";
-import ListHealthInsurance from "../pages/listHealthInsurance";
+import ListHealthInsurance from "../pages/BHYT/list_health_insurance";
 import ProductDetailPage from "./productDetail";
 import BillPayPage from "./billPay";
 import BillPayBHYTPage from './billPayBHYT';
 import BuillDetailPage from "../pages/billDetail";
 import RegisterBHXH from "./registerBHXH";
-import RegisterBHYT from "./RegisterBHYT";
 import ProductDetailPage1 from "./productDetail-1";
 import HistoryUnpaidPage from "./historyUnpaid";
 import ListsHistoryPage from "../pages/listsHistoryPage";
 import HistoryUnpaid1Page from "./historyUnpaid1";
 import HistoryUnpaid2Page from "./historyUnpaid2";
 import { SpecificProvider } from "./SpecificContext";
+import RegisterBHYT from "../pages/BHYT/register_bhyt";
+import ListHistoryBHYT from "../pages/BHYT/list_history_bhyt";
+import InfoDetailBHYT from "../pages/BHYT/info_detail_bhyt";
 
 const MyApp = () => {
   return (
@@ -118,6 +120,14 @@ const MyApp = () => {
                 <Route
                   path="/lists-history"
                   element={<ListsHistoryPage w={""} h={""} url={""} />}
+                />
+                <Route
+                  path="/info-detail-bhyt/:id"
+                  element={<InfoDetailBHYT />}
+                />
+                <Route
+                  path="/list-history-bhyt"
+                  element={<ListHistoryBHYT />}
                 />
                 <Route
                   path="/history-unpaid/:id"
