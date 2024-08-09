@@ -1,19 +1,33 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import HeaderBase from "./headerBase";
+import { Link, useNavigate } from "react-router-dom";
+import HeaderBase from "../../components/headerBase";
 import { useParams } from "react-router-dom";
-import { formatDate, formatMoneyVND, formatPhoneNumber } from "../utils/validateString";
+import { formatDate, formatMoneyVND, formatPhoneNumber, isValidEmptyString } from "../../utils/validateString";
 
-const BillPayBHYTPage: React.FunctionComponent = () => {
+const InfoDetailBHYT: React.FunctionComponent = () => {
   const { id } = useParams();
   const [billPay, setBillPay] = useState<any>();
   const [loading, setLoading] = useState(true)
-
-  const [provinceName, setProvinceName] = useState("");
-  const [districtName, setDistrictName] = useState("");
-  const [wardeName, setWardeName] = useState("");
+  const navigate = useNavigate();
   const [selectedCheckbox, setSelectedCheckbox] = useState("");
+
+  const PENDING = 1001;
+  const DONE = 1002;
+  const CANCELED = 1003;
+
+  const switchColor = (insuranceOrderStatusId) => {
+    switch (insuranceOrderStatusId) {
+      case PENDING:
+        return '#FAAD14'
+      case DONE:
+        return '#00BA00'
+      case CANCELED:
+        return '#F00'
+      default:
+        return '#FAAD14'
+    }
+  }
 
   const handleCheckboxChange = (value) => {
     setSelectedCheckbox(value);
@@ -33,39 +47,6 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
         setLoading(false);
       });
   }, [])
-
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       "https://baohiem.dion.vn/province/api/detail/" +
-  //       0
-  //     )
-  //     .then((response) => {
-  //       setProvinceName(response.data.data[0].name);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  //   axios
-  //     .get(
-  //       "https://baohiem.dion.vn/district/api/detail/" +
-  //       0
-  //     )
-  //     .then((response) => {
-  //       setDistrictName(response.data.data[0].name);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  //   axios
-  //     .get("https://baohiem.dion.vn/ward/api/detail/" + 0)
-  //     .then((response) => {
-  //       setWardeName(response.data.data[0].name);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, []);
 
   const boxBuyer = () => {
     return (
@@ -136,7 +117,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-              {item?.fullName.trim() == "" ? "Chưa cập nhật" : item?.fullName.trim()}
+              {!isValidEmptyString(item?.fullName) ? "Chưa cập nhật" : item?.fullName.trim()}
             </p>
           </div>
         </div>
@@ -147,7 +128,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.doB.trim() == "" ? "Chưa cập nhật" : formatDate(item?.doB.trim())}
+              {!isValidEmptyString(item?.doB) ? "Chưa cập nhật" : formatDate(item?.doB.trim())}
             </p>
           </div>
         </div>
@@ -159,7 +140,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.citizenId.trim() == "" ? "Chưa cập nhật" : item?.citizenId.trim()}
+              {isValidEmptyString(item?.citizenId) ? "Chưa cập nhật" : item?.citizenId.trim()}
             </p>
           </div>
         </div>
@@ -170,7 +151,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.gender.trim() == "" ? "Chưa cập nhật" : item?.gender.trim()}
+              {!isValidEmptyString(item?.gender) ? "Chưa cập nhật" : item?.gender.trim()}
             </p>
           </div>
         </div>
@@ -181,7 +162,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-              {item?.healthInsuranceNumber.trim() == "" ? "Chưa cập nhật" : item?.healthInsuranceNumber.trim()}
+              {!isValidEmptyString(item?.healthInsuranceNumber) ? "Chưa cập nhật" : item?.healthInsuranceNumber}
             </p>
           </div>
         </div>
@@ -194,7 +175,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.monthInsured == 0 ? "Chưa cập nhật" : item?.monthInsured} tháng
+              {!isValidEmptyString(item?.monthInsured) ? "Chưa cập nhật" : item?.monthInsured} tháng
             </p>
           </div>
         </div>
@@ -205,8 +186,8 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-              {item?.hospitalName == 0 ? "Chưa cập nhật" : item?.hospitalName} -
-              {item?.medicalProvinceName == 0 ? "Chưa cập nhật" : item?.medicalProvinceName}
+              {!isValidEmptyString(item?.hospitalName) ? "Chưa cập nhật" : item?.hospitalName} -
+              {!isValidEmptyString(item?.medicalProvinceName) ? "Chưa cập nhật" : item?.medicalProvinceName}
             </p>
           </div>
         </div>
@@ -231,13 +212,49 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
     )
   }
 
+  const methodPayment = () => {
+    return (
+
+      <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <h3 className="text-[#0076B7] text-lg font-medium">
+            Phương thức thanh toán
+          </h3>
+          <div className="flex gap-3">
+            <input
+              type="checkbox"
+              className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
+              checked={true}
+              onChange={() => handleCheckboxChange("vnpay")}
+              id="vnpay-checkbox"
+            />
+            <label
+              htmlFor="vnpay-checkbox"
+              className="text-sm font-normal text-[#000] w-[96%]"
+            >
+              Thanh toán VNPAY (Powered ChaiPay)
+            </label>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="pt-20">
       <HeaderBase
         isHome={false}
-        title={"BHYT tự nguyện"}
+        title={"Thông tin chi tiết"}
+        onBack={() => navigate('/list-history-bhyt')}
       />
+
+      <div className={`bg-[${switchColor(billPay?.insuranceOrderStatusId)}] h-10 flex justify-between px-4 items-center text-white text-base font-normal`}>
+        <div>Trạng thái</div>
+        <div>{billPay?.insuranceOrderStatusName}</div>
+      </div>
+
       <div className="page-1 flex flex-col gap-4 mb-4">
+
         <div className="">
           {boxBuyer()}
           {line()}
@@ -245,105 +262,36 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
             billPay.listInsuredPerson.map((item, index) => {
               return boxBeneficiary(item, index)
             })}
-
         </div >
 
-        <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
-          {/* <h3 className="text-[#0076B7] text-lg font-medium">
-            Danh mục sản phẩm
-          </h3>
-          <div className="flex gap-[10px]">
-            <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
-            <div className="title-product flex flex-col">
-              <h3 className="text-[#0076B7] text-lg font-medium">
-                BH Xã Hội Tự nguyện
-              </h3>
-              <p className="text-[#646464] text-sm font-normal">Theo tháng</p>
-              <span className="text-[#0076B7] text-lg font-bold">
-                22<samp className="text-[#646464] text-sm font-normal">%</samp>
-              </span>
-            </div>
-          </div> */}
-
-          {/* <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr> */}
-
-          <div className="flex flex-col gap-2">
-            <h3 className="text-[#0076B7] text-lg font-medium">
-              Phương thức thanh toán
-            </h3>
-            {/* <div className="flex gap-3">
-              <input
-                type="checkbox"
-                className="relative appearance-none bg-white w-5 h-5 border rounded-full border-red-400 cursor-pointer checked:bg-[#0076B7]"
-                checked={selectedCheckbox === "vietqr"}
-                onChange={() => handleCheckboxChange("vietqr")}
-                id="vietqr-checkbox"
-              />
-              <label
-                htmlFor="vietqr-checkbox"
-                className="text-sm font-normal text-[#000] w-[96%]"
-              >
-                VietQR (Chuyển khoản ngân hàng, MOMO, Zalopay, Viettelpay)
-              </label>
-            </div> */}
-
-            <div className="flex gap-3">
-              <input
-                type="checkbox"
-                className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
-                checked={true}
-                onChange={() => handleCheckboxChange("vnpay")}
-                id="vnpay-checkbox"
-              />
-              <label
-                htmlFor="vnpay-checkbox"
-                className="text-sm font-normal text-[#000] w-[96%]"
-              >
-                Thanh toán VNPAY (Powered ChaiPay)
-              </label>
-            </div>
-
-            {/* <div className="flex gap-3">
-              <input
-                type="checkbox"
-                className="relative appearance-none bg-white w-5 h-5 border rounded-full border-red-400 cursor-pointer checked:bg-[#0076B7]"
-                checked={selectedCheckbox === "khac"}
-                onChange={() => handleCheckboxChange("khac")}
-                id="khac-checkbox"
-              />
-              <label
-                htmlFor="khac-checkbox"
-                className="text-sm font-normal text-[#000] w-[96%]"
-              >
-                Khác
-              </label>
-            </div> */}
-          </div>
-        </div>
+        {billPay?.insuranceOrderStatusId == PENDING && methodPayment()}
       </div>
-      {/* <FooterPayPage w={""} h={""} url={"/buill-detail/1"} /> */}
-      <div className="page-2 bg-white">
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-row content-center justify-between">
-            <p className="block text-sm font-normal text-gray-900">
-              Tổng thanh toán:
-            </p>
-            <h3 className="text-base font-medium text-[#0076B7]">
-              {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} VND
-            </h3>
+      {billPay?.insuranceOrderStatusId == PENDING &&
+        (
+          <div className="page-2 bg-white">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-row content-center justify-between">
+                <p className="block text-sm font-normal text-gray-900">
+                  Tổng thanh toán:
+                </p>
+                <h3 className="text-base font-medium text-[#0076B7]">
+                  {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} VND
+                </h3>
+              </div>
+              <div className="flex flex-row content-center justify-center items-center">
+                <Link
+                  to={`/buill-detail/${id}`}
+                  className="px-[20px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+                >
+                  Tiếp tục
+                </Link>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-row content-center justify-center items-center">
-            <Link
-              to={`/buill-detail/${id}`}
-              className="px-[20px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
-            >
-              Tiếp tục
-            </Link>
-          </div>
-        </div>
-      </div>
+        )
+      }
     </div>
   );
 };
 
-export default BillPayBHYTPage;
+export default InfoDetailBHYT;

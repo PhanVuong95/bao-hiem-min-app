@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "zmp-ui";
+import { closeApp } from "zmp-sdk/apis";
 
 interface Props {
   isHome?: boolean;
@@ -13,6 +14,23 @@ interface Props {
 const HeaderBase = (props: Props) => {
   const { isHome, title, onClose, onActions, onBack } = props;
   const navigate = useNavigate();
+
+  const closeMiniApp = async () => {
+    try {
+      closeApp({
+        success: () => {
+          console.log("Thoát app");
+        },
+        fail: (error) => {
+          // xử lý khi gọi api thất bại
+          console.log(error);
+        }
+      });
+    } catch (error) {
+      // xử lý khi gọi api thất bại
+      console.log(error);
+    }
+  };
 
   return (
     <div className="fixed top-0 z-10">
@@ -43,7 +61,13 @@ const HeaderBase = (props: Props) => {
           </div>
           <div className="w-[1.5px] bg-[#BAE7FF40] h-4 "></div>
           <div>
-            <img src="../../assets-src/close.png" className="w-3 h-3" />
+            <button
+              type="button"
+              onClick={() => closeMiniApp()}
+            >
+              <img src="../../assets-src/close.png" className="w-3 h-3" />
+            </button>
+
           </div>
         </div>
       </div>

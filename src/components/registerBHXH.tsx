@@ -231,6 +231,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const handleDobChange = (event) => {
     const { value } = event.target;
     setDateValue(value);
+
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
       listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
@@ -898,6 +899,18 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                     );
                   }
 
+                  setInsuranceOrder((prevOrder) => ({
+                    ...prevOrder,
+                    listInsuredPerson: prevOrder.listInsuredPerson.map(
+                      (person, index) =>
+                        index === 0
+                          ? {
+                              ...person,
+                              monthInsured: parseInt(e.target.value),
+                            }
+                          : person
+                    ),
+                  }));
                   calculateFinalPrice();
                 }}
               />

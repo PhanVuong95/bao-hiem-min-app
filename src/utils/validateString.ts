@@ -13,11 +13,12 @@ export const formatDate = (date: any) => {
     let month = (temp.getMonth() + 1).toString().padStart(2, '0');
     let day = temp.getDate().toString().padStart(2, '0');
 
-    return `${day}-${month}-${year}`;
+    return `${day}/${month}/${year}`;
   } catch {
     return ''
   }
 }
+
 export const formatDateToUpdateSQL = (date: Date) => {
   try {
     let year = date.getFullYear();
@@ -59,8 +60,17 @@ export const formatTime = (dates: string) => {
   return ''
 }
 
+export const formatTimeSql = (dates: string) => {
+  var time = dates.split('/')
+  if (time) {
+    return `${time[2]}-${time[1]}-${time[0]}`
+  }
+  return ''
+}
+
+
 export const isValidEmptyString = (data: string) => {
-  if (data.length === 0 || data === "" || data === undefined) {
+  if (data === undefined || data === null || data === "" || data.length === 0) {
     return false
   }
   return true
@@ -100,5 +110,49 @@ export const formatPhoneNumber = (phoneNumber) => {
     return phoneNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1.$2.$3');
   } catch (error) {
     return ''
+  }
+}
+
+export const isValidSocialInsuranceNumber = (data: string) => {
+  const socialInsuranceNumberCheck = /^[0-9]{10}$/;
+  return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
+}
+
+export const isValidHealthInsuranceNumber = (data: string) => {
+  const socialInsuranceNumberCheck = /^[0-9]{15}$/;
+  return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
+}
+
+
+export const isValidCitizenId = (data: string) => {
+  const citizenIdCheck = /^[0-9]{12}$/;
+  return /^\d+$/.test(data) && citizenIdCheck.test(data);
+}
+
+export const compareTwoDateString = (dateString1, dateString2) => {
+
+  // Hàm chuyển đổi chuỗi ngày theo định dạng MM/DD/YYYY sang YYYY-MM-DD
+  function convertDateFormat(dateString) {
+    const parts = dateString.split('/');
+    return parts[2] + '-' + parts[1] + '-' + parts[0];
+  }
+
+  // Chuyển đổi các chuỗi ngày sang định dạng mới
+  const formattedDateString1 = convertDateFormat(dateString1);
+  const formattedDateString2 = convertDateFormat(dateString2);
+
+  // Tạo các đối tượng Date
+  const date1 = new Date(formattedDateString1);
+  const date2 = new Date(formattedDateString2);
+
+  // So sánh
+  if (date1 > date2) {
+    // Ngày 1 sau ngày 2
+    return 2;
+  } else if (date1 < date2) {
+    // Ngày 1 trước ngày 2
+    return 1;
+  } else {
+    return 0;
   }
 }
