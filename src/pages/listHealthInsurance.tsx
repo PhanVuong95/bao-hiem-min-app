@@ -22,9 +22,10 @@ export let registerInfoBHYT = {
   "listInsuredPerson": [
     {
       "id": 0,
-      "insuranceProvinceId": 0,
+      "insuranceProvinceId": null,
       "medicalProvinceId": 0,
       "socialInsuranceNumber": "",
+      "healthInsuranceNumber": "",
       "citizenId": "",
       "photoCitizenFront": "",
       "photoCitizenBack": "",
@@ -38,10 +39,52 @@ export let registerInfoBHYT = {
       "oldCardStartDate": "",
       "oldCardEndDate": "",
       "newCardEndDate": "",
-      "newCardStartDate": ""
+      "newCardStartDate": "",
+      "price": 0,
+      "hospitalId": 0
     }
   ]
 }
+
+// Test
+// export let registerInfoBHYT = {
+//   "id": 1091,
+//   "insuranceId": 1002,
+//   "accountId": 0,
+//   "citizenId": 0,
+//   "photoCitizenFront": "",
+//   "photoCitizenBack": "",
+//   "phone": "0828782000",
+//   "fullName": "Vũ Văn Tuấn",
+//   "email": "tuanlbs78@gmail.com",
+//   "provinceId": 1062,
+//   "districtId": 1695,
+//   "wardId": 11489,
+//   "finalPrice": 1263000,
+//   "addressDetail": "Địa chỉ A",
+//   "listInsuredPerson": [
+//     {
+//       "id": 0,
+//       "insuranceProvinceId": 1047,
+//       "medicalProvinceId": 1001,
+//       "socialInsuranceNumber": "1232132132",
+//       "citizenId": "",
+//       "photoCitizenFront": "",
+//       "photoCitizenBack": "",
+//       "fullName": "Vũ Văn Thành",
+//       "doB": "02/08/2024",
+//       "gender": "Nam",
+//       "supportBudget": 0,
+//       "wage": 0,
+//       "monthInsured": 12,
+//       "ethnic": "Kinh",
+//       "oldCardStartDate": "01/08/2024",
+//       "oldCardEndDate": "02/08/2024",
+//       "newCardEndDate": "13/08/2024",
+//       "newCardStartDate": "12/08/2024"
+//     }
+//   ]
+// }
 
 const ListHealthInsurance: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -66,9 +109,10 @@ const ListHealthInsurance: React.FunctionComponent = () => {
       "listInsuredPerson": [
         {
           "id": 0,
-          "insuranceProvinceId": 0,
+          "insuranceProvinceId": null,
           "medicalProvinceId": 0,
           "socialInsuranceNumber": "",
+          "healthInsuranceNumber": "",
           "citizenId": "",
           "photoCitizenFront": "",
           "photoCitizenBack": "",
@@ -82,7 +126,9 @@ const ListHealthInsurance: React.FunctionComponent = () => {
           "oldCardStartDate": "",
           "oldCardEndDate": "",
           "newCardEndDate": "",
-          "newCardStartDate": ""
+          "newCardStartDate": "",
+          "price": 0,
+          "hospitalId": 0
         }
       ]
     }

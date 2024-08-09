@@ -1,35 +1,62 @@
 import axios from "axios";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { registerInfoBHYT } from "../pages/listHealthInsurance";
 import { listEthnics } from "../utils/constants";
-import { formatDate, formatMoneyVND, isValidCitizenId, isValidEmptyString, isValidSocialInsuranceNumber } from "../utils/validateString";
+import { formatDate, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
 
 interface Props {
   price: number,
   index: number,
   onClose: (index: number) => void;
+  refs: any
+  provinces: any
 }
 
 const UserBeneficiaryBHYTPage = (props: Props) => {
-  const { index, price, onClose } = props;
+  const { index, price, onClose, refs, provinces } = props;
 
-  const [socialInsuranceNumber, setSocialInsuranceNumber] = useState("");
+  const [socialInsuranceNumber, setSocialInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].socialInsuranceNumber);
+  const [healthInsuranceNumber, setHealthInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].healthInsuranceNumber);
   const [errors, setErrors] = useState<any>({});
-  const [citizenId, setCitizenId] = useState("");
-  const [photoCitizenFront, setPhotoCitizenFront] = useState("");
-  const [photoCitizenBack, setPhotoCitizenBack] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [dob, setDob] = useState("");
-  const [gender, setGender] = useState("");
-  const [ethnic, setEthnic] = useState("");
-  const [oldCardStartDate, setOldCardStartDate] = useState("");
-  const [oldCardEndDate, setOldCardEndDate] = useState("");
-  const [newCardEndDate, setNewCardEndDate] = useState("");
-  const [newCardStartDate, setNewCardStartDate] = useState("");
+  const [citizenId, setCitizenId] = useState(registerInfoBHYT["listInsuredPerson"][index].citizenId);
+  const [photoCitizenFront, setPhotoCitizenFront] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenFront);
+  const [photoCitizenBack, setPhotoCitizenBack] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenBack);
+  const [fullName, setFullName] = useState(registerInfoBHYT["listInsuredPerson"][index].fullName);
+  const [dob, setDob] = useState(
+    registerInfoBHYT["listInsuredPerson"][index].doB == "" ?
+      "" :
+      formatTimeSql(registerInfoBHYT["listInsuredPerson"][index].doB)
+  );
+
+  const [gender, setGender] = useState(registerInfoBHYT["listInsuredPerson"][index].gender);
+  const [ethnic, setEthnic] = useState(registerInfoBHYT["listInsuredPerson"][index].ethnic);
+  const [oldCardStartDate, setOldCardStartDate] = useState(
+    registerInfoBHYT["listInsuredPerson"][index].oldCardStartDate == "" ?
+      "" :
+      formatTimeSql(registerInfoBHYT["listInsuredPerson"][index].oldCardStartDate)
+  );
+  const [oldCardEndDate, setOldCardEndDate] = useState(
+    registerInfoBHYT["listInsuredPerson"][index].oldCardEndDate == "" ? "" :
+      formatTimeSql(registerInfoBHYT["listInsuredPerson"][index].oldCardEndDate)
+  );
+  const [newCardEndDate, setNewCardEndDate] = useState(
+    registerInfoBHYT["listInsuredPerson"][index].newCardEndDate == "" ? "" :
+      formatTimeSql(registerInfoBHYT["listInsuredPerson"][index].newCardEndDate)
+  );
+  const [newCardStartDate, setNewCardStartDate] = useState(
+    registerInfoBHYT["listInsuredPerson"][index].newCardStartDate == "" ? "" :
+      formatTimeSql(registerInfoBHYT["listInsuredPerson"][index].newCardStartDate)
+  );
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
-  const [insuranceProvinceId, setInsuranceProvinceId] = useState("");
-  const [medicalProvinceId, setMedicalProvinceId] = useState("");
+  const [medicalProvinceId, setMedicalProvinceId] = useState(registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId.toString());
+  const [hospitalId, setHospitalId] = useState(registerInfoBHYT["listInsuredPerson"][index].hospitalId.toString());
+  const [listHospitals, setListHospitals] = useState<any>([])
+
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  console.log();
+
 
   const calculatePrice = () => {
     switch (index) {
@@ -47,6 +74,23 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         return `${formatMoneyVND(price * 0.4)} đ`
     }
   }
+
+  useEffect(() => {
+    setListHospitals([])
+    if (medicalProvinceId != "0") {
+      axios
+        .get(
+          `https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${medicalProvinceId}`
+        ).then((response) => {
+          setListHospitals(response.data.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          setListHospitals([])
+          console.error(error);
+        });
+    }
+  }, [medicalProvinceId])
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -152,6 +196,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             type="text"
             id="socialInsuranceNumber"
             value={socialInsuranceNumber}
+            ref={refs.socialInsuranceNumber}
             maxLength={10}
             onChange={(e) => {
               const value = e.target.value;
@@ -161,7 +206,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
               if (value.length > 0) {
                 if (!isValidSocialInsuranceNumber(value)) {
-                  setErrors({ ...errors, ...{ "socialInsuranceNumber": "Số BHYT không hợp lệ" } })
+                  setErrors({ ...errors, ...{ "socialInsuranceNumber": "Số BHXH không hợp lệ" } })
                 } else {
                   setErrors({ ...errors, ...{ "socialInsuranceNumber": null } })
                 }
@@ -209,11 +254,12 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
-          Số CCCD
+          Số CCCD <samp className="text-red-600">*</samp>
         </label>
         <input
           type="text"
           id="name"
+          ref={refs.citizenId}
           maxLength={12}
           value={citizenId}
           onChange={(e) => {
@@ -246,7 +292,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
       <div className="p-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
         <h3 className="text-[#0076B7] text-lg font-medium">Tải ảnh CCCD</h3>
         <div className="flex flex-row gap-2 ">
-          <div className="flex flex-row gap-2">
+          <div ref={refs.photoCitizenFront} className="flex flex-row gap-2">
             <div className="flex flex-col gap-2 " onClick={() => handleCardClick(frontImageInputRef)}>
               <div className="bg-[#F5F5F5]  rounded-lg p-[9px] card-cccd">
                 <div className="icon-1">
@@ -314,7 +360,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               />
             </div>
 
-            <div className="flex flex-col gap-2 " onClick={() => handleCardClick(backImageInputRef)}>
+            <div ref={refs.photoCitizenBack} className="flex flex-col gap-2 " onClick={() => handleCardClick(backImageInputRef)}>
               <div className="flex flex-col gap-2">
                 <div className="bg-[#F5F5F5]  rounded-lg p-[9px] card-cccd">
                   <div className="icon-1">
@@ -391,7 +437,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     )
   }
 
-
   const renderFullName = () => {
     return (
       <div>
@@ -400,7 +445,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         </label>
         <input
           type="text"
-          id="fullName"
+          ref={refs.fullName}
           value={fullName}
           onChange={(e) => {
             const value = e.target.value;
@@ -423,6 +468,42 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     )
   }
 
+  const renderInputBHYT = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal pb-2 text-gray-900">
+          Mã BHYT cũ <samp className="text-red-600">*</samp>
+        </label>
+        <input
+          type="text"
+          maxLength={15}
+          ref={refs.healthInsuranceNumber}
+          value={healthInsuranceNumber}
+          onChange={(e) => {
+            const value = e.target.value;
+
+            setHealthInsuranceNumber(value);
+            registerInfoBHYT["listInsuredPerson"][index].healthInsuranceNumber = value;
+
+            if (value.length > 0) {
+              if (!isValidHealthInsuranceNumber(value)) {
+                setErrors({ ...errors, ...{ "healthInsuranceNumber": "Mã BHYT không hợp lệ" } })
+              } else {
+                setErrors({ ...errors, ...{ "healthInsuranceNumber": null } })
+              }
+            } else {
+              setErrors({ ...errors, ...{ "healthInsuranceNumber": null } })
+            }
+          }}
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="---"
+          required
+        />
+        {errors.healthInsuranceNumber && <div className="mt-2 text-red-500">{errors.healthInsuranceNumber}</div>}
+      </div>
+    )
+  }
+
   const renderDob = () => {
     return (
       <div>
@@ -431,8 +512,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         </label>
         <input
           type="date"
-          id="date"
+          ref={refs.dob}
           value={dob}
+          max={new Date().toISOString().split("T")[0]}
           onChange={(e) => {
             const value = e.target.value;
 
@@ -457,7 +539,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           Giới tính <samp className="text-red-600">*</samp>
         </label>
         <select
-          id="gender"
+          ref={refs.gender}
           value={gender}
           onChange={(e) => {
             const value = e.target.value;
@@ -484,7 +566,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           Đân tộc <samp className="text-red-600">*</samp>
         </label>
         <select
-          id="ethnic"
+          ref={refs.ethnic}
           value={ethnic}
           onChange={(e) => {
             const value = e.target.value;
@@ -505,8 +587,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     )
   }
 
-
-
   const renderBoxOldCard = () => {
     return (
       <div className="flex flex-col">
@@ -521,7 +601,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             </label>
             <input
               type="date"
-              id="oldCardStartDate"
+              ref={refs.oldCardStartDate}
               value={oldCardStartDate}
               onChange={(e) => {
                 const value = e.target.value;
@@ -538,11 +618,12 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
           <div>
             <label className="block text-sm font-normal pb-2 text-gray-900">
-              Ngày hết hiệu lực
+              Ngày hết hiệu lực <samp className="text-red-600">*</samp>
             </label>
             <input
               type="date"
               id="oldCardEndDate"
+              ref={refs.oldCardEndDate}
               value={oldCardEndDate}
               onChange={(e) => {
                 const value = e.target.value;
@@ -581,7 +662,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             </label>
             <input
               type="date"
-              id="newCardStartDate"
+              ref={refs.newCardStartDate}
               value={newCardStartDate}
               onChange={(e) => {
                 const value = e.target.value;
@@ -598,11 +679,11 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
           <div>
             <label className="block text-sm font-normal pb-2 text-gray-900">
-              Ngày hết hiệu lực
+              Ngày hết hiệu lực <samp className="text-red-600">*</samp>
             </label>
             <input
               type="date"
-              id="phone"
+              ref={refs.newCardEndDate}
               value={newCardEndDate}
               onChange={(e) => {
                 const value = e.target.value;
@@ -631,16 +712,23 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           <samp className="text-red-600"> *</samp>
         </label>
         <select
-          id="countries"
+          ref={refs.medicalProvinceId}
+          value={medicalProvinceId}
           onChange={(e) => {
             const value = e.target.value;
 
-            registerInfoBHYT["listInsuredPerson"][index].insuranceProvinceId = parseInt(value);
+            setMedicalProvinceId(value)
+
+            registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId = parseInt(value);
           }}
           className="bg-gray-50 border border-gray-300  text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
         >
-          <option selected>Chọn tỉnh thành phố</option>
-          <option value="1047">Fix Cứng</option>
+          <option selected value="0">Chọn tỉnh thành phố</option>
+          {provinces.map((province) => (
+            <option key={province.id} value={province.id}>
+              {province.name}
+            </option>
+          ))}
         </select>
 
         {errors.provinceRegister && <div className="mt-2 text-red-500">{errors.provinceRegister}</div>}
@@ -656,15 +744,23 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           <samp className="text-red-600"> *</samp>
         </label>
         <select
-          id="hispital"
+          ref={refs.hospitalId}
+          value={hospitalId}
           onChange={(e) => {
             const value = e.target.value;
-            registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId = parseInt(value);
+
+            setHospitalId(value)
+
+            registerInfoBHYT["listInsuredPerson"][index].hospitalId = parseInt(value);
           }}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
         >
           <option selected>Chọn bệnh viện</option>
-          <option value="1001">Fix cứng</option>
+          {listHospitals.map((hospital) => (
+            <option key={hospital.id} value={hospital.id}>
+              {hospital.name}
+            </option>
+          ))}
         </select>
 
         {errors.hispitalRegister && <div className="mt-2 text-red-500">{errors.hispitalRegister}</div>}
@@ -695,6 +791,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
       {renderGender()}
 
       {renderEthnic()}
+
+      {renderInputBHYT()}
 
       {renderLine()}
 

@@ -18,6 +18,7 @@ export const formatDate = (date: any) => {
     return ''
   }
 }
+
 export const formatDateToUpdateSQL = (date: Date) => {
   try {
     let year = date.getFullYear();
@@ -58,6 +59,15 @@ export const formatTime = (dates: string) => {
   }
   return ''
 }
+
+export const formatTimeSql = (dates: string) => {
+  var time = dates.split('/')
+  if (time) {
+    return `${time[2]}-${time[1]}-${time[0]}`
+  }
+  return ''
+}
+
 
 export const isValidEmptyString = (data: string) => {
   if (data.length === 0 || data === "" || data === undefined) {
@@ -108,7 +118,41 @@ export const isValidSocialInsuranceNumber = (data: string) => {
   return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
 }
 
+export const isValidHealthInsuranceNumber = (data: string) => {
+  const socialInsuranceNumberCheck = /^[0-9]{15}$/;
+  return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
+}
+
+
 export const isValidCitizenId = (data: string) => {
   const citizenIdCheck = /^[0-9]{12}$/;
   return /^\d+$/.test(data) && citizenIdCheck.test(data);
+}
+
+export const compareTwoDateString = (dateString1, dateString2) => {
+
+  // Hàm chuyển đổi chuỗi ngày theo định dạng MM/DD/YYYY sang YYYY-MM-DD
+  function convertDateFormat(dateString) {
+    const parts = dateString.split('/');
+    return parts[2] + '-' + parts[1] + '-' + parts[0];
+  }
+
+  // Chuyển đổi các chuỗi ngày sang định dạng mới
+  const formattedDateString1 = convertDateFormat(dateString1);
+  const formattedDateString2 = convertDateFormat(dateString2);
+
+  // Tạo các đối tượng Date
+  const date1 = new Date(formattedDateString1);
+  const date2 = new Date(formattedDateString2);
+
+  // So sánh
+  if (date1 > date2) {
+    // Ngày 1 sau ngày 2
+    return 2;
+  } else if (date1 < date2) {
+    // Ngày 1 trước ngày 2
+    return 1;
+  } else {
+    return 0;
+  }
 }

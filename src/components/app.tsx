@@ -90,9 +90,9 @@ const MyApp = () => {
                   }
                 />
                 <Route
-                  path="/bill-pay-bhyt/"
+                  path="/bill-pay-bhyt/:id"
                   element={
-                    <BillPayBHYTPage w={""} h={""} url={""} />
+                    <BillPayBHYTPage />
                   }
                 />
                 <Route

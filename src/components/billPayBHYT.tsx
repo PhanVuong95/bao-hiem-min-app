@@ -1,12 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Widthheight } from "../models";
-import FooterPayPage from "./footerPay";
-import { SpecificContext } from "./SpecificContext";
 import { Link } from "react-router-dom";
 import HeaderBase from "./headerBase";
+import { useParams } from "react-router-dom";
+import { formatDate, formatMoneyVND, formatPhoneNumber } from "../utils/validateString";
 
-const BillPayBHYTPage: React.FC<Widthheight> = ({ url }) => {
+const BillPayBHYTPage: React.FunctionComponent = () => {
+  const { id } = useParams();
+  const [billPay, setBillPay] = useState<any>();
+  const [loading, setLoading] = useState(true)
+
   const [provinceName, setProvinceName] = useState("");
   const [districtName, setDistrictName] = useState("");
   const [wardeName, setWardeName] = useState("");
@@ -15,38 +18,219 @@ const BillPayBHYTPage: React.FC<Widthheight> = ({ url }) => {
   const handleCheckboxChange = (value) => {
     setSelectedCheckbox(value);
   };
+
   useEffect(() => {
     axios
-      .get(
-        "https://baohiem.dion.vn/province/api/detail/" +
-        0
-      )
+      .get("https://baohiem.dion.vn/insuranceorder/api/detail-by-vm/" + id)
       .then((response) => {
-        setProvinceName(response.data.data[0].name);
+        setBillPay(response.data.data[0]);
+        setLoading(false);
+        console.log(response.data);
+
       })
       .catch((error) => {
         console.error(error);
+        setLoading(false);
       });
-    axios
-      .get(
-        "https://baohiem.dion.vn/district/api/detail/" +
-        0
-      )
-      .then((response) => {
-        setDistrictName(response.data.data[0].name);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    axios
-      .get("https://baohiem.dion.vn/ward/api/detail/" + 0)
-      .then((response) => {
-        setWardeName(response.data.data[0].name);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  }, [])
+
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       "https://baohiem.dion.vn/province/api/detail/" +
+  //       0
+  //     )
+  //     .then((response) => {
+  //       setProvinceName(response.data.data[0].name);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  //   axios
+  //     .get(
+  //       "https://baohiem.dion.vn/district/api/detail/" +
+  //       0
+  //     )
+  //     .then((response) => {
+  //       setDistrictName(response.data.data[0].name);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  //   axios
+  //     .get("https://baohiem.dion.vn/ward/api/detail/" + 0)
+  //     .then((response) => {
+  //       setWardeName(response.data.data[0].name);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
+
+  const boxBuyer = () => {
+    return (
+      <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
+        <h3 className="text-base font-medium text-[#0076B7]">
+          Người mua bảo hiểm
+        </h3>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Họ và tên</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
+              {billPay?.fullName ? billPay?.fullName.trim() : "Đang tải"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Email</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {billPay?.email ? billPay?.email.trim() : "Đang tải"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">
+              Số điện thoại
+            </p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
+              {billPay?.phone ? formatPhoneNumber(billPay?.phone.trim()) : "Đang tải"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Địa chỉ</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {`${billPay?.addressDetail ? billPay?.addressDetail.trim() : ""}, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${billPay?.districtName ? billPay?.districtName.trim() : ""} ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const boxBeneficiary = (item, index) => {
+    return (
+      <div className="p-4 bg-white rounded-xl flex flex-col gap-6 mt-4">
+        <h3 className="text-base font-medium text-[#0076B7]">
+          `Thông tin người số {index + 1} được bảo hiểm`
+        </h3>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Họ và tên</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
+              {item?.fullName.trim() == "" ? "Chưa cập nhật" : item?.fullName.trim()}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Ngày sinh</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {item?.doB.trim() == "" ? "Chưa cập nhật" : formatDate(item?.doB.trim())}
+            </p>
+          </div>
+        </div>
+
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Số CCCD</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {item?.citizenId.trim() == "" ? "Chưa cập nhật" : item?.citizenId.trim()}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Giới tính</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {item?.gender.trim() == "" ? "Chưa cập nhật" : item?.gender.trim()}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Mã số BHYT</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
+              {item?.healthInsuranceNumber.trim() == "" ? "Chưa cập nhật" : item?.healthInsuranceNumber.trim()}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">
+              Số tháng đóng
+            </p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {item?.monthInsured == 0 ? "Chưa cập nhật" : item?.monthInsured} tháng
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Bệnh viện đăng ký</p>
+          </div>
+          <div>
+            <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
+              {item?.hospitalName == 0 ? "Chưa cập nhật" : item?.hospitalName} -
+              {item?.medicalProvinceName == 0 ? "Chưa cập nhật" : item?.medicalProvinceName}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Phí bảo hiểm</p>
+          </div>
+          <div>
+            <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
+              {item?.price == 0 ? "Chưa cập nhật" : formatMoneyVND(item?.price)} vnđ
+            </p>
+          </div>
+        </div>
+      </div >
+    )
+  }
+
+  const line = () => {
+    return (
+      <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
+    )
+  }
+
   return (
     <div className="pt-20">
       <HeaderBase
@@ -54,168 +238,16 @@ const BillPayBHYTPage: React.FC<Widthheight> = ({ url }) => {
         title={"BHYT tự nguyện"}
       />
       <div className="page-1 flex flex-col gap-4 mb-4">
-        <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
-          <h3 className="text-base font-medium text-[#0076B7]">
-            Người mua bảo hiểm
-          </h3>
+        <div className="">
+          {boxBuyer()}
+          {line()}
+          {loading ? <div></div> :
+            billPay.listInsuredPerson.map((item, index) => {
+              return boxBeneficiary(item, index)
+            })}
 
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Họ và tên</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                {'Trần Đăng trung'}
-              </p>
-            </div>
-          </div>
+        </div >
 
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Email</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {'Trungtran@gmail.com'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">
-                Số điện thoại
-              </p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                {'0364 123 456'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Địa chỉ</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {'Số 8 Phạm Hùng, Mễ Trì, Nam Từ Liêm. Hà Nội'}
-              </p>
-            </div>
-          </div>
-
-          <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
-
-          <h3 className="text-base font-medium text-[#0076B7]">
-            Thông tin người được bảo hiểm
-          </h3>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Họ và tên</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                {'Trần Đăng trung'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Số CCCD</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {'015098005123'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Số BHXH</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                {'015098005123'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Ngày sinh</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {'Trần Đăng trung'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Giới tính</p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {'Nam'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Mức lương</p>
-            </div>
-            <div>
-              <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-                {'1.263.600'}
-                vnđ
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">
-                Ngân sách hỗ trợ
-              </p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-
-                vnđ
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">
-                Số tháng đóng
-              </p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                tháng
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">Phí bảo hiểm</p>
-            </div>
-            <div>
-              <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-                vnđ
-              </p>
-            </div>
-          </div>
-        </div>
         <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
           {/* <h3 className="text-[#0076B7] text-lg font-medium">
             Danh mục sản phẩm
@@ -258,7 +290,7 @@ const BillPayBHYTPage: React.FC<Widthheight> = ({ url }) => {
             <div className="flex gap-3">
               <input
                 type="checkbox"
-                className="relative appearance-none bg-white w-5 h-5 border rounded-full border-red-400 cursor-pointer checked:bg-[#0076B7]"
+                className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
                 checked={true}
                 onChange={() => handleCheckboxChange("vnpay")}
                 id="vnpay-checkbox"
@@ -297,13 +329,13 @@ const BillPayBHYTPage: React.FC<Widthheight> = ({ url }) => {
               Tổng thanh toán:
             </p>
             <h3 className="text-base font-medium text-[#0076B7]">
-              VND
+              {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} VND
             </h3>
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <Link
-              to={"/buill-detail/l"}
-              className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+              to={`/buill-detail/${id}`}
+              className="px-[20px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
             >
               Tiếp tục
             </Link>

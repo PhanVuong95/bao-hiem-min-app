@@ -1,26 +1,79 @@
-import React, { useEffect, useState } from "react";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "zmp-ui";
+import { Province } from "../models";
 import { registerInfoBHYT } from "../pages/listHealthInsurance";
-import { isValidEmail, isValidEmptyString, isValidFullName, isValidPhone } from "../utils/validateString";
+import { compareTwoDateString, formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../utils/validateString";
 import UserBeneficiaryBHYTPage from "./cardUserBeneficiaryBHYT";
 import UserBuyerPage from "./cardUserBuyer";
 import VoucherPage from "./cardVoucher";
 import HeaderBase from "./headerBase";
 
 const RegisterBHYT = ({ }) => {
-  const [beneficiaries, setBeneficiaries] = useState([{ id: 1 }]);
+
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [provinces, setProvinces] = useState<Province[]>([]);
+
+  const userBuyerPageRefs = {
+    phone: useRef<any>(null),
+    fullName: useRef<any>(null),
+    email: useRef<any>(null),
+    provinceId: useRef<any>(null),
+    districtId: useRef<any>(null),
+    wardId: useRef<any>(null),
+    addressDetail: useRef<any>(null),
+  };
+
+  const createNewBeneficiary = () => (
+    {
+      socialInsuranceNumber: React.createRef(),
+      healthInsuranceNumber: React.createRef(),
+      citizenId: React.createRef(),
+      photoCitizenFront: React.createRef(),
+      photoCitizenBack: React.createRef(),
+      fullName: React.createRef(),
+      dob: React.createRef(),
+      gender: React.createRef(),
+      ethnic: React.createRef(),
+      oldCardStartDate: React.createRef(),
+      oldCardEndDate: React.createRef(),
+      newCardEndDate: React.createRef(),
+      newCardStartDate: React.createRef(),
+      insuranceProvinceId: React.createRef(),
+      medicalProvinceId: React.createRef(),
+      hospitalId: React.createRef(),
+    }
+  )
+
+  const policyTerm1 = useRef(false);
+  const policyTerm2 = useRef(false);
+
+  useEffect(() => {
+    axios
+      .get("https://baohiem.dion.vn/province/api/list")
+      .then((response) => {
+        setProvinces(response.data.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  const [beneficiaries, setBeneficiaries] = useState(Array.from({ length: registerInfoBHYT["listInsuredPerson"].length }, () => createNewBeneficiary()));
 
   const addBeneficiary = () => {
-    setBeneficiaries([...beneficiaries, { id: beneficiaries.length + 1 }]);
+
+    setBeneficiaries([...beneficiaries, createNewBeneficiary()]);
+
     const itemBeneficiary = {
       "id": 0,
-      "insuranceProvinceId": 0,
+      "insuranceProvinceId": null,
       "medicalProvinceId": 0,
       "socialInsuranceNumber": "",
+      "healthInsuranceNumber": "",
       "citizenId": "",
       "photoCitizenFront": "",
       "photoCitizenBack": "",
@@ -34,26 +87,109 @@ const RegisterBHYT = ({ }) => {
       "oldCardStartDate": "",
       "oldCardEndDate": "",
       "newCardEndDate": "",
-      "newCardStartDate": ""
+      "newCardStartDate": "",
+      "price": 0,
+      "hospitalId": 0
     }
 
     registerInfoBHYT['listInsuredPerson'].push(itemBeneficiary)
   };
 
+
+  const scrollToElement = (input, boxNumber, duration) => {
+    switch (boxNumber) {
+      case 1:
+        if (userBuyerPageRefs[input] && userBuyerPageRefs[input].current) {
+          userBuyerPageRefs[input].current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            userBuyerPageRefs[input].current.focus();
+          }, duration)
+        }
+        break;
+      case 2:
+        if (duration != 0)
+          input.current.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          input.current.focus();
+        }, duration)
+        break;
+      default:
+        break;
+    }
+
+  };
+
+  const calculatePrice = () => {
+    let finalPrice = 0;
+    const BHYTprice = state.data.price;
+
+    for (let index = 0; index < beneficiaries.length; index++) {
+      let price = 0;
+      switch (index) {
+        case 0:
+          price = BHYTprice;
+          break;
+        case 1:
+          price = BHYTprice * 0.7;
+          break;
+        case 2:
+          price = BHYTprice * 0.6;
+          break;
+        case 3:
+          price = BHYTprice * 0.5;
+          break;
+        case 4:
+          price = BHYTprice * 0.4;
+          break;
+        default:
+          price = BHYTprice * 0.4;
+          break;
+      }
+      finalPrice += price
+    }
+    return finalPrice;
+  }
+
+  const calculateInsuredPersonPrice = (index) => {
+    const BHYTprice = state.data.price;
+
+    switch (index) {
+      case 0:
+        return BHYTprice;
+      case 1:
+        return BHYTprice * 0.7;
+      case 2:
+        return BHYTprice * 0.6;
+      case 3:
+        return BHYTprice * 0.5;
+      case 4:
+        return BHYTprice * 0.4;
+      default:
+        return BHYTprice * 0.4;
+    }
+
+  }
+
   const validateForm = () => {
     console.log(registerInfoBHYT);
+
+    registerInfoBHYT['finalPrice'] = calculatePrice()
+    registerInfoBHYT["insuranceId"] = state.data.insuranceTypeId
 
     // Validate số điện thoại
     if (!isValidEmptyString(registerInfoBHYT["phone"])) {
       toast.warn(
         "Số điện thoại không được để trống",
       );
+      scrollToElement("phone", 1, 500)
+
       return false;
     }
     if (!isValidPhone(registerInfoBHYT["phone"])) {
       toast.warn(
         "Số điện thoại không hợp lệ",
       );
+      scrollToElement("phone", 1, 500)
       return false;
     }
 
@@ -62,6 +198,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Họ và tên không được để trống",
       );
+      scrollToElement("fullName", 1, 500)
       return false;
     }
 
@@ -69,6 +206,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Họ và tên không hợp lệ",
       );
+      scrollToElement("fullName", 1, 500)
       return false;
     }
 
@@ -78,6 +216,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Email không hợp lệ",
         );
+        scrollToElement("email", 1, 500)
         return false;
       }
     }
@@ -87,6 +226,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Vui lòng lựa chọn Thành phố",
       );
+      scrollToElement("provinceId", 1, 500)
       return false;
     }
 
@@ -94,6 +234,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Vui lòng lựa chọn Quận huyện",
       );
+      scrollToElement("districtId", 1, 500)
       return false;
     }
 
@@ -101,6 +242,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Vui lòng lựa chọn Phường xã",
       );
+      scrollToElement("wardId", 1, 500)
       return false;
     }
 
@@ -108,13 +250,198 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Địa chỉ cụ thể không được để trống",
       );
+      scrollToElement("addressDetail", 1, 500)
       return false;
     }
 
-    console.log(registerInfoBHYT);
+    for (let index = 0; index < registerInfoBHYT['listInsuredPerson'].length; index++) {
+      // Update thông tin còn thiếu
+      registerInfoBHYT["listInsuredPerson"][index].supportBudget = 0
+      registerInfoBHYT["listInsuredPerson"][index].wage = 0
+      registerInfoBHYT["listInsuredPerson"][index].monthInsured = state.data.monthDuration
+      registerInfoBHYT["listInsuredPerson"][index].price = calculateInsuredPersonPrice(index)
+
+      // if (registerInfoBHYT['listInsuredPerson'][index].socialInsuranceNumber == ""
+      //   && registerInfoBHYT['listInsuredPerson'][index].citizenId == "") {
+      //   toast.warn(
+      //     "Số bảo hiểm y tế hoặc CCCD không được để trống",
+      //   );
+      //   scrollToElement(beneficiaries[index].socialInsuranceNumber, 2, 500)
+      //   return false;
+      // }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].socialInsuranceNumber != ""
+        && !isValidSocialInsuranceNumber(registerInfoBHYT['listInsuredPerson'][index].socialInsuranceNumber)) {
+        toast.warn(
+          "Số BHYT không hợp lệ",
+        );
+        scrollToElement(beneficiaries[index].socialInsuranceNumber, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].citizenId == "") {
+        toast.warn(
+          "Số căn cước công dân không hợp lệ",
+        );
+        scrollToElement(beneficiaries[index].citizenId, 2, 500)
+        return false;
+      }
+
+      if (!isValidCitizenId(registerInfoBHYT['listInsuredPerson'][index].citizenId)) {
+        toast.warn(
+          "Số căn cước công dân không hợp lệ",
+        );
+        scrollToElement(beneficiaries[index].citizenId, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].citizenId != ""
+        && registerInfoBHYT['listInsuredPerson'][index].photoCitizenFront == "") {
+        toast.warn(
+          "Bạn cần tải CCCD mặt trước",
+        );
+        scrollToElement(beneficiaries[index].photoCitizenFront, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].citizenId != ""
+        && registerInfoBHYT['listInsuredPerson'][index].photoCitizenBack == "") {
+        toast.warn(
+          "Bạn cần tải CCCD mặt sau",
+        );
+        scrollToElement(beneficiaries[index].photoCitizenBack, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].fullName == "") {
+        toast.warn(
+          "Họ và tên không được để trống",
+        );
+        scrollToElement(beneficiaries[index].fullName, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].doB == "") {
+        toast.warn(
+          "Ngày sinh không được để trống",
+        );
+        scrollToElement(beneficiaries[index].dob, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].gender == "") {
+        toast.warn(
+          "Giới tính không được để trống",
+        );
+        scrollToElement(beneficiaries[index].gender, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].ethnic == "") {
+        toast.warn(
+          "Dân tộc không được để trống",
+        );
+        scrollToElement(beneficiaries[index].ethnic, 2, 500)
+        return false;
+      }
+      // ///////
+      if (registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber == "") {
+        toast.warn(
+          "Mã BHYT cũ không được để trống",
+        );
+        scrollToElement(beneficiaries[index].healthInsuranceNumber, 2, 500)
+        return false;
+      }
+
+      if (!isValidHealthInsuranceNumber(registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber)) {
+        toast.warn(
+          "Mã BHYT cũ không hợp lệ",
+        );
+        scrollToElement(beneficiaries[index].healthInsuranceNumber, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].oldCardStartDate == "") {
+        toast.warn(
+          "Ngày hiệu lực của thẻ cũ không được để trống",
+        );
+        scrollToElement(beneficiaries[index].oldCardStartDate, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].oldCardEndDate == "") {
+        toast.warn(
+          "Ngày hết hiệu lực của thẻ cũ không được để trống",
+        );
+        scrollToElement(beneficiaries[index].oldCardEndDate, 2, 500)
+        return false;
+      }
 
 
-    // return true;
+      if (compareTwoDateString(
+        registerInfoBHYT['listInsuredPerson'][index].oldCardStartDate,
+        registerInfoBHYT['listInsuredPerson'][index].oldCardEndDate
+      ) != 1) {
+        toast.warn(
+          "Ngày hiệu lực phải trước ngày hết hiệu lực",
+        );
+        scrollToElement(beneficiaries[index].oldCardEndDate, 2, 500)
+        return false;
+      }
+
+
+      if (registerInfoBHYT['listInsuredPerson'][index].newCardStartDate == "") {
+        toast.warn(
+          "Ngày hiệu lực của thẻ mới không được để trống",
+        );
+        scrollToElement(beneficiaries[index].newCardStartDate, 2, 0)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].newCardEndDate == "") {
+        toast.warn(
+          "Ngày hết hiệu lực của thẻ mới không được để trống",
+        );
+        scrollToElement(beneficiaries[index].newCardEndDate, 2, 0)
+        return false;
+      }
+
+      if (compareTwoDateString(
+        registerInfoBHYT['listInsuredPerson'][index].newCardStartDate,
+        registerInfoBHYT['listInsuredPerson'][index].newCardEndDate
+      ) != 1) {
+        toast.warn(
+          "Ngày hiệu lực phải trước ngày hết hiệu lực",
+        );
+        scrollToElement(beneficiaries[index].newCardEndDate, 2, 500)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].medicalProvinceId == 0) {
+        toast.warn(
+          "Thành phố đăng ký khám chữa bệnh không được để trống",
+        );
+        scrollToElement(beneficiaries[index].medicalProvinceId, 2, 0)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].hospitalId == 0) {
+        toast.warn(
+          "Bệnh viện đăng ký khám chữa bệnh không được để trống",
+        );
+        scrollToElement(beneficiaries[index].hospitalId, 2, 0)
+        return false;
+      }
+    }
+
+    if (!policyTerm2.current) {
+      toast.warn(
+        "Bạn cần chấp nhận điều khoản của chúng tôi",
+      );
+      return false;
+    }
+
+    return true;
   }
 
   const renderHeader = () => {
@@ -213,6 +540,9 @@ const RegisterBHYT = ({ }) => {
           <div className="flex gap-2">
             <input
               type="checkbox"
+              onChange={(e) => {
+                policyTerm1.current = !policyTerm1.current
+              }}
               className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
               id="unchecked-circular-checkbox"
             />
@@ -245,6 +575,9 @@ const RegisterBHYT = ({ }) => {
             <div className="flex gap-2">
               <input
                 type="checkbox"
+                onChange={(e) => {
+                  policyTerm2.current = !policyTerm2.current
+                }}
                 className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
                 id="unchecked-circular-checkbox"
               />
@@ -266,6 +599,69 @@ const RegisterBHYT = ({ }) => {
     )
   }
 
+  const onCreate = async (token) => {
+    const response = await axios.post(
+      "https://baohiem.dion.vn/insuranceorder/api/add-order",
+      registerInfoBHYT,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(response.data);
+    if (response.data.message == "CREATED" && response.data.status == "201") {
+      registerInfoBHYT["id"] = response.data.data[0]
+    }
+
+    toast.success(
+      "Đăng ký BBHYT tự nguyện thành công",
+    );
+
+    navigate(`/bill-pay-bhyt/${registerInfoBHYT["id"]}`)
+  }
+
+  const onUpdate = async (token) => {
+    const response = await axios.post(
+      "https://baohiem.dion.vn/insuranceorder/api/update-order",
+      registerInfoBHYT,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(response.data);
+    if (response.data.message == "CREATED" && response.data.status == "201") {
+      registerInfoBHYT["id"] = response.data.data[0]
+    }
+
+    toast.success(
+      "Cập nhật thành công",
+    );
+
+    navigate(`/bill-pay-bhyt/${registerInfoBHYT["id"]}`)
+  }
+
+  const onSubmitFormData = async () => {
+    const token = localStorage.token;
+    try {
+      if (registerInfoBHYT["id"] == 0) {
+        onCreate(token)
+      } else {
+        onUpdate(token)
+      }
+    } catch (error) {
+      toast.error(
+        "Đăng ký bBHYT tự nguyện thất bại, vui lòng thử lại sau",
+      );
+    }
+  }
+
   const renderFooter = () => {
     return (
       <div className="page-2 bg-white">
@@ -275,14 +671,15 @@ const RegisterBHYT = ({ }) => {
               Tổng thanh toán:
             </p>
             <h3 className="text-base font-medium text-[#0076B7]">
-              18.084.000 VND
+              {formatMoneyVND(calculatePrice())} VND
             </h3>
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <button type="button"
               onClick={() => {
+                // navigate(`/bill-pay-bhyt/1097`)
                 if (validateForm()) {
-                  navigate('/bill-pay-bhyt/')
+                  onSubmitFormData();
                 }
               }}
               className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
@@ -299,7 +696,10 @@ const RegisterBHYT = ({ }) => {
     <div className="pt-20">
       {renderHeader()}
       <div className="page-1 flex flex-col gap-4">
-        <UserBuyerPage data={state.data} />
+        <div >
+          <UserBuyerPage data={state.data} refs={userBuyerPageRefs} />
+        </div>
+
         {beneficiaries.map((beneficiary, index) => (
           <UserBeneficiaryBHYTPage
             index={index}
@@ -307,8 +707,11 @@ const RegisterBHYT = ({ }) => {
             onClose={(index) => {
               beneficiaries.splice(index, 1);
               setBeneficiaries([...beneficiaries]);
+
+              registerInfoBHYT['listInsuredPerson'].splice(index, 1);
             }}
-            key={beneficiary.id}
+            provinces={provinces}
+            refs={beneficiary}
           />
         ))}
 

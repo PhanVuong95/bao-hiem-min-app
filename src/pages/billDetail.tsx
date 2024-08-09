@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import HeaderBase from "../components/headerBase";
 import { PulseLoader } from "react-spinners";
 import { saveImageToGallery } from "zmp-sdk";
+
 const BuillDetailPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -113,7 +114,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     try {
       const response = await axios.post(
         "https://baohiem.dion.vn/insuranceorder/api/create-payment?orderId=" +
-          id,
+        id,
         {
           headers: {
             "Content-Type": "application/json",
@@ -200,10 +201,23 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
       </>
     );
   }
+
+  const switchPage = () => {
+    switch (orderDetail?.insuranceId) {
+      case 1001:
+        return navigate("/history-unpaid/" + orderDetail.id)
+      case 1002:
+        return navigate("/history-unpaid/" + orderDetail.id)
+      default:
+        break;
+    }
+  }
+
+
   return (
     <>
       <HeaderBase isHome={false} title={"Chi tiết thanh toán"} />
-      {isPaymentSuccessful && (
+      {true && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg text-center w-4/5">
             <svg
@@ -231,11 +245,11 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </svg>
             <h2 className="text-lg font-bold">Thanh toán thành công</h2>
             <p>
-              Cảm ơn bạn tham gia <br /> Bảo hiểm Xã hội tự nguyện
+              Cảm ơn bạn tham gia <br /> {orderDetail?.insuranceName}
             </p>
             <button
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-              onClick={() => navigate("/history-unpaid/" + orderDetail.id)} // Điều hướng về trang chi tiết
+              onClick={() => switchPage()} // Điều hướng về trang chi tiết
             >
               Xem chi tiết
             </button>
