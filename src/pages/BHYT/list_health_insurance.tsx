@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { PulseLoader } from "react-spinners";
 import CardProductBHYT from "../../components/cardProductBHYT";
 import HeaderBase from "../../components/headerBase";
-import SelectCategory from "../../components/selectCategory";
+
 
 export let registerInfoBHYT = {
   "id": 0,
@@ -152,24 +153,36 @@ const ListHealthInsurance: React.FunctionComponent = () => {
       });
   }, []);
 
+  if (isLoading) {
+    return (
+      <>
+        <HeaderBase
+          isHome={false}
+          title={"BHYT tự nguyện"}
+        />
+        <div className="fixed inset-0 flex items-center justify-center">
+          <PulseLoader size={15} loading={true} color="#0076B7" />
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="pt-20">
       <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
       <div className="flex flex-col gap-[16px] px-4 py-[15px]">
         {/* <SelectCategory /> */}
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 pt-1">
           {/* Danh sách bảo hiểm y tế tự nguyện */}
-          {isLoading
-            ? "Loading"
-            : listProduct.map((item: any) => {
-              return (
-                <CardProductBHYT
-                  key={`${item?.id}_card_product_bhyt`}
-                  url={"/register-BHYT"}
-                  data={item}
-                />
-              );
-            })}
+          {listProduct.map((item: any) => {
+            return (
+              <CardProductBHYT
+                key={`${item?.id}_card_product_bhyt`}
+                url={"/register-BHYT"}
+                data={item}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

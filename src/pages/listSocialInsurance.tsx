@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import HeaderBase from "../components/headerBase";
 import { SpecificContext } from "../components/SpecificContext";
+import logo from "../../assets-src/logo1.png"
 
 const ListSocialInsurance: React.FunctionComponent = (props) => {
   const specificContext = useContext(SpecificContext);
@@ -70,16 +71,14 @@ const ListSocialInsurance: React.FunctionComponent = (props) => {
   return (
     <div className="">
       <HeaderBase isHome={false} title={"BHXH tự nguyện"} />
-      <div className="px-4 mt-8 pt-[60px] gap-[16px] py-[24px] flex flex-col ">
+      <div className="px-4 mt-8 pt-[68px] gap-[16px] py-[24px] flex flex-col ">
         {/* <SelectCategory /> */}
         <div className="flex flex-col gap-8">
           {/* <CardProduct w={""} h={""} url={"/register-BHXH"} /> */}
           <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
             <div className="flex gap-[10px]">
-              <img
-                className="object-cover w-[76px] h-[76px]"
-                src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png"
-              />
+              <img src={logo} className="w-20 h-20" />
+
               <div className="title-product flex flex-col">
                 <h3 className="text-[#0076B7] text-lg font-medium">
                   {insurance.name}

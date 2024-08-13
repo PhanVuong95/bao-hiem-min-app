@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "zmp-ui";
 import { formatMoneyVND } from "../utils/validateString";
+import logo from "../../assets-src/logo1.png"
 
 const CardProductBHYT = ({ url, data }) => {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ const CardProductBHYT = ({ url, data }) => {
   return (
     <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
       <div className="flex gap-[10px]">
-        <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+        <img src={logo} className="w-20 h-20" />
         <div className="title-product flex flex-col">
           <h3 className="text-[#0076B7] text-lg font-medium">
             {data?.name}

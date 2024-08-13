@@ -40,7 +40,6 @@ export const formatDateToUpdateSQL = (date: Date) => {
   }
 }
 
-
 export const removeUndefinedField = (params: object) => {
   Object.keys(params).forEach(key => {
     if (typeof params[key] === 'undefined') {
@@ -124,9 +123,16 @@ export const isValidSocialInsuranceNumber = (data: string) => {
 }
 
 export const isValidHealthInsuranceNumber = (data: string) => {
-  const socialInsuranceNumberCheck = /^[0-9]{15}$/;
+  const socialInsuranceNumberCheck = /^[0-9A-Za-z]{15}$/;
   return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
 }
+
+
+export const isValidOldHealthInsuranceNumber = (data: string) => {
+  const socialInsuranceNumberCheck = /^[A-Za-z]{2}[0-9]{13}$/;
+  return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
+}
+
 
 
 export const isValidCitizenId = (data: string) => {

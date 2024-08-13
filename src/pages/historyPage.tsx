@@ -12,7 +12,7 @@ const HistoryPage: React.FunctionComponent = (props) => {
         onBack={() => navigate("/")}
         title={"Nộp BHXH"}
       />
-      <div className="bg-white page min-h-[100vh] flex flex-col gap-4 !pt-[90px]">
+      <div className="bg-white page min-h-[100vh] flex flex-col gap-4 !pt-[95px]">
         <Link to="/lists-history">
           <div className="flex flex-row p-4  link-butoon ">
             <div className="flex items-center justify-center gap-4 ">

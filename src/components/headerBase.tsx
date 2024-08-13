@@ -58,7 +58,7 @@ const HeaderBase = (props: Props) => {
               </button>
             )}
           </div>
-          <div className="text-[#ffffff] ml-3 font-medium text-lg line-clamp-1">
+          <div className="text-[#ffffff] items-center ml-3 font-medium text-lg line-clamp-1">
             {isHome ? "Bảo hiểm Việt" : title}
           </div>
         </div>

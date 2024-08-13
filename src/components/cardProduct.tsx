@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Widthheight } from "../models";
+import logo from "../../assets-src/logo1.png"
 
 const CardProduct: React.FC<Widthheight> = ({ url }) => {
   return (
     <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
       <div className="flex gap-[10px]">
-        <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+        <img src={logo} className="w-20 h-20" />
         <div className="title-product flex flex-col">
           <h3 className="text-[#0076B7] text-lg font-medium">
             BH Xã Hội Tự nguyện

@@ -539,27 +539,6 @@ const RegisterBHYT = ({ }) => {
               </li>
             </ul>
           </div>
-          <div className="flex gap-2">
-            <input
-              type="checkbox"
-              onChange={(e) => {
-                policyTerm1.current = !policyTerm1.current
-              }}
-              className="relative appearance-none bg-white w-5 h-5 border rounded-full border-gray-400 cursor-pointer checked:bg-[#0076B7]"
-              id="unchecked-circular-checkbox"
-            />
-            <label
-              htmlFor="unchecked-circular-checkbox"
-              className="text-sm font-normal text-[#000] w-[96%]"
-            >
-              Tôi cam đoan răng tất cả những lời khai trên là đúng và đã hiểu
-              rõ
-              <strong className="text-[#0076B7] font-bold">
-                {" "}
-                Chính sách và điều khoản
-              </strong>
-            </label>
-          </div>
 
           <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
 
@@ -587,7 +566,7 @@ const RegisterBHYT = ({ }) => {
                 htmlFor="unchecked-circular-checkbox"
                 className="text-sm font-normal text-[#000] w-[96%]"
               >
-                Tôi cam đoan răng tất cả những lời khai trên là đúng và đã
+                Tôi cam đoan rằng tất cả những lời khai trên là đúng và đã
                 hiểu rõ
                 <strong className="text-[#0076B7] font-bold">
                   {" "}
