@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { getUserInfo } from "zmp-sdk/apis";
 import { useRecoilValue } from "recoil";
 import { userState } from "../state";
 
@@ -8,22 +9,26 @@ import HeaderPage from "../components/headerPage";
 import CardNewPage from "../components/cardNew";
 import { Link } from "react-router-dom";
 import HeaderBase from "../components/headerBase";
+import { ProfileContext } from "../components/userProfileContext";
 
 const HomePage: React.FunctionComponent = () => {
   const user = useRecoilValue(userState);
+  const profieContext = useContext(ProfileContext);
+
+  const { userProfile, setUserProfile } = profieContext;
+
+  console.log("userProfile", userProfile);
 
   return (
     <div className="home-page min-h-[100vh] pb-[120px] pt-[80px]">
       <div className="">
-        <HeaderBase
-          isHome={true}
-        />
+        <HeaderBase isHome={true} />
       </div>
 
       <div className="banner-top h-full">
         <img src="https://dion.vn/wp-content/uploads/2024/07/image-1001.png" />
         <div className="flex justify-between items-center user-home">
-          <UserCard user={user.userInfo} />
+          {userProfile ?? <UserCard user={user?.userInfo} />}
         </div>
       </div>
       <div className="bg-white flex flex-wrap justify-between items-center category-home gap-y-[24px] px-4 pt-[82px] pb-[20px]">

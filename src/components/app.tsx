@@ -27,6 +27,7 @@ import UpdateBHXH from "../pages/updateBHXH";
 import RegisterBHYT from "../pages/BHYT/register_bhyt";
 import ListHistoryBHYT from "../pages/BHYT/list_history_bhyt";
 import InfoDetailBHYT from "../pages/BHYT/info_detail_bhyt";
+import { ProfileProvider } from "./userProfileContext";
 
 const MyApp = () => {
   return (
@@ -58,7 +59,14 @@ const MyApp = () => {
           <SnackbarProvider>
             <ZMPRouter>
               <Routes>
-                <Route path="/" element={<LayoutPage />}>
+                <Route
+                  path="/"
+                  element={
+                    <ProfileProvider>
+                      <LayoutPage />
+                    </ProfileProvider>
+                  }
+                >
                   <Route index element={<HomePage />} />
                   <Route path="contract" element={<ContractPage />} />
                   <Route path="history" element={<HistoryPage />} />

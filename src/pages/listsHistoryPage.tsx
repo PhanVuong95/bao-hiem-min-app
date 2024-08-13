@@ -13,7 +13,9 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
 
   const [openTab, setOpenTab] = useState(1);
   const [listOrder, setListOrder] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const token = localStorage.token;
+
   useEffect(() => {
     axios
       .get(
@@ -37,11 +39,16 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
           }
         });
         setListOrder(fillteredOrders);
+
+        setLoading(false);
       })
       .catch((error) => {
         console.error(error);
+        setListOrder([]);
+        setLoading(false);
       });
   }, [openTab]);
+
   function formatDateTime(dateTimeString) {
     const date = new Date(dateTimeString);
 
@@ -55,7 +62,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
     return `${hours}:${minutes} - ${day}/${month}/${year}`;
   }
 
-  if (listOrder.length == 0) {
+  if (loading) {
     return (
       <>
         <HeaderBase

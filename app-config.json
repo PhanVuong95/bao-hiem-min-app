@@ -14,10 +14,10 @@
     },
     "leftButton": "back",
     "statusBar": "transparent",
-    "actionBarHidden": false,
+    "actionBarHidden": true,
     "hideAndroidBottomNavigationBar": true,
-    "hideIOSSafeAreaBottom": false,
-    "selfControlLoading": true
+    "hideIOSSafeAreaBottom": true,
+    "selfControlLoading": false
   },
   "debug": false,
   "pages": [],

@@ -10,6 +10,9 @@ const ListSocialInsurance: React.FunctionComponent = (props) => {
   const specificContext = useContext(SpecificContext);
   const [insurance, setInsurance] = useState<any>();
   const { insuranceOrder, setInsuranceOrder } = specificContext;
+
+  console.log(insuranceOrder);
+
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insurance/api/detail-viewmodel?id=1001")
