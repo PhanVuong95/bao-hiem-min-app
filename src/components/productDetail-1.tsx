@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Page } from "zmp-ui";
 import HeaderBase from "./headerBase";
 
@@ -8,8 +9,8 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
   useEffect(() => {
     // Gán giá trị imageSrcs trong useEffect
     setImageSrcs([
-      "https://dion.vn/wp-content/uploads/2024/07/image-1005.png",
-      "https://dion.vn/wp-content/uploads/2024/07/image-1006.png",
+      "https://baohiem.dion.vn/files/upload/account/1019/23397296-cdbe-4ee4-a94a-ddcbd9acdaf9.png",
+      "https://baohiem.dion.vn/files/upload/account/1019/1990eeec-efc5-4cff-8c6a-68055ce9652e.png",
     ]);
   }, []);
 
@@ -19,7 +20,7 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
         isHome={false}
         title={"Giới thiệu BHYT tự nguyện"}
       />
-      <Page className="p-4">
+      <Page className="p-4 mb-20">
         <div className="flex flex-wrap items-center justify-center min-h-[95vh]">
           {imageSrcs.length > 0 ? (
             imageSrcs.map((src, index) => (
@@ -47,6 +48,17 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
           )}
         </div>
       </Page>
+      <footer className="bg-white fixed bottom-0 left-0 w-full py-3">
+        <div className="flex justify-center w-[90%] mx-auto pb-3">
+          <Link
+            className="px-[40px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+            type="submit"
+            to="/register-BHYT"
+          >
+            Mua ngay
+          </Link>
+        </div>
+      </footer>
     </div>
 
   );

@@ -10,14 +10,12 @@ import CardNewPage from "../components/cardNew";
 import { Link } from "react-router-dom";
 import HeaderBase from "../components/headerBase";
 import { ProfileContext } from "../components/userProfileContext";
+import banner from '../../assets-src/banner.png'
 
 const HomePage: React.FunctionComponent = () => {
   const user = useRecoilValue(userState);
   const profieContext = useContext(ProfileContext);
-
   const { userProfile, setUserProfile } = profieContext;
-
-  console.log("userProfile", userProfile);
 
   return (
     <div className="home-page min-h-[100vh] pb-[120px] pt-[80px]">
@@ -26,7 +24,7 @@ const HomePage: React.FunctionComponent = () => {
       </div>
 
       <div className="banner-top h-full">
-        <img src="https://dion.vn/wp-content/uploads/2024/07/image-1001.png" />
+        <img src={banner} />
         <div className="flex justify-between items-center user-home">
           {userProfile ?? <UserCard user={user?.userInfo} />}
         </div>

@@ -16,6 +16,8 @@ const ListHistoryBHYT = ({ }) => {
   const [listOrder, setListOrder] = useState<any>([]);
   const token = localStorage.token;
 
+  const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/list-by-insuranceId?insuranceId=1002", {
@@ -36,9 +38,13 @@ const ListHistoryBHYT = ({ }) => {
           }
         });
         setListOrder(fillteredOrders);
+
+        setLoading(false)
       })
       .catch((error) => {
         console.error(error);
+        setListOrder([])
+        setLoading(false)
       });
   }, [openTab]);
 
@@ -55,16 +61,16 @@ const ListHistoryBHYT = ({ }) => {
     return `${hours}:${minutes} - ${day}/${month}/${year}`;
   }
 
-  if (!listOrder) {
+  if (loading) {
     return (
       <>
         <HeaderBase
           isHome={false}
           onBack={() => navigate("/history")}
-          title={"Lịch sử đăng ký"}
+          title={"Lịch sử đăng ký BHYT TN"}
         />
         <div className="fixed inset-0 flex items-center justify-center">
-          <PulseLoader size={15} loading={true} />
+          <PulseLoader size={15} loading={true} color="#0076B7" />
         </div>
       </>
     );
@@ -107,18 +113,24 @@ const ListHistoryBHYT = ({ }) => {
             >
               Đã mua
             </button>
-
-            {/* <button
-              onClick={() => setOpenTab(3)}
-              className={`flex-1 py-2 px-[10px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 3 ? "bg-blue-600 text-white" : ""
-                }`}
-            >
-              Đã hủy
-            </button> */}
           </div>
 
 
           <div className="flex flex-col gap-4">
+            {listOrder.length == 0 ? (
+              <div
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <div>Không có dữ liệu!</div>
+              </div>
+            ) : null
+            }
+
             {listOrder?.map((item, index) => {
               return (
                 <Link to={"/info-detail-bhyt/" + item.id} key={index}>

@@ -2,6 +2,9 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "zmp-ui";
 import { closeApp } from "zmp-sdk/apis";
+import backgroundHeader from "../../assets-src/image_header.png";
+import logo from "../../assets-src/logo.png";
+import back from "../../assets-src/back.png";
 
 interface Props {
   isHome?: boolean;
@@ -34,13 +37,13 @@ const HeaderBase = (props: Props) => {
 
   return (
     <div className="fixed top-0 z-10">
-      <img src="https://i.ibb.co/2M5LNd0/image-header.png" />
+      <img src={backgroundHeader} />
       <div className="absolute z-10 top-10 flex left-4 right-4 justify-between items-center">
         <div className="flex">
           <div>
             {isHome ? (
               <img
-                src="https://i.ibb.co/vXKypms/logo.png"
+                src={logo}
                 className="w-7 h-7"
               />
             ) : (
@@ -49,7 +52,7 @@ const HeaderBase = (props: Props) => {
                 onClick={onBack ? onBack : () => navigate(-1)}
               >
                 <img
-                  src="https://i.ibb.co/p4pkqn7/back.png"
+                  src={back}
                   className="w-7 h-7"
                 />
               </button>

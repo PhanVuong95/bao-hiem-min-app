@@ -1,17 +1,13 @@
 import axios from "axios";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import CardProduct from "../components/cardProduct";
 import HeaderBase from "../components/headerBase";
-import SelectCategory from "../components/selectCategory";
 import { SpecificContext } from "../components/SpecificContext";
 
 const ListSocialInsurance: React.FunctionComponent = (props) => {
   const specificContext = useContext(SpecificContext);
   const [insurance, setInsurance] = useState<any>();
   const { insuranceOrder, setInsuranceOrder } = specificContext;
-
-  console.log(insuranceOrder);
 
   useEffect(() => {
     axios
