@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { PulseLoader } from "react-spinners";
+import { Modal } from "zmp-ui";
 import CardProductBHYT from "../../components/cardProductBHYT";
 import HeaderBase from "../../components/headerBase";
 
@@ -143,9 +144,6 @@ const ListHealthInsurance: React.FunctionComponent = () => {
       .then((response) => {
         setListProduct(response.data.data);
         setIsLoading(false);
-
-        console.log(response.data.data);
-
       })
       .catch((error) => {
         console.error(error);
@@ -185,6 +183,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
           })}
         </div>
       </div>
+
     </div>
   );
 };

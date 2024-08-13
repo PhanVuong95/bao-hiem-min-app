@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import { ClipLoader, FadeLoader } from "react-spinners";
+import { Modal } from "zmp-ui";
 import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
 import { listEthnics } from "../utils/constants";
 import { formatDate, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
@@ -14,6 +16,7 @@ interface Props {
 
 const UserBeneficiaryBHYTPage = (props: Props) => {
   const { index, price, onClose, refs, provinces } = props;
+  const [dialogVisible, setDialogVisible] = useState(true);
 
   const [socialInsuranceNumber, setSocialInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].socialInsuranceNumber);
   const [healthInsuranceNumber, setHealthInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].healthInsuranceNumber);
@@ -21,6 +24,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [citizenId, setCitizenId] = useState(registerInfoBHYT["listInsuredPerson"][index].citizenId);
   const [photoCitizenFront, setPhotoCitizenFront] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenFront);
   const [photoCitizenBack, setPhotoCitizenBack] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenBack);
+  const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] = useState(false)
+  const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] = useState(false)
+
   const [fullName, setFullName] = useState(registerInfoBHYT["listInsuredPerson"][index].fullName);
   const [dob, setDob] = useState(
     registerInfoBHYT["listInsuredPerson"][index].doB == "" ?
@@ -52,11 +58,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [medicalProvinceId, setMedicalProvinceId] = useState(registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId.toString());
   const [hospitalId, setHospitalId] = useState(registerInfoBHYT["listInsuredPerson"][index].hospitalId.toString());
   const [listHospitals, setListHospitals] = useState<any>([])
-
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  console.log();
-
 
   const calculatePrice = () => {
     switch (index) {
@@ -95,6 +96,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     event: React.ChangeEvent<HTMLInputElement>,
     setImageUrl: React.Dispatch<React.SetStateAction<string>>
   ) => {
+
     const token = localStorage.token;
     const file = event.target.files?.[0];
     if (file) {
@@ -116,6 +118,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         return response.data.data[0];
       } catch (error) {
         console.error("Error uploading image:", error);
+        setIsUploadingPhotoCitizenBack(false)
+        setIsUploadingPhotoCitizenFont(false)
       }
     }
   };
@@ -123,11 +127,13 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const updateBackCitizenPhoto = (img) => {
     setPhotoCitizenBack(img);
     registerInfoBHYT["listInsuredPerson"][index].photoCitizenBack = img;
+    setIsUploadingPhotoCitizenBack(false)
   };
 
   const updateFrontCitizenPhoto = (img) => {
     setPhotoCitizenFront(img);
     registerInfoBHYT["listInsuredPerson"][index].photoCitizenFront = img;
+    setIsUploadingPhotoCitizenFont(false)
   }
 
   const handleCardClick = (inputRef: React.RefObject<HTMLInputElement>) => {
@@ -256,7 +262,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           Số CCCD <samp className="text-red-600">*</samp>
         </label>
         <input
-          type="text"
+          type="number"
           id="name"
           ref={refs.citizenId}
           maxLength={12}
@@ -286,24 +292,29 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     )
   }
 
+  console.log(isUploadingPhotoCitizenBack);
+
+
   const renderUploadImages = () => {
     return (
       <div className="p-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
         <h3 className="text-[#0076B7] text-lg font-medium">Tải ảnh CCCD</h3>
-        <div className="flex flex-row gap-2 ">
-          <div ref={refs.photoCitizenFront} className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 justify-around w-[100%]">
+          <div ref={refs.photoCitizenFront} className="flex flex-row gap-3">
             <div className="flex flex-col gap-2 " onClick={() => handleCardClick(frontImageInputRef)}>
-              <div className="bg-[#F5F5F5]  rounded-lg p-[9px] card-cccd">
+              <div className={`bg-[#F5F5F5]  rounded-lg p-[${photoCitizenFront ? '0px' : '9px'}]  card-cccd w-[100%] h-[100px]`}>
                 <div className="icon-1">
+
                   {photoCitizenFront ? (
                     <img
                       src={`https://baohiem.dion.vn${photoCitizenFront}`}
                       alt="Mặt trước"
+                      className="w-[140px] h-[100px] object-center rounded-lg"
                     />
                   ) :
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width={'118px'}
+                      width={'100%'}
                       height={'81px'}
                       viewBox="0 0 130 89"
                       fill="none"
@@ -328,7 +339,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                   }
                 </div>
                 <div className="icon-2">
-                  <svg
+                  {photoCitizenFront ? null : <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="25"
                     height="24"
@@ -344,7 +355,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                       d="M3.68506 12.0001C3.68506 7.26974 7.51974 3.43506 12.2501 3.43506C16.9804 3.43506 20.8151 7.26974 20.8151 12.0001C20.8151 16.7304 16.9804 20.5651 12.2501 20.5651C7.51974 20.5651 3.68506 16.7304 3.68506 12.0001ZM12.2501 4.56506C8.14382 4.56506 4.81506 7.89382 4.81506 12.0001C4.81506 16.1063 8.14382 19.4351 12.2501 19.4351C16.3563 19.4351 19.6851 16.1063 19.6851 12.0001C19.6851 7.89382 16.3563 4.56506 12.2501 4.56506Z"
                       fill="#0076B7"
                     />
-                  </svg>
+                  </svg>}
                 </div>
               </div>
               <h4 className="text-[15px] text-black text-center">Mặt trước</h4>
@@ -353,27 +364,29 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                 accept="image/*"
                 ref={frontImageInputRef}
                 style={{ display: "none" }}
-                onChange={(event) =>
+                onChange={(event) => {
+                  setIsUploadingPhotoCitizenFont(true)
                   handleImageUpload(event, updateFrontCitizenPhoto)
+                }
                 }
               />
             </div>
 
-            <div ref={refs.photoCitizenBack} className="flex flex-col gap-2 " onClick={() => handleCardClick(backImageInputRef)}>
+            <div ref={refs.photoCitizenBack} className="flex flex-col gap-3 " onClick={() => handleCardClick(backImageInputRef)}>
               <div className="flex flex-col gap-2">
-                <div className="bg-[#F5F5F5]  rounded-lg p-[9px] card-cccd">
+                <div className={`bg-[#F5F5F5]  rounded-lg p-[${photoCitizenBack ? '0px' : '9px'}]  card-cccd w-[100%] h-[100px]`}>
                   <div className="icon-1">
+
                     {photoCitizenBack ? (
                       <img
                         src={`https://baohiem.dion.vn${photoCitizenBack}`}
                         alt="Mặt sau"
-                        width="100%"
-                        height="100%"
+                        className="w-[140px] h-[100px] object-center rounded-lg"
                       />
                     ) :
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width={'118px'}
+                        width={'100%'}
                         height={'81px'}
                         viewBox="0 0 130 89"
                         fill="none"
@@ -397,8 +410,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                       </svg>
                     }
                   </div>
+
                   <div className="icon-2">
-                    <svg
+                    {photoCitizenBack ? null : <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="25"
                       height="24"
@@ -414,7 +428,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                         d="M3.68506 12.0001C3.68506 7.26974 7.51974 3.43506 12.2501 3.43506C16.9804 3.43506 20.8151 7.26974 20.8151 12.0001C20.8151 16.7304 16.9804 20.5651 12.2501 20.5651C7.51974 20.5651 3.68506 16.7304 3.68506 12.0001ZM12.2501 4.56506C8.14382 4.56506 4.81506 7.89382 4.81506 12.0001C4.81506 16.1063 8.14382 19.4351 12.2501 19.4351C16.3563 19.4351 19.6851 16.1063 19.6851 12.0001C19.6851 7.89382 16.3563 4.56506 12.2501 4.56506Z"
                         fill="#0076B7"
                       />
-                    </svg>
+                    </svg>}
+
                   </div>
                 </div>
 
@@ -424,8 +439,10 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                   accept="image/*"
                   ref={backImageInputRef}
                   style={{ display: "none" }}
-                  onChange={(event) =>
+                  onChange={(event) => {
+                    setIsUploadingPhotoCitizenBack(true)
                     handleImageUpload(event, updateBackCitizenPhoto)
+                  }
                   }
                 />
               </div>
@@ -807,6 +824,28 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
       {renderHispital()}
 
+      <Modal
+        visible={isUploadingPhotoCitizenFont}
+        modalStyle={{
+          background: 'transparent'
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
+
+
+      <Modal
+        visible={isUploadingPhotoCitizenBack}
+        modalStyle={{
+          background: 'transparent'
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
     </div>
   );
 };

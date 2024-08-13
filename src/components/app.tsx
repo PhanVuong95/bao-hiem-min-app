@@ -1,6 +1,6 @@
 // src/App.js
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Route, Routes } from "react-router-dom";
 import { App, ZMPRouter, SnackbarProvider } from "zmp-ui";
@@ -28,11 +28,24 @@ import RegisterBHYT from "../pages/BHYT/register_bhyt";
 import ListHistoryBHYT from "../pages/BHYT/list_history_bhyt";
 import InfoDetailBHYT from "../pages/BHYT/info_detail_bhyt";
 import { ProfileProvider } from "./userProfileContext";
+import splash from '../../assets-src/splash.png'
+import { closeLoading } from "zmp-sdk/apis";
 
 const MyApp = () => {
+
+  useEffect(() => {
+    closeLoading({
+      success: (data) => {
+      },
+      fail: (error) => {
+        console.log(error);
+      }
+    });
+  }, []);
+
   return (
     <RecoilRoot>
-      <Suspense fallback={<div>Đang tải...</div>}>
+      <Suspense fallback={<img src={splash} />}>
         <App>
           <ToastContainer
             style={{
