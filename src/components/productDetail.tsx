@@ -28,7 +28,7 @@ const ProductDetailPage: React.FunctionComponent = (props) => {
   return (
     <div className="relative min-h-screen flex flex-col">
       <HeaderBase isHome={false} title={"Chi tiết BHXH tự nguyện"} />
-      <Page className="p-4 !pt-24 flex-grow">
+      <Page className="p-4 !pt-24 flex-grow pb-20">
         <div className="bg-white flex flex-wrap items-center justify-center min-h-[95vh]">
           {detailSrcs ? (
             <div dangerouslySetInnerHTML={{ __html: detailSrcs }} />
@@ -52,7 +52,7 @@ const ProductDetailPage: React.FunctionComponent = (props) => {
       <footer className="bg-white fixed bottom-0 left-0 w-full py-3">
         <div className="flex justify-center w-[90%] mx-auto">
           <Link
-            className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+            className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center mb-3"
             type="submit"
             to="/register-BHXH"
           >

@@ -17,7 +17,6 @@ const UserCard: React.FunctionComponent<UserProps> = ({ user }) => {
 
         <Box ml={4}>
           <p className="text-lg font-semibold">Xin chào, {user.name}</p>
-          <p className="text-[14px] text-[#595959] font-normal">0986977365</p>
         </Box>
       </div>
 

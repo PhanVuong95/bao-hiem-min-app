@@ -377,7 +377,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       toast.warn("Giới tính không được để trống");
       return false;
     }
-    if (Number(wage.current) == 0 || Number(wage.current) < 0) {
+    if (Number(wage.current) == 0 || Number(wage.current) < 1000000) {
       toast.warn("Mức lương không hợp lệ");
       return false;
     }

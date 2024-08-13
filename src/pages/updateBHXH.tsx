@@ -328,7 +328,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       toast.warn("Giới tính không được để trống");
       return false;
     }
-    if (Number(orderDetail.listInsuredPerson[0].wage) <= 0) {
+    if (Number(orderDetail.listInsuredPerson[0].wage) < 1000000) {
       toast.warn("Mức lương không hợp lệ");
       return false;
     }
