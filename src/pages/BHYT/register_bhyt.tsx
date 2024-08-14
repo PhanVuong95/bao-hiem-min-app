@@ -345,50 +345,46 @@ const RegisterBHYT = ({ }) => {
         scrollToElement(beneficiaries[index].ethnic, 2, 500)
         return false;
       }
-      // ///////
-      if (registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber == "") {
-        toast.warn(
-          "Mã BHYT cũ không được để trống",
-        );
-        scrollToElement(beneficiaries[index].healthInsuranceNumber, 2, 500)
-        return false;
-      }
 
-      if (!isValidHealthInsuranceNumber(registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber)) {
-        toast.warn(
-          "Mã BHYT cũ không hợp lệ",
-        );
-        scrollToElement(beneficiaries[index].healthInsuranceNumber, 2, 500)
-        return false;
-      }
 
-      if (registerInfoBHYT['listInsuredPerson'][index].oldCardStartDate == "") {
-        toast.warn(
-          "Ngày hiệu lực của thẻ cũ không được để trống",
-        );
-        scrollToElement(beneficiaries[index].oldCardStartDate, 2, 500)
-        return false;
-      }
-
-      if (registerInfoBHYT['listInsuredPerson'][index].oldCardEndDate == "") {
-        toast.warn(
-          "Ngày hết hiệu lực của thẻ cũ không được để trống",
-        );
-        scrollToElement(beneficiaries[index].oldCardEndDate, 2, 500)
-        return false;
+      if (registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber != "") {
+        if (!isValidHealthInsuranceNumber(registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber)) {
+          toast.warn(
+            "Mã BHYT cũ không hợp lệ",
+          );
+          scrollToElement(beneficiaries[index].healthInsuranceNumber, 2, 500)
+          return false;
+        }
       }
 
 
-      if (compareTwoDateString(
-        registerInfoBHYT['listInsuredPerson'][index].oldCardStartDate,
-        registerInfoBHYT['listInsuredPerson'][index].oldCardEndDate
-      ) != 1) {
-        toast.warn(
-          "Ngày hiệu lực phải trước ngày hết hiệu lực",
-        );
-        scrollToElement(beneficiaries[index].oldCardEndDate, 2, 500)
-        return false;
-      }
+      // if (registerInfoBHYT['listInsuredPerson'][index].oldCardStartDate == "") {
+      //   toast.warn(
+      //     "Ngày hiệu lực của thẻ cũ không được để trống",
+      //   );
+      //   scrollToElement(beneficiaries[index].oldCardStartDate, 2, 500)
+      //   return false;
+      // }
+
+      // if (registerInfoBHYT['listInsuredPerson'][index].oldCardEndDate == "") {
+      //   toast.warn(
+      //     "Ngày hết hiệu lực của thẻ cũ không được để trống",
+      //   );
+      //   scrollToElement(beneficiaries[index].oldCardEndDate, 2, 500)
+      //   return false;
+      // }
+
+
+      // if (compareTwoDateString(
+      //   registerInfoBHYT['listInsuredPerson'][index].oldCardStartDate,
+      //   registerInfoBHYT['listInsuredPerson'][index].oldCardEndDate
+      // ) != 1) {
+      //   toast.warn(
+      //     "Ngày hiệu lực phải trước ngày hết hiệu lực",
+      //   );
+      //   scrollToElement(beneficiaries[index].oldCardEndDate, 2, 500)
+      //   return false;
+      // }
 
 
       if (registerInfoBHYT['listInsuredPerson'][index].newCardStartDate == "") {
@@ -399,24 +395,24 @@ const RegisterBHYT = ({ }) => {
         return false;
       }
 
-      if (registerInfoBHYT['listInsuredPerson'][index].newCardEndDate == "") {
-        toast.warn(
-          "Ngày hết hiệu lực của thẻ mới không được để trống",
-        );
-        scrollToElement(beneficiaries[index].newCardEndDate, 2, 0)
-        return false;
-      }
+      // if (registerInfoBHYT['listInsuredPerson'][index].newCardEndDate == "") {
+      //   toast.warn(
+      //     "Ngày hết hiệu lực của thẻ mới không được để trống",
+      //   );
+      //   scrollToElement(beneficiaries[index].newCardEndDate, 2, 0)
+      //   return false;
+      // }
 
-      if (compareTwoDateString(
-        registerInfoBHYT['listInsuredPerson'][index].newCardStartDate,
-        registerInfoBHYT['listInsuredPerson'][index].newCardEndDate
-      ) != 1) {
-        toast.warn(
-          "Ngày hiệu lực phải trước ngày hết hiệu lực",
-        );
-        scrollToElement(beneficiaries[index].newCardEndDate, 2, 500)
-        return false;
-      }
+      // if (compareTwoDateString(
+      //   registerInfoBHYT['listInsuredPerson'][index].newCardStartDate,
+      //   registerInfoBHYT['listInsuredPerson'][index].newCardEndDate
+      // ) != 1) {
+      //   toast.warn(
+      //     "Ngày hiệu lực phải trước ngày hết hiệu lực",
+      //   );
+      //   scrollToElement(beneficiaries[index].newCardEndDate, 2, 500)
+      //   return false;
+      // }
 
       if (registerInfoBHYT['listInsuredPerson'][index].medicalProvinceId == 0) {
         toast.warn(
@@ -657,7 +653,6 @@ const RegisterBHYT = ({ }) => {
           <div className="flex flex-row content-center justify-center items-center">
             <button type="button"
               onClick={() => {
-                // navigate(`/bill-pay-bhyt/1097`)
                 if (validateForm()) {
                   onSubmitFormData();
                 }

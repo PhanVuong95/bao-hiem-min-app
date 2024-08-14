@@ -262,7 +262,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           Số CCCD <samp className="text-red-600">*</samp>
         </label>
         <input
-          type="number"
+          type="text"
           id="name"
           ref={refs.citizenId}
           maxLength={12}
@@ -291,9 +291,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
       </div>
     )
   }
-
-  console.log(isUploadingPhotoCitizenBack);
-
 
   const renderUploadImages = () => {
     return (
@@ -488,7 +485,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
-          Mã BHYT cũ <samp className="text-red-600">*</samp>
+          Mã BHYT cũ
         </label>
         <input
           type="text"
@@ -617,6 +614,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             </label>
             <input
               type="date"
+              min={new Date().toISOString().split("T")[0]}
               ref={refs.oldCardStartDate}
               value={oldCardStartDate}
               onChange={(e) => {
@@ -692,7 +690,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               required
             />
           </div>
-
+          {/* 
           <div>
             <label className="block text-sm font-normal pb-2 text-gray-900">
               Ngày hết hiệu lực <samp className="text-red-600">*</samp>
@@ -712,10 +710,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               placeholder="Chọn ngày sinh"
               required
             />
-          </div>
+          </div> */}
         </div>
 
-        {errors.boxNewCard && <div className="mt-2 text-red-500">{errors.boxNewCard}</div>}
       </div>
     )
   }
@@ -810,9 +807,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
       {renderInputBHYT()}
 
-      {renderLine()}
+      {/* {renderLine()}
 
-      {renderBoxOldCard()}
+      {renderBoxOldCard()} */}
 
       {renderLine()}
 

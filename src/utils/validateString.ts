@@ -123,8 +123,14 @@ export const isValidSocialInsuranceNumber = (data: string) => {
 }
 
 export const isValidHealthInsuranceNumber = (data: string) => {
-  const socialInsuranceNumberCheck = /^[0-9A-Za-z]{15}$/;
-  return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
+  if (data.length == 10) {
+    const socialInsuranceNumberCheck = /^[0-9]{10}$/;
+    return /^\d+$/.test(data) && socialInsuranceNumberCheck.test(data);
+  } else if (data.length == 15) {
+    const socialInsuranceNumberCheck = /^[A-Za-z]{2}[0-9]{13}$/;
+    return socialInsuranceNumberCheck.test(data);
+  }
+  return false;
 }
 
 
