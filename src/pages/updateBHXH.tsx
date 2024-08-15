@@ -15,18 +15,22 @@ import {
 const UpdateBHXH: React.FunctionComponent = (props) => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] =
+    useState(false);
+  const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] =
+    useState(false);
+
   const [orderDetail, setOrderDetail] = useState<any>();
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
-  const [selectedBuyerProvince, setSelectedBuyerProvince] =
-    useState<number>(1001);
-  const [selectedDistrict, setSelectedDistrict] = useState<number>(1001);
-  const [selectedWard, setSelectedWard] = useState<number>(1001);
+  const [selectedBuyerProvince, setSelectedBuyerProvince] = useState<number>();
+  const [selectedDistrict, setSelectedDistrict] = useState<number>();
+  const [selectedWard, setSelectedWard] = useState<number>();
   const provinceId = useRef(0);
   const districtId = useRef(0);
   const wardId = useRef(0);
-  const selectedProvince = useRef<number>(1001);
+  const selectedProvince = useRef<number>();
   const [supportBudget, setSupportBudget] = useState<number>(0);
   const wage = useRef<number>(0);
   const monthCount = useRef<number>(0);
@@ -51,12 +55,14 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             "vi-VN"
           )
         );
-        wage.current = response.data.data[0].wage;
+        wage.current = response.data.data[0].listInsuredPerson[0].wage;
         monthCount.current =
           response.data.data[0].listInsuredPerson[0].monthInsured;
         provinceId.current = response.data.data[0].provinceId;
         districtId.current = response.data.data[0].districtId;
         wardId.current = response.data.data[0].wardId;
+        selectedProvince.current =
+          response.data.data[0].listInsuredPerson[0].insuranceProvinceId;
         setSelectedBuyerProvince(response.data.data[0].provinceId);
         setSelectedDistrict(response.data.data[0].districtId);
       })
@@ -70,10 +76,12 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       .get("https://baohiem.dion.vn/province/api/list")
       .then((response) => {
         setProvinces(response.data.data);
-        setSelectedBuyerProvince(Number(response.data.data[0].id));
-        selectedProvince.current = Number(response.data.data[0].id);
-        setValue("province", Number(response.data.data[0].id));
-        setValue("buyerProvince", Number(response.data.data[0].id));
+        // setSelectedBuyerProvince(Number(response.data.data[0].id));
+        // selectedProvince.current = Number(response.data.data[0].id);
+        // setValue("province", Number(response.data.data[0].id));
+        // setValue("buyerProvince", Number(response.data.data[0].id));
+        setDistricts([]);
+        setWards([]);
         setTemp(!temp);
       })
       .catch((error) => {
@@ -89,9 +97,10 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         )
         .then((response) => {
           setDistricts(response.data.data);
-          if (!orderDetail) {
-            setSelectedDistrict(Number(response.data.data[0].id));
-          }
+          setWards([]);
+          // if (!orderDetail) {
+          //   setSelectedDistrict(Number(response.data.data[0].id));
+          // }
         })
         .catch((error) => {
           console.error(error);
@@ -107,9 +116,9 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         )
         .then((response) => {
           setWards(response.data.data);
-          if (!orderDetail) {
-            setSelectedWard(Number(response.data.data[0].id));
-          }
+          // if (!orderDetail) {
+          //   setSelectedWard(Number(response.data.data[0].id));
+          // }
         })
         .catch((error) => {
           console.error(error);
@@ -172,6 +181,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       ...prevState,
       ...(prevState.listInsuredPerson[0].photoCitizenFront = url),
     }));
+    setIsUploadingPhotoCitizenFont(false);
   };
   const handleUpdateBackImage = (url) => {
     setBackImageUrl(url);
@@ -193,6 +203,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       ...prevState,
       ...(prevState.listInsuredPerson[0].photoCitizenBack = url),
     }));
+    setIsUploadingPhotoCitizenBack(false);
   };
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -218,6 +229,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         return response.data.data[0];
       } catch (error) {
         console.error("Error uploading image:", error);
+        setIsUploadingPhotoCitizenBack(false);
+        setIsUploadingPhotoCitizenFont(false);
       }
     }
   };
@@ -231,6 +244,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     if (wage.current != 0 && monthCount.current != 0) {
       finalPrice.current =
         (wage.current * 0.22 - budgetPerMonth) * monthCount.current;
+      // console.log(finalPrice.current);
       setOrderDetail((prevDetail) => ({
         ...prevDetail,
         finalPrice: finalPrice.current,
@@ -257,7 +271,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
   ) => {
     const provinceId = parseInt(event.target.value, 10);
     selectedProvince.current = provinceId;
-    calculateSupportBudget(provinceId, watch("months"));
+    calculateSupportBudget(provinceId, monthCount.current);
     calculateFinalPrice();
     handleInsuredPersonChange("insuranceProvinceId", provinceId);
   };
@@ -265,16 +279,19 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
   const handleDistrictChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setSelectedDistrict(parseInt(event.target.value, 10));
-    handleInsuredPersonChange(
-      "insuranceDistrictId",
-      parseInt(event.target.value, 10)
-    );
+    let districtId = Number(event.target.value);
+    if (districtId == 0) {
+      setWards([]);
+    }
+    setSelectedDistrict(districtId);
+    handleInputChange("districtId", districtId);
   };
 
   const handleWardChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedWard(parseInt(event.target.value));
-    handleInsuredPersonChange("insuranceWardId", parseInt(event.target.value));
+    let wardId = Number(event.target.value);
+
+    setSelectedWard(wardId);
+    handleInputChange("wardId", wardId);
   };
 
   const calculateSupportBudget = (provinceId: number, months: number) => {
@@ -307,15 +324,14 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     ) {
       toast.warn("Số CCCD không được để trống");
       return false;
-    } else if (orderDetail.listInsuredPerson[0].citizenId.trim().length > 12) {
-      toast.warn("Số CCCD không hợp lệ");
+    } else if (orderDetail.listInsuredPerson[0].citizenId.trim().length != 12) {
+      toast.warn("Số CCCD gồm 12 ký tự, vui lòng nhập lại");
       return false;
     }
     if (
-      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length >
-        0 &&
-      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length !==
-        10
+      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length <
+        10 ||
+      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length > 15
     ) {
       toast.warn("Số BHXH không hợp lệ");
       return false;
@@ -342,6 +358,18 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     }
     if (!isValidEmptyString(orderDetail.fullName.trim())) {
       toast.warn("Họ và tên người mua không được để trống");
+      return false;
+    }
+    if (Number(orderDetail.provinceId) == 0) {
+      toast.warn("Vui lòng chọn tỉnh thành");
+      return false;
+    }
+    if (Number(selectedDistrict) == 0) {
+      toast.warn("Vui lòng chọn quận huyện");
+      return false;
+    }
+    if (Number(selectedWard) == 0) {
+      toast.warn("Vui lòng chọn phường xã");
       return false;
     }
     if (isValidEmptyString(orderDetail.email.trim())) {
@@ -483,11 +511,13 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
           <h3 className="text-[#0076B7] text-lg font-medium">
             Chụp ảnh giấy tờ tuỳ thân
           </h3>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row gap-2  justify-around w-[100%]">
             <div className="flex flex-row gap-2">
               <div className="flex flex-col gap-2">
                 <div
-                  className="bg-[#F5F5F5] rounded-lg p-[9px] card-cccd cursor-pointer"
+                  className={`bg-[#F5F5F5]  rounded-lg p-[${
+                    frontImageUrl ? "0px" : "0px"
+                  }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(frontImageInputRef)}
                 >
                   <div className="icon-1">
@@ -495,12 +525,13 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                       <img
                         src={`https://baohiem.dion.vn${orderDetail.photoCitizenFront}`}
                         alt="Mặt trước"
+                        className="w-[140px] h-[100px] object-center rounded-lg"
                       />
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="130"
-                        height="89"
+                        width={"100%"}
+                        height={"81px"}
                         viewBox="0 0 130 89"
                         fill="none"
                       >
@@ -555,14 +586,17 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                   accept="image/*"
                   ref={frontImageInputRef}
                   style={{ display: "none" }}
-                  onChange={(event) =>
-                    handleImageUpload(event, handleUpdateFrontImage)
-                  }
+                  onChange={(event) => {
+                    setIsUploadingPhotoCitizenFont(true);
+                    handleImageUpload(event, handleUpdateFrontImage);
+                  }}
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <div
-                  className="bg-[#F5F5F5] rounded-lg p-[9px] card-cccd cursor-pointer"
+                  className={`bg-[#F5F5F5]  rounded-lg p-[${
+                    backImageUrl ? "0px" : "0px"
+                  }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(backImageInputRef)}
                 >
                   <div className="icon-1">
@@ -570,12 +604,13 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                       <img
                         src={`https://baohiem.dion.vn${orderDetail.photoCitizenBack}`}
                         alt="Mặt sau"
+                        className="w-[140px] h-[100px] object-center rounded-lg"
                       />
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="130"
-                        height="89"
+                        width={"100%"}
+                        height={"81px"}
                         viewBox="0 0 130 89"
                         fill="none"
                       >
@@ -628,9 +663,10 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                   accept="image/*"
                   ref={backImageInputRef}
                   style={{ display: "none" }}
-                  onChange={(event) =>
-                    handleImageUpload(event, handleUpdateBackImage)
-                  }
+                  onChange={(event) => {
+                    setIsUploadingPhotoCitizenBack(true);
+                    handleImageUpload(event, handleUpdateBackImage);
+                  }}
                 />
               </div>
             </div>
@@ -666,7 +702,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               onChange={handleProvinceChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
-              <option value="" disabled hidden>
+              <option selected className="" value="0">
                 Chọn tỉnh thành phố
               </option>
               {provinces.map((province) => (
@@ -686,6 +722,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               value={orderDetail.listInsuredPerson[0].citizenId.trim()}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số CCCD"
+              maxLength={12}
               onChange={(e) => {
                 const filteredValue = e.target.value.replace(/\D/g, "");
                 handleInsuredPersonChange("citizenId", filteredValue);
@@ -699,6 +736,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="bhxh"
+              maxLength={15}
               value={orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim()}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số Bảo hiểm Xã hội"
@@ -847,7 +885,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             <input
               type="text"
               id="name"
-              value={orderDetail.fullName.trim()}
+              value={orderDetail.fullName}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
               onChange={(e) => handleInputChange("fullName", e.target.value)}
@@ -874,12 +912,16 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               value={orderDetail.provinceId}
               onChange={(e) => {
                 let provinceId: number = Number(e.target.value);
+                if (provinceId == 0) {
+                  setDistricts([]);
+                  setWards([]);
+                }
                 setSelectedBuyerProvince(provinceId);
                 handleInputChange("provinceId", provinceId);
               }}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
-              <option value="0" selected>
+              <option selected className="" value="0">
                 Chọn tỉnh thành phố
               </option>
               {provinces.map((province) => (
@@ -898,7 +940,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               onChange={handleDistrictChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
-              <option value="0" disabled hidden>
+              <option selected className="" value="0">
                 Chọn quận huyện
               </option>
               {districts.map((district) => (
@@ -917,8 +959,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               onChange={handleWardChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
-              <option value="0" disabled hidden>
-                Chọn phường xã
+              <option selected className="" value="0">
+                Chọn tỉnh phường xã
               </option>
               {wards.map((ward) => (
                 <option key={ward.id} value={ward.id}>
@@ -973,7 +1015,10 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                 Tổng thanh toán:
               </p>
               <h3 className="text-base font-medium text-[#0076B7]">
-                {orderDetail.finalPrice.toLocaleString("vi-VN")} VND
+                {orderDetail.finalPrice > 0
+                  ? orderDetail.finalPrice.toLocaleString("vi-VN")
+                  : 0}{" "}
+                VND
               </h3>
             </div>
             <div className="flex flex-row content-center justify-center items-center">

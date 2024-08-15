@@ -1,11 +1,9 @@
 import axios from "axios";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Province, District, Ward } from "../models";
-import FooterPayPage from "./footerPay";
-import VoucherPage from "./cardVoucher";
-import instance from "../api/api-config";
+import { ClipLoader, FadeLoader } from "react-spinners";
+import { Modal } from "zmp-ui";
 import { SpecificContext } from "./SpecificContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +33,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const [selectedBuyerProvince, setSelectedBuyerProvince] = useState<number>(0);
   const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
   const [selectedWard, setSelectedWard] = useState<number>(0);
+
+  const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] =
+    useState(false);
+  const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] =
+    useState(false);
 
   // const [selectedProvince, setSelectedProvince] = useState<number>(0);
   const selectedProvince = useRef<number>(0);
@@ -295,6 +298,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       ...prevOrder,
       photoCitizenFront: img,
     }));
+    setIsUploadingPhotoCitizenFont(false);
   };
   const updateBackCitizenPhoto = (img) => {
     setInsuranceOrder((prevOrder) => ({
@@ -307,6 +311,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       ...prevOrder,
       photoCitizenBack: img,
     }));
+
+    setIsUploadingPhotoCitizenBack(false);
   };
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -333,6 +339,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         return response.data.data[0];
       } catch (error) {
         console.error("Error uploading image:", error);
+        setIsUploadingPhotoCitizenBack(false);
+        setIsUploadingPhotoCitizenFont(false);
       }
     }
   };
@@ -361,11 +369,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
     if (!isValidEmptyString(citizenId)) {
       toast.warn("Số CCCD không được để trống");
       return false;
-    } else if (citizenId.length > 12) {
-      toast.warn("Số CCCD không hợp lệ");
+    } else if (citizenId.length != 12) {
+      toast.warn("Số CCCD gồm 12 ký tự, vui lòng nhập lại");
       return false;
     }
-    if (socialInsuranceId.length > 0 && socialInsuranceId.length != 10) {
+    if (socialInsuranceId.length < 10 || socialInsuranceId.length > 15) {
       toast.warn("Số BHXH không hợp lệ");
       return false;
     }
@@ -510,11 +518,13 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           <h3 className="text-[#0076B7] text-lg font-medium">
             Chụp ảnh giấy tờ tuỳ thân
           </h3>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row gap-2  justify-around w-[100%]">
             <div className="flex flex-row gap-2">
               <div className="flex flex-col gap-2">
                 <div
-                  className="bg-[#F5F5F5] rounded-lg p-[9px] card-cccd cursor-pointer"
+                  className={`bg-[#F5F5F5]  rounded-lg p-[${
+                    frontImageUrl ? "0px" : "9px"
+                  }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(frontImageInputRef)}
                 >
                   <div className="icon-1">
@@ -522,12 +532,13 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       <img
                         src={`https://baohiem.dion.vn${frontImageUrl}`}
                         alt="Mặt trước"
+                        className="w-[140px] h-[100px] object-center rounded-lg"
                       />
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="130"
-                        height="89"
+                        width={"100%"}
+                        height={"81px"}
                         viewBox="0 0 130 89"
                         fill="none"
                       >
@@ -582,14 +593,17 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   accept="image/*"
                   ref={frontImageInputRef}
                   style={{ display: "none" }}
-                  onChange={(event) =>
-                    handleImageUpload(event, updateFrontCitizenPhoto)
-                  }
+                  onChange={(event) => {
+                    setIsUploadingPhotoCitizenFont(true);
+                    handleImageUpload(event, updateFrontCitizenPhoto);
+                  }}
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <div
-                  className="bg-[#F5F5F5] rounded-lg p-[9px] card-cccd cursor-pointer"
+                  className={`bg-[#F5F5F5]  rounded-lg p-[${
+                    backImageUrl ? "0px" : "9px"
+                  }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(backImageInputRef)}
                 >
                   <div className="icon-1">
@@ -597,12 +611,13 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       <img
                         src={`https://baohiem.dion.vn${backImageUrl}`}
                         alt="Mặt sau"
+                        className="w-[140px] h-[100px] object-center rounded-lg"
                       />
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="130"
-                        height="89"
+                        width={"100%"}
+                        height={"81px"}
                         viewBox="0 0 130 89"
                         fill="none"
                       >
@@ -655,9 +670,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   accept="image/*"
                   ref={backImageInputRef}
                   style={{ display: "none" }}
-                  onChange={(event) =>
-                    handleImageUpload(event, updateBackCitizenPhoto)
-                  }
+                  onChange={(event) => {
+                    setIsUploadingPhotoCitizenBack(true);
+                    handleImageUpload(event, updateBackCitizenPhoto);
+                  }}
                 />
               </div>
             </div>
@@ -723,6 +739,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               id="cccd"
               value={citizenId}
               {...register("cccd", { required: false })}
+              maxLength={12}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số CCCD"
               onChange={(e) => {
@@ -751,6 +768,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               type="text"
               id="bhxh"
               {...register("bhxh", { required: false })}
+              maxLength={15}
               value={socialInsuranceId}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số Bảo hiểm Xã hội"
@@ -1010,7 +1028,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               {...register("buyerProvince", { required: false })}
               onChange={(e) => {
                 let provinceId: number = Number(e.target.value);
-                console.log(provinceId);
                 if (provinceId == 0) {
                   setDistricts([]);
                   setWards([]);
@@ -1151,7 +1168,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                 Tổng thanh toán:
               </p>
               <h3 className="text-base font-medium text-[#0076B7]">
-                {finalPrice.current.toLocaleString("vi-VN")} VND
+                {finalPrice.current > 0
+                  ? finalPrice.current.toLocaleString("vi-VN")
+                  : 0}{" "}
+                VND
               </h3>
             </div>
             <div className="flex flex-row content-center justify-center items-center">
@@ -1171,6 +1191,28 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           </div>
         </div>
       </form>
+
+      <Modal
+        visible={isUploadingPhotoCitizenFont}
+        modalStyle={{
+          background: "transparent",
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
+
+      <Modal
+        visible={isUploadingPhotoCitizenBack}
+        modalStyle={{
+          background: "transparent",
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
     </>
   );
 };
