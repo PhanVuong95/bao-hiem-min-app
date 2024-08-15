@@ -340,7 +340,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             }}
           >
             <Scanner
-              paused={isShowModelQR}
+              paused={!isShowModelQR}
               onError={(error) => {
 
               }}
