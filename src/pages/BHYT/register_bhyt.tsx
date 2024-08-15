@@ -354,7 +354,7 @@ const RegisterBHYT = ({ }) => {
       if (registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber != "") {
         if (!isValidHealthInsuranceNumber(registerInfoBHYT['listInsuredPerson'][index].healthInsuranceNumber)) {
           toast.warn(
-            "Mã BHYT cũ không hợp lệ",
+            "Mã BHYT 10-15 ký tự bao gồm chữ và số",
           );
           scrollToElement(beneficiaries[index].healthInsuranceNumber, 2, 500)
           return false;

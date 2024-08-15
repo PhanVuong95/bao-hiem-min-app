@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import HeaderBase from "../components/headerBase";
 import { ProfileContext } from "../components/userProfileContext";
 import banner from '../../assets-src/banner.png'
+import { toast } from "react-toastify";
 
 const HomePage: React.FunctionComponent = () => {
   const user = useRecoilValue(userState);
@@ -128,7 +129,11 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">
@@ -190,7 +195,9 @@ const HomePage: React.FunctionComponent = () => {
         </Link>
 
         <Link to="" onClick={() => {
-          console.log('aaa');
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
         }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
@@ -242,7 +249,11 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">
@@ -309,7 +320,11 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">

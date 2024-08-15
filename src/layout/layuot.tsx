@@ -57,7 +57,7 @@ const LayoutPage: React.FunctionComponent = (props) => {
   }, []);
 
   const user = useRecoilValue(userState);
-  console.log("user", user);
+  // console.log("user", user);
 
   const userId = user.userInfo.id;
   // console.log(userId);

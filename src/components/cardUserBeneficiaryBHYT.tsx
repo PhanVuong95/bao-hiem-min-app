@@ -605,7 +605,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
             if (value.length > 0) {
               if (!isValidHealthInsuranceNumber(value)) {
-                setErrors({ ...errors, ...{ "healthInsuranceNumber": "Mã BHYT không hợp lệ" } })
+                setErrors({ ...errors, ...{ "healthInsuranceNumber": "Mã BHYT 10-15 ký tự bao gồm chữ và số" } })
               } else {
                 setErrors({ ...errors, ...{ "healthInsuranceNumber": null } })
               }

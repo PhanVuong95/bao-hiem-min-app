@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 import { GetUserInfoReturns } from "zmp-sdk";
 import { Avatar, Box, Text } from "zmp-ui";
 
@@ -21,7 +22,11 @@ const UserCard: React.FunctionComponent<UserProps> = ({ user }) => {
         </Box>
       </div>
 
-      <Box ml={4}>
+      <Box ml={4} onClick={() => {
+        toast.info(
+          "Tính năng này đang phát triển",
+        );
+      }}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="52"
