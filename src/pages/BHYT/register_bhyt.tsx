@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "zmp-ui";
+import { Modal, useNavigate } from "zmp-ui";
 import { Province } from "../../models";
 import { registerInfoBHYT } from "./list_health_insurance";
 import { compareTwoDateString, formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../../utils/validateString";
@@ -10,6 +10,7 @@ import UserBeneficiaryBHYTPage from "../../components/cardUserBeneficiaryBHYT";
 import UserBuyerPage from "../../components/cardUserBuyer";
 import VoucherPage from "../../components/cardVoucher";
 import HeaderBase from "../../components/headerBase";
+import { FadeLoader } from "react-spinners";
 
 const RegisterBHYT = ({ }) => {
 
@@ -18,6 +19,7 @@ const RegisterBHYT = ({ }) => {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const fileUploadUrl = useRef<HTMLInputElement>(null);
   const [isLoadingFileUploadUrl, setLoadingFileUploadUrl] = useState(false)
+  const [fileUpload, setFileUpload] = useState(registerInfoBHYT["fileUploadUrl"])
 
   const userBuyerPageRefs = {
     phone: useRef<any>(null),
@@ -495,39 +497,99 @@ const RegisterBHYT = ({ }) => {
     }
   }
 
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setFileUpload: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+
+    const token = localStorage.token;
+    const file = event.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await axios.post(
+          "https://baohiem.dion.vn/account/api/upload-file",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setFileUpload(response.data.data[0]);
+        return response.data.data[0];
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setLoadingFileUploadUrl(false)
+      }
+    }
+  };
+
+  const updateFile = (file) => {
+    setFileUpload(file);
+    registerInfoBHYT["fileUploadUrl"] = file;
+    setLoadingFileUploadUrl(false)
+  }
+
+  console.log(registerInfoBHYT["fileUploadUrl"]);
+
   const renderAttachedFiles = () => {
     return (
       <div className="flex flex-col gap-2 mb-[32px]">
-        <div className="bg-white rounded-xl flex flex-col gap-6 p-4" onClick={() => handleUploadFileClick(fileUploadUrl)}>
-          <h3 className="text-[#0076B7] text-lg font-medium">
-            File đính kèm
-          </h3>
-          <button className="button-add">
-            <div className="flex flex-row justify-center items-center gap-3">
-              <p className="text-[#0076B7] text-base font-semibold">
-                Upload hình ảnh liên quan
-              </p>
-              <input
-                type="file"
-                accept=".doc,.docx,.pdf,.xls,.xlsx"
-                ref={fileUploadUrl}
-                style={{ display: "none" }}
+
+        <div className="bg-white rounded-xl flex flex-col gap-6 p-4" >
+          <div >
+            <h3 className="text-[#0076B7] text-lg font-medium">
+              File đính kèm
+            </h3>
+            {!fileUpload && (<button className="button-add w-[100%] mt-3" onClick={() => handleUploadFileClick(fileUploadUrl)}>
+              <div className="flex flex-row justify-center items-center gap-3">
+                <p className="text-[#0076B7] text-base font-semibold">
+                  Upload hình ảnh liên quan
+                </p>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="25"
+                  height="25"
+                  viewBox="0 0 25 25"
+                  fill="none"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M1.75134 12.7915C1.75134 6.87729 6.58713 2.0415 12.5013 2.0415C18.4156 2.0415 23.2513 6.87729 23.2513 12.7915C23.2513 18.7057 18.4156 23.5415 12.5013 23.5415C6.58713 23.5415 1.75134 18.7057 1.75134 12.7915ZM12.5013 3.5415C7.41556 3.5415 3.25134 7.70572 3.25134 12.7915C3.25134 17.8773 7.41556 22.0415 12.5013 22.0415C17.5871 22.0415 21.7513 17.8773 21.7513 12.7915C21.7513 7.70572 17.5871 3.5415 12.5013 3.5415ZM7.75134 12.7915C7.75134 12.3773 8.08713 12.0415 8.50134 12.0415H11.7513V8.7915C11.7513 8.37729 12.0871 8.0415 12.5013 8.0415C12.9156 8.0415 13.2513 8.37729 13.2513 8.7915V12.0415H16.5013C16.9156 12.0415 17.2513 12.3773 17.2513 12.7915C17.2513 13.2057 16.9156 13.5415 16.5013 13.5415H13.2513V16.7915C13.2513 17.2057 12.9156 17.5415 12.5013 17.5415C12.0871 17.5415 11.7513 17.2057 11.7513 16.7915V13.5415H8.50134C8.08713 13.5415 7.75134 13.2057 7.75134 12.7915Z"
+                    fill="#0076B7"
+                  />
+                </svg>
+              </div>
+            </button>)}
+          </div>
+
+
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileUploadUrl}
+            style={{ display: "none" }}
+            onChange={(event) => {
+              setLoadingFileUploadUrl(true)
+              handleFileUpload(event, updateFile)
+            }}
+          />
+
+          {fileUpload && (
+            <div className="flex items-center" >
+              <img
+                src={`https://baohiem.dion.vn${fileUpload}`}
+                alt="Ảnh "
+                className="w-[100%] object-center rounded-lg"
+                onClick={() => handleUploadFileClick(fileUploadUrl)}
               />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="25"
-                height="25"
-                viewBox="0 0 25 25"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M1.75134 12.7915C1.75134 6.87729 6.58713 2.0415 12.5013 2.0415C18.4156 2.0415 23.2513 6.87729 23.2513 12.7915C23.2513 18.7057 18.4156 23.5415 12.5013 23.5415C6.58713 23.5415 1.75134 18.7057 1.75134 12.7915ZM12.5013 3.5415C7.41556 3.5415 3.25134 7.70572 3.25134 12.7915C3.25134 17.8773 7.41556 22.0415 12.5013 22.0415C17.5871 22.0415 21.7513 17.8773 21.7513 12.7915C21.7513 7.70572 17.5871 3.5415 12.5013 3.5415ZM7.75134 12.7915C7.75134 12.3773 8.08713 12.0415 8.50134 12.0415H11.7513V8.7915C11.7513 8.37729 12.0871 8.0415 12.5013 8.0415C12.9156 8.0415 13.2513 8.37729 13.2513 8.7915V12.0415H16.5013C16.9156 12.0415 17.2513 12.3773 17.2513 12.7915C17.2513 13.2057 16.9156 13.5415 16.5013 13.5415H13.2513V16.7915C13.2513 17.2057 12.9156 17.5415 12.5013 17.5415C12.0871 17.5415 11.7513 17.2057 11.7513 16.7915V13.5415H8.50134C8.08713 13.5415 7.75134 13.2057 7.75134 12.7915Z"
-                  fill="#0076B7"
-                />
-              </svg>
             </div>
-          </button>
+          )}
 
           <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
 
@@ -624,7 +686,7 @@ const RegisterBHYT = ({ }) => {
 
   const onUpdate = async (token) => {
     const response = await axios.post(
-      "https://baohiem.dion.vn/insuranceorder/api/update-order",
+      "https://baohiem.dion.vn/insuranceorder/api/update-insuranceOrder",
       registerInfoBHYT,
       {
         headers: {
@@ -720,6 +782,17 @@ const RegisterBHYT = ({ }) => {
       </div>
 
       {renderFooter()}
+
+      <Modal
+        visible={isLoadingFileUploadUrl}
+        modalStyle={{
+          background: 'transparent'
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
     </div>
   );
 };

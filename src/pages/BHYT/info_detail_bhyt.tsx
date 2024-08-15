@@ -41,7 +41,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
         setInsuranceId(data?.insuranceId);
         registerInfoBHYT["id"] = data?.id;
-
+        registerInfoBHYT["fileUploadUrl"] = data?.fileUploadUrl;
         registerInfoBHYT["insuranceId"] = data?.insuranceId;
         registerInfoBHYT["citizenId"] = data?.citizenId;
         registerInfoBHYT["photoCitizenFront"] = data?.photoCitizenFront;

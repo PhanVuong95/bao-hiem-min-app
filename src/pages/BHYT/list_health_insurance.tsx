@@ -20,6 +20,7 @@ export let registerInfoBHYT = {
   "wardId": 0,
   "finalPrice": 0,
   "addressDetail": "",
+  "fileUploadUrl": "",
   "listInsuredPerson": [
     {
       "id": 0,
@@ -108,6 +109,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
       "wardId": 0,
       "finalPrice": 0,
       "addressDetail": "",
+      "fileUploadUrl": "",
       "listInsuredPerson": [
         {
           "id": 0,
