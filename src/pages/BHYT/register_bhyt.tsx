@@ -16,7 +16,8 @@ const RegisterBHYT = ({ }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [provinces, setProvinces] = useState<Province[]>([]);
-
+  const fileUploadUrl = useRef<HTMLInputElement>(null);
+  const [isLoadingFileUploadUrl, setLoadingFileUploadUrl] = useState(false)
 
   const userBuyerPageRefs = {
     phone: useRef<any>(null),
@@ -45,11 +46,11 @@ const RegisterBHYT = ({ }) => {
       newCardStartDate: React.createRef(),
       insuranceProvinceId: React.createRef(),
       medicalProvinceId: React.createRef(),
+      medicalDistrictId: React.createRef(),
       hospitalId: React.createRef(),
     }
   )
 
-  const policyTerm1 = useRef(false);
   const policyTerm2 = useRef(false);
 
   useEffect(() => {
@@ -73,6 +74,7 @@ const RegisterBHYT = ({ }) => {
       "id": 0,
       "insuranceProvinceId": null,
       "medicalProvinceId": 0,
+      "medicalDistrictId": 0,
       "socialInsuranceNumber": "",
       "healthInsuranceNumber": "",
       "citizenId": "",
@@ -416,9 +418,17 @@ const RegisterBHYT = ({ }) => {
 
       if (registerInfoBHYT['listInsuredPerson'][index].medicalProvinceId == 0) {
         toast.warn(
-          "Thành phố đăng ký khám chữa bệnh không được để trống",
+          "Thành phố khám chữa bệnh không được để trống",
         );
         scrollToElement(beneficiaries[index].medicalProvinceId, 2, 0)
+        return false;
+      }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].medicalDistrictId == 0) {
+        toast.warn(
+          "Quận huyện khám chữa bệnh không được để trống",
+        );
+        scrollToElement(beneficiaries[index].medicalDistrictId, 2, 0)
         return false;
       }
 
@@ -479,10 +489,16 @@ const RegisterBHYT = ({ }) => {
     )
   }
 
+  const handleUploadFileClick = (inputRef: React.RefObject<HTMLInputElement>) => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  }
+
   const renderAttachedFiles = () => {
     return (
       <div className="flex flex-col gap-2 mb-[32px]">
-        <div className="bg-white rounded-xl flex flex-col gap-6 p-4">
+        <div className="bg-white rounded-xl flex flex-col gap-6 p-4" onClick={() => handleUploadFileClick(fileUploadUrl)}>
           <h3 className="text-[#0076B7] text-lg font-medium">
             File đính kèm
           </h3>
@@ -491,6 +507,12 @@ const RegisterBHYT = ({ }) => {
               <p className="text-[#0076B7] text-base font-semibold">
                 Upload hình ảnh liên quan
               </p>
+              <input
+                type="file"
+                accept=".doc,.docx,.pdf,.xls,.xlsx"
+                ref={fileUploadUrl}
+                style={{ display: "none" }}
+              />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -692,7 +714,7 @@ const RegisterBHYT = ({ }) => {
 
         {renderAddUserBeneficiary()}
 
-        <VoucherPage />
+        {/* <VoucherPage /> */}
 
         {renderAttachedFiles()}
       </div>

@@ -281,7 +281,7 @@ const UserBuyerPage = (props: Props) => {
 
       {renderAddressDetail()}
 
-      <Link to="#" className="text-[#0076B7] text-sm font-normal underline">
+      <Link to="/" className="text-[#0076B7] text-sm font-normal underline">
         Xem hướng dẫn sử dụng trên VssID
       </Link>
     </div>

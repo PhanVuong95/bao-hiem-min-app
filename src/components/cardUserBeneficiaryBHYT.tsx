@@ -5,6 +5,8 @@ import { Modal } from "zmp-ui";
 import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
 import { listEthnics } from "../utils/constants";
 import { formatDate, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
+import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner';
+import iconClose from '../../assets-src/close_1.png'
 
 interface Props {
   price: number,
@@ -16,8 +18,8 @@ interface Props {
 
 const UserBeneficiaryBHYTPage = (props: Props) => {
   const { index, price, onClose, refs, provinces } = props;
-  const [dialogVisible, setDialogVisible] = useState(true);
 
+  const [districts, setDistricts] = useState<any>([]);
   const [socialInsuranceNumber, setSocialInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].socialInsuranceNumber);
   const [healthInsuranceNumber, setHealthInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].healthInsuranceNumber);
   const [errors, setErrors] = useState<any>({});
@@ -27,11 +29,11 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] = useState(false)
   const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] = useState(false)
 
-  const [fullName, setFullName] = useState(registerInfoBHYT["listInsuredPerson"][index].fullName);
+  const [fullName, setFullName] = useState(registerInfoBHYT["listInsuredPerson"][index].fullName.trim());
   const [dob, setDob] = useState(
     registerInfoBHYT["listInsuredPerson"][index].doB == "" ?
       "" :
-      formatTimeSql(registerInfoBHYT["listInsuredPerson"][index].doB)
+      formatTimeSql(registerInfoBHYT["listInsuredPerson"][index].doB.trim())
   );
 
   const [gender, setGender] = useState(registerInfoBHYT["listInsuredPerson"][index].gender);
@@ -55,9 +57,13 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   );
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
-  const [medicalProvinceId, setMedicalProvinceId] = useState(registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId.toString());
+  const [medicalProvinceId, setMedicalProvinceId] = useState<any>(registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId.toString());
+  const [medicalDistrictId, setMedicalDistrictId] = useState<any>(registerInfoBHYT["listInsuredPerson"][index].medicalDistrictId.toString());
+
   const [hospitalId, setHospitalId] = useState(registerInfoBHYT["listInsuredPerson"][index].hospitalId.toString());
   const [listHospitals, setListHospitals] = useState<any>([])
+
+  const [isShowModelQR, setIsShowModelQR] = useState<boolean>(false)
 
   const calculatePrice = () => {
     switch (index) {
@@ -77,11 +83,26 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   }
 
   useEffect(() => {
-    setListHospitals([])
-    if (medicalProvinceId != "0") {
+    setDistricts([])
+    if (medicalProvinceId != "0" || medicalProvinceId != 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${medicalProvinceId}`
+          `https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${medicalProvinceId}`
+        ).then((response) => {
+          setDistricts(response.data.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [medicalProvinceId]);
+
+  useEffect(() => {
+    setListHospitals([])
+    if (medicalDistrictId != "0" || medicalDistrictId != 0) {
+      axios
+        .get(
+          `https://baohiem.dion.vn/hospital/api/list-hospital-by-districtId?districtId=${medicalDistrictId}`
         ).then((response) => {
           setListHospitals(response.data.data);
         })
@@ -90,7 +111,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           console.error(error);
         });
     }
-  }, [medicalProvinceId])
+  }, [medicalDistrictId])
+
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -155,7 +177,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               onClose(index);
             }}
           >
-            <img src="../../assets-src/close_1.png" className="w-3 h-3" />
+            <img src={iconClose} className="w-3 h-3" />
           </button>
           :
           null
@@ -295,7 +317,84 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const renderUploadImages = () => {
     return (
       <div className="p-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
-        <h3 className="text-[#0076B7] text-lg font-medium">Tải ảnh CCCD</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-[#0076B7] text-lg font-medium">Tải ảnh CCCD</h3>
+          <button onClick={() => {
+            setIsShowModelQR(true)
+          }}>Quét QR CCCD</button>
+        </div>
+
+        {
+          <Modal
+            visible={isShowModelQR}
+            onClose={() => {
+              setIsShowModelQR(false)
+            }}
+            modalStyle={{
+              background: 'transparent',
+              width: '400px',
+              height: '600px',
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Scanner
+              paused={isShowModelQR}
+              onError={(error) => {
+
+              }}
+              components={{
+                zoom: true,
+                torch: false,
+                tracker: (detectedCodes: IDetectedBarcode[], ctx: CanvasRenderingContext2D) => {
+                }
+              }}
+              onScan={(data) => {
+                const info = data[0]["rawValue"];
+                const words = info.split("|")
+
+                setIsShowModelQR(false)
+                setCitizenId(words[0])
+
+                registerInfoBHYT["listInsuredPerson"][index].citizenId = words[0];
+
+                setFullName(words[2])
+                registerInfoBHYT["listInsuredPerson"][index].fullName = words[2];
+
+                const dob = words[3];
+                const day = dob.substring(0, 2);
+                const month = dob.substring(2, 4);
+                const year = dob.substring(4, 8);
+
+                setDob(`${year}-${month}-${day}`)
+
+                registerInfoBHYT["listInsuredPerson"][index].doB = formatDate(`${year}-${month}-${day}`);
+
+                setGender(words[4])
+                registerInfoBHYT["listInsuredPerson"][index].gender = words[4];
+
+              }}
+              allowMultiple={false}
+              constraints={{ facingMode: 'environment' }}
+              styles={{
+                container: {
+                  width: '100%',
+                  height: '100%',
+                  alignSelf: 'center',
+                },
+                finderBorder: 10,
+                video: {
+                  width: '100%',
+                  height: '100%',
+                  alignSelf: 'center'
+                }
+              }}
+            />
+          </Modal>
+        }
+
+
         <div className="flex flex-row gap-2 justify-around w-[100%]">
           <div ref={refs.photoCitizenFront} className="flex flex-row gap-3">
             <div className="flex flex-col gap-2 " onClick={() => handleCardClick(frontImageInputRef)}>
@@ -576,7 +675,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
-          Đân tộc <samp className="text-red-600">*</samp>
+          Dân tộc <samp className="text-red-600">*</samp>
         </label>
         <select
           ref={refs.ethnic}
@@ -721,7 +820,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
-          Thành phố đăng ký khám chữa bệnh
+          Thành phố khám chữa bệnh
           <samp className="text-red-600"> *</samp>
         </label>
         <select
@@ -744,7 +843,37 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           ))}
         </select>
 
-        {errors.provinceRegister && <div className="mt-2 text-red-500">{errors.provinceRegister}</div>}
+      </div>
+    )
+  }
+
+  const renderDistrict = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal pb-2 text-gray-900">
+          Quận huyện khám chữa bệnh
+          <samp className="text-red-600"> *</samp>
+        </label>
+        <select
+          ref={refs.medicalDistrictId}
+          value={medicalDistrictId}
+          onChange={(e) => {
+            const value = e.target.value;
+
+            setMedicalDistrictId(value)
+
+            registerInfoBHYT["listInsuredPerson"][index].medicalDistrictId = parseInt(value);
+          }}
+          className="bg-gray-50 border border-gray-300  text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
+        >
+          <option selected value="0">Chọn quận huyện</option>
+          {districts.map((district) => (
+            <option key={district.id} value={district.id}>
+              {district.name}
+            </option>
+          ))}
+        </select>
+
       </div>
     )
   }
@@ -818,6 +947,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
       {renderLine()}
 
       {renderProvince()}
+
+      {renderDistrict()}
 
       {renderHispital()}
 

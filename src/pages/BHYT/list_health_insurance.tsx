@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { PulseLoader } from "react-spinners";
-import { Modal } from "zmp-ui";
 import CardProductBHYT from "../../components/cardProductBHYT";
 import HeaderBase from "../../components/headerBase";
 
@@ -26,6 +25,7 @@ export let registerInfoBHYT = {
       "id": 0,
       "insuranceProvinceId": null,
       "medicalProvinceId": 0,
+      "medicalDistrictId": 0,
       "socialInsuranceNumber": "",
       "healthInsuranceNumber": "",
       "citizenId": "",
@@ -97,7 +97,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
       "id": 0,
       "insuranceId": 0,
       "accountId": 0,
-      "citizenId": 1063,
+      "citizenId": 0,
       "photoCitizenFront": "",
       "photoCitizenBack": "",
       "phone": "",
@@ -113,6 +113,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
           "id": 0,
           "insuranceProvinceId": null,
           "medicalProvinceId": 0,
+          "medicalDistrictId": 0,
           "socialInsuranceNumber": "",
           "healthInsuranceNumber": "",
           "citizenId": "",

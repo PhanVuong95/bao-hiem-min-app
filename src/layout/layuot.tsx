@@ -32,22 +32,22 @@ const LayoutPage: React.FunctionComponent = (props) => {
   useEffect(() => {
     getSetting({
       success: (data) => {
-        // if (!data["authSetting"]["scope.userPhonenumber"]) {
-        //   authorize({
-        //     scopes: ["scope.userPhonenumber"],
-        //     success: (data) => {
-        //       // xử lý khi gọi api thành công
-        //       // const user = useRecoilValue(userState);
-        //       // console.log(user);
-        //       // setUserProfile(() => user);
-        //     },
-        //     fail: (error) => {
-        //       // xử lý khi gọi api thất bại
-        //       // closeMiniApp();
-        //       console.log("Không cấp quyền");
-        //     },
-        //   });
-        // }
+        if (!data["authSetting"]["scope.userInfo"]) {
+          authorize({
+            scopes: ["scope.userInfo"],
+            success: (data) => {
+              // xử lý khi gọi api thành công
+              // const user = useRecoilValue(userState);
+              // console.log(user);
+              // setUserProfile(() => user);
+            },
+            fail: (error) => {
+              // xử lý khi gọi api thất bại
+              // closeMiniApp();
+              console.log("Không cấp quyền");
+            },
+          });
+        }
       },
       fail: (error) => {
         // xử lý khi gọi api thất bại
@@ -57,7 +57,7 @@ const LayoutPage: React.FunctionComponent = (props) => {
   }, []);
 
   const user = useRecoilValue(userState);
-  // console.log("user", user);
+  console.log("user", user);
 
   const userId = user.userInfo.id;
   // console.log(userId);

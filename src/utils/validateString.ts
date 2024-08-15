@@ -173,3 +173,8 @@ export const compareTwoDateString = (dateString1, dateString2) => {
     return 0;
   }
 }
+
+export const isValidString = (data) => {
+  if (typeof data !== "string") return "";
+  return data.trim();
+}

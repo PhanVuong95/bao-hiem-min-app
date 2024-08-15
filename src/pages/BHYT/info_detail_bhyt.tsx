@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "../../components/headerBase";
 import { useParams } from "react-router-dom";
-import { formatDate, formatMoneyVND, formatPhoneNumber, formatTime, isValidEmptyString } from "../../utils/validateString";
+import { formatDate, formatMoneyVND, formatPhoneNumber, formatTime, isValidEmptyString, isValidString } from "../../utils/validateString";
 import { registerInfoBHYT } from "./list_health_insurance";
 
 const InfoDetailBHYT: React.FunctionComponent = () => {
@@ -38,26 +38,32 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         const data = response.data.data[0]
         setBillPay(data);
         setLoading(false);
-        console.log(data);
 
-        setInsuranceId(data?.insuranceId)
+        setInsuranceId(data?.insuranceId);
         registerInfoBHYT["id"] = data?.id;
+
         registerInfoBHYT["insuranceId"] = data?.insuranceId;
         registerInfoBHYT["citizenId"] = data?.citizenId;
         registerInfoBHYT["photoCitizenFront"] = data?.photoCitizenFront;
         registerInfoBHYT["photoCitizenBack"] = data?.photoCitizenBack;
-        registerInfoBHYT["phone"] = data?.phone.trim();
-        registerInfoBHYT["fullName"] = data?.fullName.trim();
-        registerInfoBHYT["email"] = data?.email.trim();
+        registerInfoBHYT["phone"] = isValidString(data?.phone);
+        registerInfoBHYT["fullName"] = isValidString(data?.fullName);
+        registerInfoBHYT["email"] = isValidString(data?.email);
         registerInfoBHYT["provinceId"] = data?.provinceId;
         registerInfoBHYT["districtId"] = data?.districtId;
         registerInfoBHYT["wardId"] = data?.wardId;
         registerInfoBHYT["finalPrice"] = data?.finalPrice;
-        registerInfoBHYT["addressDetail"] = data?.addressDetail;
+        registerInfoBHYT["addressDetail"] = isValidString(data?.addressDetail);
 
 
         registerInfoBHYT["listInsuredPerson"] = data?.listInsuredPerson.map(item => {
           const obj = Object.assign({}, item);
+          obj["socialInsuranceNumber"] = isValidString(item["socialInsuranceNumber"]);
+          obj["healthInsuranceNumber"] = isValidString(item["healthInsuranceNumber"]);
+          obj["citizenId"] = isValidString(item["citizenId"]);
+          obj["photoCitizenFront"] = isValidString(item["photoCitizenFront"]);
+          obj["photoCitizenBack"] = isValidString(item["photoCitizenBack"]);
+          obj["fullName"] = isValidString(item["fullName"]);
           obj["doB"] = formatDate(item["doB"]);
           obj["newCardEndDate"] = formatDate(item["newCardEndDate"]);
           obj["newCardStartDate"] = formatDate(item["newCardStartDate"]);
@@ -65,12 +71,15 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           obj["oldCardStartDate"] = formatDate(item["oldCardStartDate"]);
           return obj;
         })
+
+        console.log(registerInfoBHYT);
+
       })
       .catch((error) => {
         console.error(error);
         setLoading(false);
       });
-  }, [])
+  }, [id])
 
   useEffect(() => {
     axios
@@ -201,7 +210,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {isValidEmptyString(item?.citizenId) ? "Chưa cập nhật" : item?.citizenId.trim()}
+              {!isValidEmptyString(item?.citizenId) ? "Chưa cập nhật" : item?.citizenId.trim()}
             </p>
           </div>
         </div>
@@ -286,7 +295,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
             <h3 className="text-[#0076B7] text-lg font-medium">
               {billPay?.insuranceOrderStatusName}
             </h3>
-            <p className="text-[#646464] text-sm font-normal">{billPay?.listInsuredPerson[0].monthInsured} tháng</p>
+            <p className="text-[#646464] text-sm font-normal">{billPay?.listInsuredPerson.length > 0 ? billPay?.listInsuredPerson[0].monthInsured : ''} tháng</p>
             <span className="text-[#0076B7] text-lg font-bold">
               {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} vnđ
             </span>

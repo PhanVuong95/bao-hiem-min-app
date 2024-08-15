@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Page } from "zmp-ui";
 import HeaderBase from "./headerBase";
 
 const ProductDetailPage1: React.FunctionComponent = (props) => {
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
+  const navigate = useNavigate();
+  const insurance = useRef()
 
   useEffect(() => {
     // Gán giá trị imageSrcs trong useEffect
@@ -12,6 +15,22 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
       "https://baohiem.dion.vn/files/upload/account/1019/23397296-cdbe-4ee4-a94a-ddcbd9acdaf9.png",
       "https://baohiem.dion.vn/files/upload/account/1019/1990eeec-efc5-4cff-8c6a-68055ce9652e.png",
     ]);
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(
+        "https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002"
+      )
+      .then((response) => {
+        const data = response.data.data.filter((item) => item.id == 1002)[0]
+
+        insurance.current = data;
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   return (
@@ -50,13 +69,15 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
       </Page>
       <footer className="bg-white fixed bottom-0 left-0 w-full py-3">
         <div className="flex justify-center w-[90%] mx-auto pb-3">
-          <Link
+
+          <button
+            onClick={() => {
+              navigate('/register-BHYT/', { state: { data: insurance.current, type: 'register' } })
+            }}
             className="px-[40px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
-            type="submit"
-            to="/register-BHYT"
           >
-            Mua ngay
-          </Link>
+            Chỉnh sửa
+          </button>
         </div>
       </footer>
     </div>
