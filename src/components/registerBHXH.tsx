@@ -369,7 +369,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
     if (!isValidEmptyString(citizenId)) {
       toast.warn("Số CCCD không được để trống");
       return false;
-    } else if (citizenId.length > 12) {
+    } else if (citizenId.length != 12) {
       toast.warn("Số CCCD gồm 12 ký tự, vui lòng nhập lại");
       return false;
     }
