@@ -47,7 +47,6 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
         imageUrl: imageURL,
         success: (res) => {
           // Handle success
-          // console.log(imageURL);
           console.log("Image saved successfully");
           toast.success("Lưu ảnh thành công!");
         },

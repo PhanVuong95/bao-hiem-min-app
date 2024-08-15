@@ -25,8 +25,6 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
       .then((response) => {
         setBillPay(response.data.data[0]);
         setLoading(false);
-        console.log(response.data);
-
       })
       .catch((error) => {
         console.error(error);
@@ -127,7 +125,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
     return (
       <div className="p-4 bg-white rounded-xl flex flex-col gap-6 mt-4">
         <h3 className="text-base font-medium text-[#0076B7]">
-          `Thông tin người số {index + 1} được bảo hiểm`
+          Thông tin người số {index + 1} được bảo hiểm
         </h3>
 
         <div className="flex flex-row justify-between w-full">

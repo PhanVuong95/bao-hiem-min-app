@@ -189,7 +189,9 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          console.log('aaa');
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">

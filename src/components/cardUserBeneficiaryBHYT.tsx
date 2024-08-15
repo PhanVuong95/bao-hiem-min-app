@@ -7,6 +7,7 @@ import { listEthnics } from "../utils/constants";
 import { formatDate, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner';
 import iconClose from '../../assets-src/close_1.png'
+import imageQR from '../../assets-src/icon_qr.png'
 
 interface Props {
   price: number,
@@ -318,10 +319,12 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     return (
       <div className="p-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-[#0076B7] text-lg font-medium">Tải ảnh CCCD</h3>
+          <h3 className="text-[#0076B7] text-lg font-medium items-center">Tải ảnh CCCD</h3>
           <button onClick={() => {
             setIsShowModelQR(true)
-          }}>Quét QR CCCD</button>
+          }}>
+            <img src={imageQR} className="w-8" />
+          </button>
         </div>
 
         {
@@ -339,6 +342,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               alignItems: 'center'
             }}
           >
+            <div className="text-[#fff]  w-[100%] text-center justify-items-center underline italic ">
+              Quét QR trên CCCD của bạn
+            </div>
             <Scanner
               paused={!isShowModelQR}
               onError={(error) => {

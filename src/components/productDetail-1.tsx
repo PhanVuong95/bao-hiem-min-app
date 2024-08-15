@@ -76,7 +76,7 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
             }}
             className="px-[40px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
           >
-            Chỉnh sửa
+            Mua ngay
           </button>
         </div>
       </footer>

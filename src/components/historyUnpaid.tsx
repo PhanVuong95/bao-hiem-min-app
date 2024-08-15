@@ -19,7 +19,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
-        console.log(response.data.data[0]);
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
       })
@@ -96,11 +95,9 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
       />
       <div className="pt-20">
         <div
-          className={`bg-[${orderStatusId == PENDING ? "#FAAD14" : ""}${
-            orderStatusId == CANCELED ? "#F00" : ""
-          }${
-            orderStatusId == DONE ? "#00BA00" : ""
-          }] py-[12px] px-4 flex flex-row items-center justify-between`}
+          className={`bg-[${orderStatusId == PENDING ? "#FAAD14" : ""}${orderStatusId == CANCELED ? "#F00" : ""
+            }${orderStatusId == DONE ? "#00BA00" : ""
+            }] py-[12px] px-4 flex flex-row items-center justify-between`}
         >
           <p className="text-white text-sm font-normal">Trạng thái</p>
           <p className="text-white text-sm font-semibold">

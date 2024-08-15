@@ -8,9 +8,6 @@ interface UserProps {
 
 const UserCard: React.FunctionComponent<UserProps> = ({ user }) => {
 
-  console.log(user);
-
-
   return (
     <div className="box-user w-full flex py-[24px] px-[16px] flex justify-between items-center">
       <div className="flex justify-between items-center">

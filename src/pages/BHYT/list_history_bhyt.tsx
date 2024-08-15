@@ -4,6 +4,7 @@ import axios from "axios";
 import HeaderBase from "../../components/headerBase";
 import { PulseLoader } from "react-spinners";
 import { formatMoneyVND } from "../../utils/validateString";
+import logo from "../../../assets-src/logo1.png"
 
 const ListHistoryBHYT = ({ }) => {
   const navigate = useNavigate();
@@ -96,7 +97,7 @@ const ListHistoryBHYT = ({ }) => {
         onBack={() => navigate("/history")}
         title={"Lịch sử đăng ký BHYT TN"}
       />
-      <div className="page-1 !pb-2 !pt-24">
+      <div className="page-1 !pb-2 !pt-[95px]">
         <div className="max-w-md mx-auto">
           <div className="mb-4 flex space-x-4 p-1 bg-white rounded-lg shadow-md">
             <button
@@ -136,7 +137,7 @@ const ListHistoryBHYT = ({ }) => {
                 <Link to={"/info-detail-bhyt/" + item.id} key={index}>
                   <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
                     <div className="flex gap-[10px]">
-                      <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+                      <img src={logo} className="w-16 h-16" />
                       <div className="title-product flex flex-col">
                         <h3 className="text-[#0076B7] text-lg font-medium">
                           {item?.insuranceName}
