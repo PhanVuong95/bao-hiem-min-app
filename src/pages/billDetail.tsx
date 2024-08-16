@@ -5,12 +5,14 @@ import { SpecificContext } from "../components/SpecificContext";
 import html2canvas from "html2canvas";
 import { toast } from "react-toastify";
 import HeaderBase from "../components/headerBase";
-import { PulseLoader } from "react-spinners";
+import { FadeLoader, PulseLoader } from "react-spinners";
 import { saveImageToGallery } from "zmp-sdk";
-
+import { Modal } from "zmp-ui";
+import warningIc from "../../assets-src/warning_icon.png";
 const BuillDetailPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const specificContext = useContext(SpecificContext);
   const { insuranceOrder, setInsuranceOrder } = specificContext;
   const [base64QRCode, setBase64QRCode] = useState<string>("");
@@ -35,6 +37,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   //   }
   // };
   const handleDownload = () => {
+    setLoading(true);
     // Capture the entire .invitation-ticket-full element
     html2canvas(orderRef.current as HTMLElement, {
       allowTaint: true,
@@ -48,7 +51,8 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
         success: (res) => {
           // Handle success
           // console.log(imageURL);
-          console.log("Image saved successfully");
+          // console.log("Image saved successfully");
+          setLoading(false);
           toast.success("Lưu ảnh thành công!");
         },
         fail: (error) => {
@@ -114,7 +118,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     try {
       const response = await axios.post(
         "https://baohiem.dion.vn/insuranceorder/api/create-payment?orderId=" +
-        id,
+          id,
         {
           headers: {
             "Content-Type": "application/json",
@@ -129,6 +133,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
       setExpiryDateString(formatDate(now));
     } catch (error) {
       console.error("Error uploading image:", error);
+      setBase64QRCode("400");
     }
   };
   useEffect(() => {
@@ -155,14 +160,15 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
           if (response.data.data[0] === STATUS_DONE_ID) {
             setIsPaymentSuccessful(true); // Hiển thị modal
             clearInterval(interval);
-          } else {
+          } else if (base64QRCode == "400") {
             // const notify1 = () => toast("Có lỗi xảy ra! Xin vui lòng thử lại");
             // notify1();
+            clearInterval(interval);
           }
         })
         .catch((error) => {
-          const notify1 = () => toast("Có lỗi xảy ra! Xin vui lòng thử lại");
-          notify1();
+          // const notify1 = () => toast("Có lỗi xảy ra! Xin vui lòng thử lại");
+          // notify1();
         });
     }, 5000);
 
@@ -366,11 +372,30 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
           </div>
           <div>
-            <img src={`data:image/png;base64,${base64QRCode}`} />
+            {base64QRCode != "400" ? (
+              <img src={`data:image/png;base64,${base64QRCode}`} />
+            ) : (
+              <div className="flex flex-row gap-5 items-center">
+                <img
+                  className="object-contain"
+                  width="45"
+                  height="12"
+                  src={warningIc}
+                ></img>
+                <p className="text-sm italic font-bold">
+                  Dịch vụ thanh toán tạm thời gián đoạn. Quý khách vui lòng thử
+                  lại sau!
+                </p>
+              </div>
+            )}
           </div>
-          <i className="text-xs font-semibold text-center text-red-700">
-            QR thanh toán sẽ hết hạn vào lúc {expiryDateString}
-          </i>
+          {base64QRCode != "400" ? (
+            <i className="text-xs font-semibold text-center text-red-700">
+              QR thanh toán sẽ hết hạn vào lúc {expiryDateString}
+            </i>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
       <div className="page-2 bg-white">
@@ -393,6 +418,16 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
           </div>
         </div>
       </div>
+      <Modal
+        visible={loading}
+        modalStyle={{
+          background: "transparent",
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
     </>
   );
 };

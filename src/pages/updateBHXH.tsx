@@ -11,7 +11,10 @@ import {
   isValidEmptyString,
   isValidPhone,
 } from "../utils/validateString";
-
+import { Modal } from "zmp-ui";
+import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
+import imageQR from "../../assets-src/icon_qr.png";
+import { FadeLoader } from "react-spinners";
 const UpdateBHXH: React.FunctionComponent = (props) => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -44,6 +47,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
   const [displayValue, setDisplayValue] = useState("");
   const [temp, setTemp] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isShowModelQR, setIsShowModelQR] = useState<boolean>(false);
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
@@ -65,6 +70,17 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
           response.data.data[0].listInsuredPerson[0].insuranceProvinceId;
         setSelectedBuyerProvince(response.data.data[0].provinceId);
         setSelectedDistrict(response.data.data[0].districtId);
+        axios
+          .get(
+            `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${response.data.data[0].districtId}`
+          )
+          .then((response) => {
+            setWards(response.data.data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+        setSelectedWard(response.data.data[0].wardId);
       })
       .catch((error) => {
         console.error(error);
@@ -76,10 +92,6 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       .get("https://baohiem.dion.vn/province/api/list")
       .then((response) => {
         setProvinces(response.data.data);
-        // setSelectedBuyerProvince(Number(response.data.data[0].id));
-        // selectedProvince.current = Number(response.data.data[0].id);
-        // setValue("province", Number(response.data.data[0].id));
-        // setValue("buyerProvince", Number(response.data.data[0].id));
         setDistricts([]);
         setWards([]);
         setTemp(!temp);
@@ -98,9 +110,6 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         .then((response) => {
           setDistricts(response.data.data);
           setWards([]);
-          // if (!orderDetail) {
-          //   setSelectedDistrict(Number(response.data.data[0].id));
-          // }
         })
         .catch((error) => {
           console.error(error);
@@ -116,9 +125,6 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         )
         .then((response) => {
           setWards(response.data.data);
-          // if (!orderDetail) {
-          //   setSelectedWard(Number(response.data.data[0].id));
-          // }
         })
         .catch((error) => {
           console.error(error);
@@ -283,6 +289,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     if (districtId == 0) {
       setWards([]);
     }
+    handleInputChange("wardId", 0);
     setSelectedDistrict(districtId);
     handleInputChange("districtId", districtId);
   };
@@ -329,9 +336,14 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       return false;
     }
     if (
-      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length <
-        10 ||
-      orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length > 15
+      !(
+        orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length ==
+          0 ||
+        orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length ==
+          10 ||
+        orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length ==
+          15
+      )
     ) {
       toast.warn("Số BHXH không hợp lệ");
       return false;
@@ -364,11 +376,11 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       toast.warn("Vui lòng chọn tỉnh thành");
       return false;
     }
-    if (Number(selectedDistrict) == 0) {
+    if (Number(orderDetail.districtId) == 0) {
       toast.warn("Vui lòng chọn quận huyện");
       return false;
     }
-    if (Number(selectedWard) == 0) {
+    if (Number(orderDetail.wardId) == 0) {
       toast.warn("Vui lòng chọn phường xã");
       return false;
     }
@@ -391,6 +403,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
 
   const onSubmit = (data: any) => {
     if (validate()) {
+      setLoading(true);
       //UpdateInsuranceOrder();
       const updateOrder = {
         id: Number(orderDetail.id),
@@ -441,11 +454,13 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         }
       );
       if (response.data.status == "200") {
+        setLoading(false);
         toast.success("Cập nhật đơn đăng ký BHXH thành công!");
         setTimeout(() => {
           navigate(-1);
         }, 1000);
       } else {
+        setLoading(false);
         toast.error("Có lỗi xảy ra. Vui lòng thử lại!");
       }
     } catch (error) {
@@ -470,13 +485,13 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     return `${year}-${month}-${day}`;
   }
 
-  useEffect(() => {
-    if (orderDetail) {
-      setSelectedBuyerProvince(orderDetail.provinceId);
-      setSelectedDistrict(orderDetail.districtId);
-      setSelectedWard(orderDetail.wardId);
-    }
-  }, [orderDetail]);
+  // useEffect(() => {
+  //   if (orderDetail) {
+  //     setSelectedBuyerProvince(orderDetail.provinceId);
+  //     setSelectedDistrict(orderDetail.districtId);
+  //     setSelectedWard(orderDetail.wardId);
+  //   }
+  // }, [orderDetail]);
 
   if (!orderDetail) {
     return;
@@ -508,9 +523,82 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         className=" flex flex-col gap-4 pt-[75px]"
       >
         <div className="p-4 mx-4 mt-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
-          <h3 className="text-[#0076B7] text-lg font-medium">
+          {/* <h3 className="text-[#0076B7] text-lg font-medium">
             Chụp ảnh giấy tờ tuỳ thân
-          </h3>
+          </h3> */}
+          <div className="flex justify-between">
+            <h3 className="text-[#0076B7] text-lg font-medium">
+              Chụp ảnh giấy tờ tuỳ thân
+            </h3>
+
+            {
+              <Modal
+                visible={isShowModelQR}
+                onClose={() => {
+                  setIsShowModelQR(false);
+                }}
+                modalStyle={{
+                  background: "transparent",
+                  width: "400px",
+                  height: "600px",
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div className="text-[#fff]  w-[100%] text-center justify-items-center underline italic ">
+                  Quét QR trên CCCD của bạn
+                </div>
+                <Scanner
+                  paused={!isShowModelQR}
+                  onError={(error) => {}}
+                  components={{
+                    zoom: true,
+                    torch: false,
+                    tracker: (
+                      detectedCodes: IDetectedBarcode[],
+                      ctx: CanvasRenderingContext2D
+                    ) => {},
+                  }}
+                  onScan={(data) => {
+                    const info = data[0]["rawValue"];
+                    const words = info.split("|");
+
+                    setIsShowModelQR(false);
+                    handleInsuredPersonChange("citizenId", words[0]);
+                    handleInsuredPersonChange("fullName", words[2]);
+                    const dob = words[3];
+                    const day = dob.substring(0, 2);
+                    const month = dob.substring(2, 4);
+                    const year = dob.substring(4, 8);
+
+                    // set năm sinh
+                    setDateValue(`${year}-${month}-${day}`);
+
+                    handleInsuredPersonChange("doB", `${year}-${month}-${day}`);
+
+                    handleInsuredPersonChange("gender", words[4]);
+                  }}
+                  allowMultiple={false}
+                  constraints={{ facingMode: "environment" }}
+                  styles={{
+                    container: {
+                      width: "100%",
+                      height: "90%",
+                      alignSelf: "center",
+                    },
+                    finderBorder: 10,
+                    video: {
+                      width: "100%",
+                      height: "100%",
+                      alignSelf: "center",
+                    },
+                  }}
+                />
+              </Modal>
+            }
+          </div>
+
           <div className="flex flex-row gap-2  justify-around w-[100%]">
             <div className="flex flex-row gap-2">
               <div className="flex flex-col gap-2">
@@ -673,9 +761,18 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
           </div>
         </div>
         <div className="p-4 mx-4 bg-white rounded-xl flex flex-col gap-6">
-          <h3 className="text-[#0076B7] text-lg font-medium">
-            Thông tin người tham gia BHXH tự nguyện
-          </h3>
+          <div className="flex justify-between">
+            <h3 className="text-[#0076B7] text-lg font-medium">
+              Thông tin người tham gia BHXH tự nguyện
+            </h3>
+            <div
+              onClick={() => {
+                setIsShowModelQR(true);
+              }}
+            >
+              <img className="w-12" src={imageQR} />
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-normal text-gray-900">
               Họ và tên <samp className="text-red-600">*</samp>
@@ -918,6 +1015,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                 }
                 setSelectedBuyerProvince(provinceId);
                 handleInputChange("provinceId", provinceId);
+                handleInputChange("wardId", 0);
+                handleInputChange("districtId", 0);
               }}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
@@ -960,7 +1059,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
               <option selected className="" value="0">
-                Chọn tỉnh phường xã
+                Chọn phường xã
               </option>
               {wards.map((ward) => (
                 <option key={ward.id} value={ward.id}>
@@ -1032,6 +1131,37 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
           </div>
         </div>
       </form>
+      <Modal
+        visible={isUploadingPhotoCitizenFont}
+        modalStyle={{
+          background: "transparent",
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
+
+      <Modal
+        visible={isUploadingPhotoCitizenBack}
+        modalStyle={{
+          background: "transparent",
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
+      <Modal
+        visible={loading}
+        modalStyle={{
+          background: "transparent",
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
     </>
   );
 };

@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import HeaderBase from "../components/headerBase";
 import { SpecificContext } from "../components/SpecificContext";
-import logo from "../../assets-src/logo1.png"
+import logo from "../../assets-src/logo1.png";
 
 const ListSocialInsurance: React.FunctionComponent = (props) => {
   const specificContext = useContext(SpecificContext);
@@ -86,7 +86,7 @@ const ListSocialInsurance: React.FunctionComponent = (props) => {
                 <p className="text-[#646464] text-sm font-normal">Theo tháng</p>
                 <span className="text-[#0076B7] text-lg font-bold">
                   {insurance.discount}
-                  <samp className="text-[#646464] text-sm font-normal">%</samp>
+                  <samp className="text-[#646464] text-sm font-normal"> %</samp>
                 </span>
               </div>
             </div>

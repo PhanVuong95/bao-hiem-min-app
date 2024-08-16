@@ -8,11 +8,14 @@ import { SpecificContext } from "./SpecificContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import HeaderBase from "./headerBase";
+import imageQR from "../../assets-src/icon_qr.png";
 import {
+  formatDate,
   isValidEmail,
   isValidEmptyString,
   isValidPhone,
 } from "../utils/validateString";
+import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 const RegisterBHXH: React.FunctionComponent = (props) => {
   const navigate = useNavigate();
   const [personName, setPersonName] = useState<string>("");
@@ -38,7 +41,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
     useState(false);
   const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] =
     useState(false);
-
+  const [loading, setLoading] = useState(false);
   // const [selectedProvince, setSelectedProvince] = useState<number>(0);
   const selectedProvince = useRef<number>(0);
   const [supportBudget, setSupportBudget] = useState<number>(0);
@@ -56,6 +59,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const specificContext = useContext(SpecificContext);
   const [displayValue, setDisplayValue] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+
+  const [isShowModelQR, setIsShowModelQR] = useState<boolean>(false);
+
   const {
     // frontCitizenidPhoto,
     // backCitizenidPhoto,
@@ -115,6 +121,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         insuranceOrder.listInsuredPerson[0].wage.toLocaleString("vi-VN")
       );
       finalPrice.current = insuranceOrder.finalPrice;
+      axios
+        .get(
+          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${insuranceOrder.districtId}`
+        )
+        .then((response) => {
+          setWards(response.data.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, []);
   useEffect(() => {
@@ -370,11 +386,17 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       toast.warn("Số CCCD không được để trống");
       return false;
     } else if (citizenId.length != 12) {
-      toast.warn("Số CCCD gồm 12 ký tự, vui lòng nhập lại");
+      toast.warn("Số CCCD bao gồm 12 ký tự, vui lòng nhập lại");
       return false;
     }
-    if (socialInsuranceId.length < 10 || socialInsuranceId.length > 15) {
-      toast.warn("Số BHXH không hợp lệ");
+    if (
+      !(
+        socialInsuranceId.length == 0 ||
+        socialInsuranceId.length == 10 ||
+        socialInsuranceId.length == 15
+      )
+    ) {
+      toast.warn("Số BHXH bao gồm 10 hoặc 15 ký tự, vui lòng nhập lại");
       return false;
     }
     if (!isValidEmptyString(dateValue)) {
@@ -433,7 +455,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   // const ()
   const onSubmit = (data: any) => {
     if (validate()) {
-      console.log(insuranceOrder.id);
+      setLoading(true);
       if (insuranceOrder.id == 0) {
         AddInsuranceOrder();
       } else {
@@ -463,7 +485,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           ...prevOrder,
           id: response.data.data[0],
         }));
+        setLoading(false);
         navigate("/buill-pay/1");
+      } else {
+        setLoading(false);
+        toast.warn("Có lỗi xảy ra, vui lòng thử lại!");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -487,7 +513,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       // return response.data.data[0];
       console.log(response.data);
       if (response.data.status == "200") {
+        setLoading(false);
         navigate("/buill-pay/1");
+      } else {
+        setLoading(false);
+        toast.warn("Có lỗi xảy ra, vui lòng thử lại!");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -515,9 +545,124 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         className=" flex flex-col gap-4 pt-[75px]"
       >
         <div className="p-4 mx-4 mt-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
-          <h3 className="text-[#0076B7] text-lg font-medium">
-            Chụp ảnh giấy tờ tuỳ thân
-          </h3>
+          <div className="flex justify-between">
+            <h3 className="text-[#0076B7] text-lg font-medium">
+              Chụp ảnh giấy tờ tuỳ thân
+            </h3>
+
+            {
+              <Modal
+                visible={isShowModelQR}
+                onClose={() => {
+                  setIsShowModelQR(false);
+                }}
+                modalStyle={{
+                  background: "transparent",
+                  width: "400px",
+                  height: "600px",
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div className="text-[#fff]  w-[100%] text-center justify-items-center underline italic ">
+                  Quét QR trên CCCD của bạn
+                </div>
+                <Scanner
+                  paused={!isShowModelQR}
+                  onError={(error) => {}}
+                  components={{
+                    zoom: true,
+                    torch: false,
+                    tracker: (
+                      detectedCodes: IDetectedBarcode[],
+                      ctx: CanvasRenderingContext2D
+                    ) => {},
+                  }}
+                  onScan={(data) => {
+                    const info = data[0]["rawValue"];
+                    const words = info.split("|");
+
+                    setIsShowModelQR(false);
+                    setCitizenId(words[0]);
+
+                    // số căn cước
+                    setCitizenId(words[0]);
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0
+                            ? { ...person, citizenId: words[0] }
+                            : person
+                      ),
+                    }));
+                    // họ và tên
+                    setPersonName(words[2]);
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0
+                            ? { ...person, fullName: words[2] }
+                            : person
+                      ),
+                    }));
+
+                    const dob = words[3];
+                    const day = dob.substring(0, 2);
+                    const month = dob.substring(2, 4);
+                    const year = dob.substring(4, 8);
+
+                    // set năm sinh
+                    setDateValue(`${year}-${month}-${day}`);
+
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0
+                            ? {
+                                ...person,
+                                doB: formatDateString(
+                                  `${year}-${month}-${day}`
+                                ),
+                              }
+                            : person
+                      ),
+                    }));
+
+                    //registerInfoBHYT["listInsuredPerson"][index].doB = formatDate(`${year}-${month}-${day}`);
+
+                    setGender(words[4]); // giới tính
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0 ? { ...person, gender: words[4] } : person
+                      ),
+                    }));
+                    //registerInfoBHYT["listInsuredPerson"][index].gender = words[4];
+                  }}
+                  allowMultiple={false}
+                  constraints={{ facingMode: "environment" }}
+                  styles={{
+                    container: {
+                      width: "100%",
+                      height: "90%",
+                      alignSelf: "center",
+                    },
+                    finderBorder: 10,
+                    video: {
+                      width: "100%",
+                      height: "100%",
+                      alignSelf: "center",
+                    },
+                  }}
+                />
+              </Modal>
+            }
+          </div>
           <div className="flex flex-row gap-2  justify-around w-[100%]">
             <div className="flex flex-row gap-2">
               <div className="flex flex-col gap-2">
@@ -680,9 +825,18 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           </div>
         </div>
         <div className="p-4 mx-4 bg-white rounded-xl flex flex-col gap-6">
-          <h3 className="text-[#0076B7] text-lg font-medium">
-            Thông tin người tham gia BHXH tự nguyện
-          </h3>
+          <div className="flex justify-between">
+            <h3 className="text-[#0076B7] text-lg font-medium">
+              Thông tin người tham gia BHXH tự nguyện{" "}
+            </h3>
+            <div
+              onClick={() => {
+                setIsShowModelQR(true);
+              }}
+            >
+              <img className="w-12" src={imageQR} />
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-normal text-gray-900">
               Họ và tên <samp className="text-red-600">*</samp>
@@ -1205,6 +1359,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
 
       <Modal
         visible={isUploadingPhotoCitizenBack}
+        modalStyle={{
+          background: "transparent",
+        }}
+      >
+        <div className="justify-center flex">
+          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
+        </div>
+      </Modal>
+      <Modal
+        visible={loading}
         modalStyle={{
           background: "transparent",
         }}
