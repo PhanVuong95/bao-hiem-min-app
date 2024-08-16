@@ -2,6 +2,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import { GetUserInfoReturns } from "zmp-sdk";
 import { Avatar, Box, Text } from "zmp-ui";
+import logo from '../../assets-src/logo1.png'
 
 interface UserProps {
   user: GetUserInfoReturns["userInfo"];
@@ -14,11 +15,11 @@ const UserCard: React.FunctionComponent<UserProps> = ({ user }) => {
       <div className="flex justify-between items-center">
         <img
           className="rounded-full w-[50px] h-[50px]"
-          src={user.avatar.startsWith("http") ? user.avatar : undefined}
+          src={user?.avatar ?? logo}
         />
 
         <Box ml={4}>
-          <p className="text-lg font-semibold">Xin chào, {user.name}</p>
+          <p className="text-lg font-semibold">Xin chào, {user?.name ?? 'Quý khách'}</p>
         </Box>
       </div>
 

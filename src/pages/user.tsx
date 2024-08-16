@@ -1,22 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Avatar,
   List,
   Text,
   Box,
   Page,
-  Button,
-  Icon,
-  useNavigate,
 } from "zmp-ui";
-import { useRecoilValue } from "recoil";
-import { displayNameState, userState } from "../state";
 import HeaderBase from "../components/headerBase";
+import { ProfileContext } from "../components/userProfileContext";
+import logo from '../../assets-src/logo1.png'
 
 const UserPage = () => {
-  const { userInfo: user } = useRecoilValue(userState);
-  const displayName = useRecoilValue(displayNameState);
-  const navigate = useNavigate();
+
+  const profieContext = useContext(ProfileContext);
+  const { userProfile, setUserProfile } = profieContext;
+
+
   return (
     <div>
       <HeaderBase
@@ -34,15 +33,15 @@ const UserPage = () => {
               story="default"
               size={96}
               online
-              src={user.avatar.startsWith("http") ? user.avatar : undefined}
+              src={userProfile?.userInfo?.avatar ?? logo}
             >
-              {user.avatar}
+              {userProfile?.userInfo?.avatar}
             </Avatar>
           </Box>
           <div className="mt-2">
             <Box flex flexDirection="row" alignItems="center">
               <Box>
-                <Text.Title>{displayName || user.name}</Text.Title>
+                <Text.Title>{userProfile?.userInfo?.name}</Text.Title>
               </Box>
               {/* <Box ml={4}>
               <Button
@@ -60,9 +59,9 @@ const UserPage = () => {
         <Box m={0} p={0} mt={4}>
           <div className="section-container">
             <List>
-              <List.Item title="Name" subTitle={user.name} />
+              <List.Item title="Name" subTitle={userProfile?.userInfo?.name} />
               {/* <List.Item title="Display Name" subTitle={displayName} /> */}
-              <List.Item title="ID" subTitle={user.id} />
+              <List.Item title="ID" subTitle={userProfile?.userInfo?.id} />
             </List>
           </div>
         </Box>
