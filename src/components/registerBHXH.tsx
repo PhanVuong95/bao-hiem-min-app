@@ -196,6 +196,18 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           //   ...prevOrder,
           //   districtId: Number(response.data.data[0].id),
           // }));
+          if (selectedDistrict !== 0) {
+            axios
+              .get(
+                `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${insuranceOrder.districtId}`
+              )
+              .then((response) => {
+                setWards(response.data.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
           setTemp(!temp);
         })
         .catch((error) => {
@@ -492,6 +504,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         toast.warn("Có lỗi xảy ra, vui lòng thử lại!");
       }
     } catch (error) {
+      setLoading(false);
+      toast.warn("Có lỗi xảy ra, vui lòng thử lại!");
       console.error("Error uploading image:", error);
     }
   };
@@ -520,6 +534,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         toast.warn("Có lỗi xảy ra, vui lòng thử lại!");
       }
     } catch (error) {
+      setLoading(false);
+      toast.warn("Có lỗi xảy ra, vui lòng thử lại!");
       console.error("Error uploading image:", error);
     }
   };
@@ -870,6 +886,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <select
               id="insuranceProvince"
               value={selectedProvince.current}
+              key={selectedProvince.current}
               {...register("province", { required: false })}
               onChange={handleProvinceChange}
               className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow`}
@@ -1179,6 +1196,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               value={selectedBuyerProvince}
+              key={selectedBuyerProvince}
               {...register("buyerProvince", { required: false })}
               onChange={(e) => {
                 let provinceId: number = Number(e.target.value);
@@ -1220,6 +1238,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               value={selectedDistrict}
+              key={selectedDistrict}
               {...register("buyerDistrict", { required: false })}
               onChange={handleDistrictChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
@@ -1241,13 +1260,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <select
               {...register("buyerWard", { required: false })}
               value={selectedWard}
+              //key={selectedWard}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
               onChange={(e) => {
                 {
+                  console.log(Number(e.target.value));
+
                   setSelectedWard(parseInt(e.target.value));
                   setInsuranceOrder((prevOrder) => ({
                     ...prevOrder,
-                    wardId: parseInt(e.target.value, 10),
+                    wardId: parseInt(e.target.value),
                   }));
                 }
               }}

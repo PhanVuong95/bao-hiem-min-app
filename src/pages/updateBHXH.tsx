@@ -27,9 +27,9 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
-  const [selectedBuyerProvince, setSelectedBuyerProvince] = useState<number>();
-  const [selectedDistrict, setSelectedDistrict] = useState<number>();
-  const [selectedWard, setSelectedWard] = useState<number>();
+  const [selectedBuyerProvince, setSelectedBuyerProvince] = useState<number>(0);
+  const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
+  const [selectedWard, setSelectedWard] = useState<number>(0);
   const provinceId = useRef(0);
   const districtId = useRef(0);
   const wardId = useRef(0);
@@ -53,7 +53,6 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
-        console.log(response.data.data[0]);
         setOrderDetail(response.data.data[0]);
         setDisplayValue(
           response.data.data[0].listInsuredPerson[0].wage.toLocaleString(
@@ -110,6 +109,18 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         .then((response) => {
           setDistricts(response.data.data);
           setWards([]);
+          if (selectedDistrict != 0) {
+            axios
+              .get(
+                `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedDistrict}`
+              )
+              .then((response) => {
+                setWards(response.data.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -290,6 +301,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
       setWards([]);
     }
     handleInputChange("wardId", 0);
+    setSelectedWard(0);
     setSelectedDistrict(districtId);
     handleInputChange("districtId", districtId);
   };
@@ -345,7 +357,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
           15
       )
     ) {
-      toast.warn("Số BHXH không hợp lệ");
+      toast.warn("Số BHXH bao gồm 10 hoặc 15 ký tự, vui lòng thử lại");
       return false;
     }
     if (!isValidEmptyString(orderDetail.listInsuredPerson[0].doB)) {
@@ -464,6 +476,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
         toast.error("Có lỗi xảy ra. Vui lòng thử lại!");
       }
     } catch (error) {
+      setLoading(false);
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại!");
       console.error("Error uploading image:", error);
     }
   };
@@ -796,6 +810,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             <select
               id="insuranceProvince"
               value={orderDetail.listInsuredPerson[0].insuranceProvinceId}
+              key={orderDetail.listInsuredPerson[0].insuranceProvinceId}
               onChange={handleProvinceChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
@@ -1007,6 +1022,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               value={orderDetail.provinceId}
+              key={orderDetail.provinceId}
               onChange={(e) => {
                 let provinceId: number = Number(e.target.value);
                 if (provinceId == 0) {
@@ -1015,6 +1031,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                 }
                 setSelectedBuyerProvince(provinceId);
                 handleInputChange("provinceId", provinceId);
+                setSelectedWard(0);
+                setSelectedDistrict(0);
                 handleInputChange("wardId", 0);
                 handleInputChange("districtId", 0);
               }}
@@ -1037,6 +1055,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             <select
               value={selectedDistrict}
               onChange={handleDistrictChange}
+              key={selectedDistrict}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
               <option selected className="" value="0">
@@ -1055,6 +1074,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             </label>
             <select
               value={selectedWard}
+              key={selectedWard}
               onChange={handleWardChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
             >
