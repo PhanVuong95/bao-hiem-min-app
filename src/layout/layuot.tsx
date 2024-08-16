@@ -52,12 +52,9 @@ const LayoutPage: React.FunctionComponent = (props) => {
         avatarType: "normal",
       })
 
-      console.log(user);
       setUserProfile(() => user);
 
-
       const userId = user.userInfo.id;
-
 
       const { data } = await axios.post(
         `https://baohiem.dion.vn/account/api/login-mini-app`,
@@ -72,7 +69,6 @@ const LayoutPage: React.FunctionComponent = (props) => {
       // Saving token to local storage
       localStorage.setItem("token", data.resources.accessToken);
       localStorage.setItem("profile", JSON.stringify(data.resources.profile));
-
 
       console.log("Đăng nhập - đăng ký thành công!!");
     } catch (error) {

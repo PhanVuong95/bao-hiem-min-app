@@ -15,11 +15,11 @@ const UserCard: React.FunctionComponent<UserProps> = ({ user }) => {
       <div className="flex justify-between items-center">
         <img
           className="rounded-full w-[50px] h-[50px]"
-          src={user?.avatar ?? logo}
+          src={user?.avatar ? user?.avatar : logo}
         />
 
         <Box ml={4}>
-          <p className="text-lg font-semibold">Xin chào, {user?.name ?? 'Quý khách'}</p>
+          <p className="text-lg font-semibold">Xin chào, {user?.name ? user?.name : 'Quý khách'}</p>
         </Box>
       </div>
 

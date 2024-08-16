@@ -33,7 +33,7 @@ const UserPage = () => {
               story="default"
               size={96}
               online
-              src={userProfile?.userInfo?.avatar ?? logo}
+              src={userProfile?.userInfo?.avatar ? userProfile?.userInfo?.avatar : logo}
             >
               {userProfile?.userInfo?.avatar}
             </Avatar>
@@ -41,7 +41,7 @@ const UserPage = () => {
           <div className="mt-2">
             <Box flex flexDirection="row" alignItems="center">
               <Box>
-                <Text.Title>{userProfile?.userInfo?.name}</Text.Title>
+                <Text.Title>{userProfile?.userInfo?.name ? userProfile?.userInfo?.name : ''}</Text.Title>
               </Box>
               {/* <Box ml={4}>
               <Button
@@ -59,9 +59,9 @@ const UserPage = () => {
         <Box m={0} p={0} mt={4}>
           <div className="section-container">
             <List>
-              <List.Item title="Name" subTitle={userProfile?.userInfo?.name} />
+              <List.Item title="Name" subTitle={userProfile?.userInfo?.name ? userProfile?.userInfo?.name : ''} />
               {/* <List.Item title="Display Name" subTitle={displayName} /> */}
-              <List.Item title="ID" subTitle={userProfile?.userInfo?.id} />
+              <List.Item title="ID" subTitle={userProfile?.userInfo?.id ? userProfile?.userInfo?.id : ''} />
             </List>
           </div>
         </Box>
