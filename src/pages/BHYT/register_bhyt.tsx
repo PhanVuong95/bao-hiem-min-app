@@ -534,8 +534,6 @@ const RegisterBHYT = ({ }) => {
     setLoadingFileUploadUrl(false)
   }
 
-  console.log(registerInfoBHYT["fileUploadUrl"]);
-
   const renderAttachedFiles = () => {
     return (
       <div className="flex flex-col gap-2 mb-[32px]">

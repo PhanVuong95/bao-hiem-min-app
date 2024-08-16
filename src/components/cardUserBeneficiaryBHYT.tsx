@@ -832,6 +832,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <select
           ref={refs.medicalProvinceId}
           value={medicalProvinceId}
+          key={medicalProvinceId}
           onChange={(e) => {
             const value = e.target.value;
 
@@ -863,6 +864,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <select
           ref={refs.medicalDistrictId}
           value={medicalDistrictId}
+          key={medicalDistrictId}
           onChange={(e) => {
             const value = e.target.value;
 
@@ -894,6 +896,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <select
           ref={refs.hospitalId}
           value={hospitalId}
+          key={hospitalId}
           onChange={(e) => {
             const value = e.target.value;
 
