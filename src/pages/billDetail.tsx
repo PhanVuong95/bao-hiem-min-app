@@ -49,14 +49,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
       saveImageToGallery({
         imageUrl: imageURL,
         success: (res) => {
-          // Handle success
-<<<<<<< HEAD
-          // console.log(imageURL);
-          // console.log("Image saved successfully");
           setLoading(false);
-=======
-          console.log("Image saved successfully");
->>>>>>> 8ab4c695de1808d248b18f993fa19f034ee8c6e9
           toast.success("Lưu ảnh thành công!");
         },
         fail: (error) => {
