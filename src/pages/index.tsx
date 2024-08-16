@@ -11,9 +11,9 @@ import { Link } from "react-router-dom";
 import HeaderBase from "../components/headerBase";
 import { ProfileContext } from "../components/userProfileContext";
 import banner from '../../assets-src/banner.png'
+import { toast } from "react-toastify";
 
 const HomePage: React.FunctionComponent = () => {
-  const user = useRecoilValue(userState);
   const profieContext = useContext(ProfileContext);
   const { userProfile, setUserProfile } = profieContext;
 
@@ -26,7 +26,7 @@ const HomePage: React.FunctionComponent = () => {
       <div className="banner-top h-full">
         <img src={banner} />
         <div className="flex justify-between items-center user-home">
-          {userProfile ?? <UserCard user={user?.userInfo} />}
+          {<UserCard user={userProfile?.userInfo} />}
         </div>
       </div>
       <div className="bg-white flex flex-wrap justify-between items-center category-home gap-y-[24px] px-4 pt-[82px] pb-[20px]">
@@ -128,7 +128,11 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">
@@ -189,7 +193,11 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">
@@ -240,7 +248,11 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">
@@ -307,7 +319,11 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="">
+        <Link to="" onClick={() => {
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
+        }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">

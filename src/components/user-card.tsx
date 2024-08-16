@@ -1,6 +1,8 @@
 import React from "react";
+import { toast } from "react-toastify";
 import { GetUserInfoReturns } from "zmp-sdk";
 import { Avatar, Box, Text } from "zmp-ui";
+import logo from '../../assets-src/logo1.png'
 
 interface UserProps {
   user: GetUserInfoReturns["userInfo"];
@@ -8,23 +10,24 @@ interface UserProps {
 
 const UserCard: React.FunctionComponent<UserProps> = ({ user }) => {
 
-  console.log(user);
-
-
   return (
     <div className="box-user w-full flex py-[24px] px-[16px] flex justify-between items-center">
       <div className="flex justify-between items-center">
         <img
           className="rounded-full w-[50px] h-[50px]"
-          src={user.avatar.startsWith("http") ? user.avatar : undefined}
+          src={user?.avatar ?? logo}
         />
 
         <Box ml={4}>
-          <p className="text-lg font-semibold">Xin chào, {user.name}</p>
+          <p className="text-lg font-semibold">Xin chào, {user?.name ?? 'Quý khách'}</p>
         </Box>
       </div>
 
-      <Box ml={4}>
+      <Box ml={4} onClick={() => {
+        toast.info(
+          "Tính năng này đang phát triển",
+        );
+      }}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="52"

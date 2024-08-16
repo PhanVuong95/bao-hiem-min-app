@@ -4,6 +4,8 @@ import { Widthheight } from "../models";
 import axios from "axios";
 import HeaderBase from "../components/headerBase";
 import { PulseLoader } from "react-spinners";
+import logo from "../../assets-src/logo1.png"
+
 const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
   const navigate = useNavigate();
 
@@ -89,17 +91,15 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
           <div className="mb-4 flex space-x-4 p-1 bg-white rounded-lg shadow-md">
             <button
               onClick={() => setOpenTab(1)}
-              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${
-                openTab === 1 ? "bg-blue-600 text-white" : ""
-              }`}
+              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 1 ? "bg-blue-600 text-white" : ""
+                }`}
             >
               Đang mua
             </button>
             <button
               onClick={() => setOpenTab(2)}
-              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${
-                openTab === 2 ? "bg-blue-600 text-white" : ""
-              }`}
+              className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 2 ? "bg-blue-600 text-white" : ""
+                }`}
             >
               Đã mua
             </button>
@@ -124,7 +124,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
                     <Link to={"/history-unpaid/" + item.id} key={index}>
                       <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
                         <div className="flex gap-[10px]">
-                          <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+                          <img src={logo} className="w-16 h-16" />
                           <div className="title-product flex flex-col">
                             <h3 className="text-[#0076B7] text-lg font-medium">
                               {item.insuranceName}
@@ -149,15 +149,13 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
                             </div>
                             <div>
                               <p
-                                className={`text-[${
-                                  item.insuranceOrderStatusId == PENDING
-                                    ? "#FAAD14"
-                                    : ""
-                                }${
-                                  item.insuranceOrderStatusId == CANCELED
+                                className={`text-[${item.insuranceOrderStatusId == PENDING
+                                  ? "#FAAD14"
+                                  : ""
+                                  }${item.insuranceOrderStatusId == CANCELED
                                     ? "#F00"
                                     : ""
-                                }] text-sm font-semibold max-w-[142px] text-right`}
+                                  }] text-sm font-semibold max-w-[142px] text-right`}
                               >
                                 {item.insuranceOrderStatusName}
                               </p>
@@ -216,7 +214,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
                     <Link to={"/history-unpaid/" + item.id} key={index}>
                       <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
                         <div className="flex gap-[10px]">
-                          <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+                          <img src={logo} className="w-16 h-16" />
                           <div className="title-product flex flex-col">
                             <h3 className="text-[#0076B7] text-lg font-medium">
                               BH Xã Hội Tự nguyện

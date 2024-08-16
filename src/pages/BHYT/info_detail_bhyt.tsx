@@ -71,9 +71,6 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           obj["oldCardStartDate"] = formatDate(item["oldCardStartDate"]);
           return obj;
         })
-
-        console.log(registerInfoBHYT);
-
       })
       .catch((error) => {
         console.error(error);
@@ -400,7 +397,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         onBack={() => navigate('/list-history-bhyt')}
       />
 
-      <div className={`bg-[${switchColor(billPay?.insuranceOrderStatusId)}] h-10 flex justify-between px-4 items-center text-white text-base font-normal`}>
+      <div className={`bg-[${switchColor(billPay?.insuranceOrderStatusId)}] h-11 flex justify-between px-4 items-center text-white text-base font-normal`}>
         <div>Trạng thái</div>
         <div>{billPay?.insuranceOrderStatusName}</div>
       </div>
