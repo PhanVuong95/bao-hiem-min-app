@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import HeaderBase from "../components/headerBase";
 import {
+  convertListToSelect,
+  formatDate2,
   isValidEmail,
   isValidEmptyString,
   isValidPhone,
@@ -15,6 +17,11 @@ import { Modal } from "zmp-ui";
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 import imageQR from "../../assets-src/icon_qr.png";
 import { FadeLoader } from "react-spinners";
+import { Input, Select, DatePicker } from "antd";
+import dayjs from "dayjs";
+import "../locale/vi";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import locale from "antd/es/date-picker/locale/vi_VN";
 const UpdateBHXH: React.FunctionComponent = (props) => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -39,7 +46,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
   const monthCount = useRef<number>(0);
   const [frontImageUrl, setFrontImageUrl] = useState<string>("");
   const [backImageUrl, setBackImageUrl] = useState<string>("");
-  const [dateValue, setDateValue] = useState("");
+  const [dateValue, setDateValue] = useState<any>("");
   const finalPrice = useRef(0);
   const { register, handleSubmit, watch, setValue } = useForm();
   const frontImageInputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +56,7 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isShowModelQR, setIsShowModelQR] = useState<boolean>(false);
+  const dateFormat = "DD/MM/YYYY";
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
@@ -69,6 +77,11 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
           response.data.data[0].listInsuredPerson[0].insuranceProvinceId;
         setSelectedBuyerProvince(response.data.data[0].provinceId);
         setSelectedDistrict(response.data.data[0].districtId);
+        const doBStr = formatDateString(
+          response.data.data[0].listInsuredPerson[0].doB
+        );
+        setDateValue(dayjs(doBStr, dateFormat));
+
         axios
           .get(
             `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${response.data.data[0].districtId}`
@@ -277,26 +290,27 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     }
   };
 
-  const handleDobChange = (event) => {
-    const { value } = event.target;
-    setDateValue(value);
-    handleInsuredPersonChange("doB", value);
+  const handleDobChange = (value) => {
+    const dateObject = dayjs(value.toString());
+    const dateStr = `${dateObject.date().toString().padStart(2, "0")}/${(
+      dateObject.month() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${dateObject.year()}`;
+    setDateValue(dayjs(dateStr, dateFormat));
+    handleInsuredPersonChange("doB", dateStr);
   };
 
-  const handleProvinceChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const provinceId = parseInt(event.target.value, 10);
+  const handleProvinceChange = (value) => {
+    const provinceId = parseInt(value);
     selectedProvince.current = provinceId;
     calculateSupportBudget(provinceId, monthCount.current);
     calculateFinalPrice();
     handleInsuredPersonChange("insuranceProvinceId", provinceId);
   };
 
-  const handleDistrictChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    let districtId = Number(event.target.value);
+  const handleDistrictChange = (value) => {
+    let districtId = Number(value);
     if (districtId == 0) {
       setWards([]);
     }
@@ -306,9 +320,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     handleInputChange("districtId", districtId);
   };
 
-  const handleWardChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    let wardId = Number(event.target.value);
-
+  const handleWardChange = (value) => {
+    let wardId = Number(value);
     setSelectedWard(wardId);
     handleInputChange("wardId", wardId);
   };
@@ -788,14 +801,14 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Họ và tên <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="name"
               value={orderDetail.listInsuredPerson[0].fullName}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
               onChange={(e) =>
                 handleInsuredPersonChange("fullName", e.target.value)
@@ -803,36 +816,37 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Tỉnh thành nơi tham gia BHXH{" "}
               <samp className="text-red-600">*</samp>
             </label>
-            <select
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              placeholder="Chọn thành phố"
               id="insuranceProvince"
               value={orderDetail.listInsuredPerson[0].insuranceProvinceId}
               key={orderDetail.listInsuredPerson[0].insuranceProvinceId}
+              dropdownMatchSelectWidth={false}
               onChange={handleProvinceChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-            >
-              <option selected className="" value="0">
-                Chọn tỉnh thành phố
-              </option>
-              {provinces.map((province) => (
-                <option key={province.id} value={province.id}>
-                  {province.name}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(provinces, "Chọn tỉnh thành phố")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số CCCD <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="cccd"
               value={orderDetail.listInsuredPerson[0].citizenId.trim()}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số CCCD"
               maxLength={12}
               onChange={(e) => {
@@ -842,15 +856,15 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số BHXH
             </label>
-            <input
+            <Input
               type="text"
               id="bhxh"
               maxLength={15}
               value={orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim()}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số Bảo hiểm Xã hội"
               onChange={(e) =>
                 handleInsuredPersonChange(
@@ -861,44 +875,59 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Ngày sinh <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <DatePicker
               type="date"
               id="dob"
-              value={formatDate(orderDetail.listInsuredPerson[0].doB)}
-              onInput={handleDobChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              size="large"
+              locale={locale}
+              className="w-[100%]"
+              value={dateValue}
+              placeholder="dd/mm/yyyy"
+              onChange={handleDobChange}
+              format={dateFormat}
+              maxDate={dayjs(formatDate2(new Date()), dateFormat)}
             />
           </div>
           <div>
             <label className="block text-sm font-normal text-gray-900">
               Giới tính <samp className="text-red-600">*</samp>
             </label>
-            <select
+            <Select
+              size="large"
+              className="w-[100%]"
               id="gender"
+              showSearch
+              placeholder="Chọn giới tính"
               value={orderDetail.listInsuredPerson[0].gender}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-              onChange={(e) =>
-                handleInsuredPersonChange("gender", e.target.value)
+              dropdownMatchSelectWidth={false}
+              onChange={(value) => {
+                handleInsuredPersonChange("gender", value);
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
-            >
-              <option value="">Chọn giới tính</option>
-              <option value="Nam">Nam</option>
-              <option value="Nữ">Nữ</option>
-            </select>
+              options={[
+                { value: "", label: "Chọn giới tính" },
+                { value: "Nam", label: "Nam" },
+                { value: "Nữ", label: "Nữ" },
+              ]}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Mức lương làm căn cứ đóng <samp className="text-red-600">*</samp>
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 id="salary"
                 value={displayValue}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập mức lương"
                 onChange={(e) => {
                   let rawValue = e.target.value.replace(/\D/g, "");
@@ -917,16 +946,16 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số tháng đóng <samp className="text-red-600">*</samp>
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 id="months"
                 value={orderDetail.listInsuredPerson[0].monthInsured}
                 aria-describedby="helper-text-explanation"
-                className="bg-gray-50 border border-gray-300 text-[#0076B7] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="border border-gray-300 text-[#0076B7] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập số tháng"
                 onChange={(e) => {
                   let numberValue = e.target.value.replace(/\D/g, "");
@@ -955,11 +984,11 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Ngân sách hỗ trợ
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={orderDetail.listInsuredPerson[0].supportBudget.toLocaleString(
@@ -978,53 +1007,59 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             Thông tin người mua
           </h3>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số điện thoại <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="phone"
               value={orderDetail.phone.trim()}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Số điện thoại"
               onChange={(e) => handleInputChange("phone", e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Họ và tên <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="name"
               value={orderDetail.fullName}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
               onChange={(e) => handleInputChange("fullName", e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Email
             </label>
-            <input
+            <Input
               type="email"
               id="email"
               value={orderDetail.email.trim()}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập email của bạn"
               onChange={(e) => handleInputChange("email", e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Tỉnh thành <samp className="text-red-600">*</samp>
             </label>
-            <select
+            <Select
+              size="large"
+              className="w-[100%]"
+              {...register("buyerProvince", { required: false })}
+              showSearch
+              placeholder="Chọn tỉnh thành phố"
+              dropdownMatchSelectWidth={false}
               value={orderDetail.provinceId}
               key={orderDetail.provinceId}
-              onChange={(e) => {
-                let provinceId: number = Number(e.target.value);
+              onChange={(value) => {
+                let provinceId: number = Number(value);
                 if (provinceId == 0) {
                   setDistricts([]);
                   setWards([]);
@@ -1036,67 +1071,65 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                 handleInputChange("wardId", 0);
                 handleInputChange("districtId", 0);
               }}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-            >
-              <option selected className="" value="0">
-                Chọn tỉnh thành phố
-              </option>
-              {provinces.map((province) => (
-                <option key={province.id} value={province.id}>
-                  {province.name}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(provinces, "Chọn tỉnh thành phố")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Quận huyện <samp className="text-red-600">*</samp>
             </label>
-            <select
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              placeholder="Chọn tỉnh thành phố"
+              dropdownMatchSelectWidth={false}
               value={selectedDistrict}
               onChange={handleDistrictChange}
               key={selectedDistrict}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-            >
-              <option selected className="" value="0">
-                Chọn quận huyện
-              </option>
-              {districts.map((district) => (
-                <option key={district.id} value={district.id}>
-                  {district.name}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(districts, "Chọn quận huyện")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Phường xã <samp className="text-red-600">*</samp>
             </label>
-            <select
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              placeholder="Chọn phường xã"
+              dropdownMatchSelectWidth={false}
               value={selectedWard}
               key={selectedWard}
               onChange={handleWardChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-            >
-              <option selected className="" value="0">
-                Chọn phường xã
-              </option>
-              {wards.map((ward) => (
-                <option key={ward.id} value={ward.id}>
-                  {ward.name}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(wards, "Chọn phường xã")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Địa chỉ cụ thể <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="address"
               value={orderDetail.addressDetail}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="VD: Số nhà, số đường,...."
               onChange={(e) =>
                 handleInputChange("addressDetail", e.target.value)

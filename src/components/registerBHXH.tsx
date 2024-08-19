@@ -10,12 +10,22 @@ import { useNavigate } from "react-router-dom";
 import HeaderBase from "./headerBase";
 import imageQR from "../../assets-src/icon_qr.png";
 import {
+  convertListToSelect,
   formatDate,
+  formatDate2,
   isValidEmail,
   isValidEmptyString,
   isValidPhone,
 } from "../utils/validateString";
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
+import { Input, Select, DatePicker } from "antd";
+import dayjs from "dayjs";
+import "../locale/vi";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import locale from "antd/es/date-picker/locale/vi_VN";
+
+dayjs.locale("vi");
+dayjs.extend(customParseFormat);
 const RegisterBHXH: React.FunctionComponent = (props) => {
   const navigate = useNavigate();
   const [personName, setPersonName] = useState<string>("");
@@ -51,7 +61,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const monthCount = useRef<number>(0);
   const [frontImageUrl, setFrontImageUrl] = useState<string>("");
   const [backImageUrl, setBackImageUrl] = useState<string>("");
-  const [dateValue, setDateValue] = useState("");
+  const [dateValue, setDateValue] = useState<any>("");
 
   const { register, handleSubmit, watch, setValue } = useForm();
   // const [finalPrice, setFinalPrice] = useState<number>(0);
@@ -61,7 +71,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const [isChecked, setIsChecked] = useState(false);
 
   const [isShowModelQR, setIsShowModelQR] = useState<boolean>(false);
-
+  const dateFormat = "DD/MM/YYYY";
   const {
     // frontCitizenidPhoto,
     // backCitizenidPhoto,
@@ -93,7 +103,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         "bhxh",
         insuranceOrder.listInsuredPerson[0].socialInsuranceNumber
       );
-      setDateValue(formatDateToISO(insuranceOrder.listInsuredPerson[0].doB));
+      setDateValue(dayjs(insuranceOrder.listInsuredPerson[0].doB, dateFormat));
       setValue("dob", formatDateToISO(insuranceOrder.listInsuredPerson[0].doB));
       setGender(insuranceOrder.listInsuredPerson[0].gender);
       setValue("gender", insuranceOrder.listInsuredPerson[0].gender);
@@ -259,14 +269,18 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
 
     return `${day}/${month}/${year}`;
   }
-  const handleDobChange = (event) => {
-    const { value } = event.target;
-    setDateValue(value);
-
+  const handleDobChange = (value) => {
+    const dateObject = dayjs(value.toString());
+    const dateStr = `${dateObject.date().toString().padStart(2, "0")}/${(
+      dateObject.month() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${dateObject.year()}`;
+    setDateValue(dayjs(dateStr, dateFormat));
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
       listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
-        index === 0 ? { ...person, doB: formatDateString(value) } : person
+        index === 0 ? { ...person, doB: dateStr } : person
       ),
     }));
   };
@@ -274,12 +288,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   //   const [day, month, year] = date.split('/');
   //   return `${year}-${month}-${day}`;
   // };
-  const handleProvinceChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const provinceId = parseInt(event.target.value);
+  const handleProvinceChange = (value) => {
+    const provinceId = value;
     selectedProvince.current = provinceId;
-    calculateSupportBudget(provinceId, watch("months"));
+    calculateSupportBudget(provinceId, monthCount.current);
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
       listInsuredPerson: prevOrder.listInsuredPerson.map((person, index) =>
@@ -289,13 +301,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
     calculateFinalPrice();
   };
 
-  const handleDistrictChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSelectedDistrict(parseInt(event.target.value, 10));
+  const handleDistrictChange = (value) => {
+    setSelectedDistrict(parseInt(value));
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
-      districtId: parseInt(event.target.value, 10),
+      districtId: parseInt(value),
     }));
     // setInsuranceOrder((prevOrder) => ({
     //   ...prevOrder,
@@ -370,6 +380,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
         setIsUploadingPhotoCitizenBack(false);
         setIsUploadingPhotoCitizenFont(false);
       }
+    } else {
+      setIsUploadingPhotoCitizenBack(false);
+      setIsUploadingPhotoCitizenFont(false);
     }
   };
 
@@ -498,6 +511,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           id: response.data.data[0],
         }));
         setLoading(false);
+        toast.success("Đăng ký bảo hiểm xã hội thành công");
         navigate("/buill-pay/1");
       } else {
         setLoading(false);
@@ -528,6 +542,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       console.log(response.data);
       if (response.data.status == "200") {
         setLoading(false);
+        toast.success("Cập nhật đơn đăng ký bảo hiểm xã hội thành công");
         navigate("/buill-pay/1");
       } else {
         setLoading(false);
@@ -680,11 +695,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             }
           </div>
           <div className="flex flex-row gap-2  justify-around w-[100%]">
-            <div className="flex flex-row gap-2">
-              <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-2 w-[100%]">
+              <div className="flex flex-col gap-2 w-[100%]">
                 <div
                   className={`bg-[#F5F5F5]  rounded-lg p-[${
-                    frontImageUrl ? "0px" : "9px"
+                    frontImageUrl ? "0px" : "4px"
                   }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(frontImageInputRef)}
                 >
@@ -693,13 +708,13 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       <img
                         src={`https://baohiem.dion.vn${frontImageUrl}`}
                         alt="Mặt trước"
-                        className="w-[140px] h-[100px] object-center rounded-lg"
+                        className="w-[100%] h-[100px] object-center rounded-lg "
                       />
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width={"100%"}
-                        height={"81px"}
+                        height={"90px"}
                         viewBox="0 0 130 89"
                         fill="none"
                       >
@@ -760,10 +775,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   }}
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-[100%]">
                 <div
-                  className={`bg-[#F5F5F5]  rounded-lg p-[${
-                    backImageUrl ? "0px" : "9px"
+                  className={`bg-[#F5F5F5] rounded-lg p-[${
+                    backImageUrl ? "0px" : "4px"
                   }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(backImageInputRef)}
                 >
@@ -772,13 +787,13 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       <img
                         src={`https://baohiem.dion.vn${backImageUrl}`}
                         alt="Mặt sau"
-                        className="w-[140px] h-[100px] object-center rounded-lg"
+                        className="w-[100%] h-[100px] object-center rounded-lg"
                       />
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width={"100%"}
-                        height={"81px"}
+                        height={"90px"}
                         viewBox="0 0 130 89"
                         fill="none"
                       >
@@ -854,15 +869,15 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Họ và tên <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="name"
               value={personName}
               {...register("name", { required: false })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
               onChange={(e) => {
                 setPersonName(e.target.value);
@@ -879,39 +894,38 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Tỉnh thành nơi tham gia BHXH{" "}
               <samp className="text-red-600">*</samp>
             </label>
-            <select
-              id="insuranceProvince"
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              placeholder="Chọn thành phố"
               value={selectedProvince.current}
-              key={selectedProvince.current}
-              {...register("province", { required: false })}
+              dropdownMatchSelectWidth={false}
               onChange={handleProvinceChange}
-              className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow`}
-            >
-              <option selected className="" value="0">
-                Chọn tỉnh thành phố
-              </option>
-              {provinces.map((province) => (
-                <option key={province.id} value={province.id}>
-                  {province.name}
-                </option>
-              ))}
-            </select>
+              key={selectedProvince.current}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(provinces, "Chọn tỉnh thành phố")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số CCCD <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="cccd"
               value={citizenId}
               {...register("cccd", { required: false })}
               maxLength={12}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số CCCD"
               onChange={(e) => {
                 // Lọc ra chỉ các ký tự số
@@ -932,16 +946,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số BHXH
             </label>
-            <input
+            <Input
               type="text"
               id="bhxh"
               {...register("bhxh", { required: false })}
               maxLength={15}
               value={socialInsuranceId}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số Bảo hiểm Xã hội"
               onChange={(e) => {
                 setSocialInsuranceId(e.target.value);
@@ -958,56 +972,66 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Ngày sinh <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <DatePicker
               type="date"
-              id="dob"
+              size="large"
+              locale={locale}
+              className="w-[100%]"
               value={dateValue}
-              onInput={handleDobChange}
-              {...register("dob", { required: false })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="dd/mm/yyyy"
+              onChange={handleDobChange}
+              format={dateFormat}
+              maxDate={dayjs(formatDate2(new Date()), dateFormat)}
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Giới tính <samp className="text-red-600">*</samp>
             </label>
-            <select
-              id="gender"
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              placeholder="Chọn giới tính"
+              dropdownMatchSelectWidth={false}
               value={gender}
-              {...register("gender", { required: false })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-              onChange={(e) => {
-                setGender(e.target.value);
+              onChange={(value) => {
+                setGender(value);
                 setInsuranceOrder((prevOrder) => ({
                   ...prevOrder,
                   listInsuredPerson: prevOrder.listInsuredPerson.map(
                     (person, index) =>
-                      index === 0
-                        ? { ...person, gender: e.target.value }
-                        : person
+                      index === 0 ? { ...person, gender: value } : person
                   ),
                 }));
               }}
-            >
-              <option value="">Chọn giới tính</option>
-              <option value="Nam">Nam</option>
-              <option value="Nữ">Nữ</option>
-            </select>
+              key={gender}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={[
+                { value: "", label: "Chọn giới tính" },
+                { value: "Nam", label: "Nam" },
+                { value: "Nữ", label: "Nữ" },
+              ]}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Mức lương làm căn cứ đóng <samp className="text-red-600">*</samp>
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 id="salary"
                 {...register("salary", { required: false })}
                 value={displayValue}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập mức lương"
                 onChange={(e) => {
                   // Lấy giá trị từ input và loại bỏ dấu phân cách hàng nghìn (dấu chấm)
@@ -1045,17 +1069,17 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số tháng đóng <samp className="text-red-600">*</samp>
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 id="months"
                 {...register("months", { required: false })}
                 value={monthCount.current}
                 aria-describedby="helper-text-explanation"
-                className="bg-gray-50 border border-gray-300 text-[#0076B7] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="border border-gray-300 text-[#0076B7] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập số tháng"
                 onChange={(e) => {
                   let numberValue = e.target.value.replace(/\D/g, "");
@@ -1109,13 +1133,13 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Ngân sách hỗ trợ
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={supportBudget.toLocaleString("vi-VN")}
                 readOnly
               />
@@ -1130,16 +1154,17 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             Thông tin người mua
           </h3>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Số điện thoại <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="phone"
               value={phone}
               {...register("phone", { required: false })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Số điện thoại"
+              maxLength={12}
               onChange={(e) => {
                 let numberValue = e.target.value.replace(/\D/g, "");
                 setPhone(numberValue);
@@ -1151,15 +1176,15 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Họ và tên <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="name"
               value={buyerName}
               {...register("buyerName", { required: false })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
               onChange={(e) => {
                 setBuyerName(e.target.value);
@@ -1171,15 +1196,15 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Email
             </label>
-            <input
+            <Input
               type="email"
               id="email"
               {...register("email", { required: false })}
               value={email}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập email của bạn"
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -1191,15 +1216,20 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Tỉnh thành <samp className="text-red-600">*</samp>
             </label>
-            <select
-              value={selectedBuyerProvince}
-              key={selectedBuyerProvince}
+
+            <Select
+              size="large"
+              className="w-[100%]"
               {...register("buyerProvince", { required: false })}
-              onChange={(e) => {
-                let provinceId: number = Number(e.target.value);
+              showSearch
+              placeholder="Chọn tỉnh thành phố"
+              dropdownMatchSelectWidth={false}
+              value={selectedBuyerProvince}
+              onChange={(value) => {
+                let provinceId: number = Number(value);
                 if (provinceId == 0) {
                   setDistricts([]);
                   setWards([]);
@@ -1209,91 +1239,79 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   ...prevOrder,
                   provinceId: provinceId,
                 }));
-                // setInsuranceOrder((prevOrder) => ({
-                //   ...prevOrder,
-                //   districtId: 0,
-                // }));
-                // setInsuranceOrder((prevOrder) => ({
-                //   ...prevOrder,
-                //   wardId: 0,
-                // }));
                 setSelectedWard(0);
                 setSelectedDistrict(0);
               }}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-            >
-              <option selected className="" value="0">
-                Chọn tỉnh thành phố
-              </option>
-              {provinces.map((province) => (
-                <option key={province.id} value={province.id}>
-                  {province.name}
-                </option>
-              ))}
-            </select>
+              key={selectedBuyerProvince}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(provinces, "Chọn tỉnh thành phố")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Quận huyện <samp className="text-red-600">*</samp>
             </label>
-            <select
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              {...register("buyerDistrict", { required: false })}
+              dropdownMatchSelectWidth={false}
+              placeholder="Chọn quận huyện"
               value={selectedDistrict}
               key={selectedDistrict}
-              {...register("buyerDistrict", { required: false })}
               onChange={handleDistrictChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-            >
-              <option selected className="" value="0">
-                Chọn quận huyện
-              </option>
-              {districts.map((district) => (
-                <option key={district.id} value={district.id}>
-                  {district.name}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(districts, "Chọn quận huyện")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Phường xã <samp className="text-red-600">*</samp>
             </label>
-            <select
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
               {...register("buyerWard", { required: false })}
+              dropdownMatchSelectWidth={false}
+              placeholder="Chọn phường xã"
               value={selectedWard}
-              //key={selectedWard}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 custom-select-arrow"
-              onChange={(e) => {
+              onChange={(value: any) => {
                 {
-                  console.log(Number(e.target.value));
-
-                  setSelectedWard(parseInt(e.target.value));
+                  setSelectedWard(parseInt(value));
                   setInsuranceOrder((prevOrder) => ({
                     ...prevOrder,
-                    wardId: parseInt(e.target.value),
+                    wardId: parseInt(value),
                   }));
                 }
               }}
-            >
-              <option selected className="" value="0">
-                Chọn phường xã
-              </option>
-              {wards.map((ward) => (
-                <option key={ward.id} value={ward.id}>
-                  {ward.name}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(wards, "Chọn phường xã")}
+            />
           </div>
           <div>
-            <label className="block text-sm font-normal text-gray-900">
+            <label className="block text-sm font-normal text-gray-900 pb-2">
               Địa chỉ cụ thể <samp className="text-red-600">*</samp>
             </label>
-            <input
+            <Input
               type="text"
               id="address"
               {...register("address", { required: false })}
               value={addressDetail}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="VD: Số nhà, số đường,...."
               onChange={(e) => {
                 setAddressDetail(e.target.value);
