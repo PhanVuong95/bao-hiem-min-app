@@ -120,22 +120,6 @@ const UserBuyerPage = (props: Props) => {
           required
         />
 
-
-        {/* 
-        <input
-          type="text"
-          id="phone"
-          ref={refs.phone}
-          maxLength={10}
-          value={phone}
-          onChange={(e) => {
-            setPhone(e.target.value);
-            registerInfoBHYT["phone"] = e.target.value;
-          }}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Số điện thoại"
-          required
-        /> */}
       </div>
     )
   }
@@ -161,20 +145,6 @@ const UserBuyerPage = (props: Props) => {
           required
         />
 
-        {/* <input
-          type="text"
-          id="name"
-          ref={refs.fullName}
-          maxLength={35}
-          value={fullName}
-          onChange={(e) => {
-            setFullName(e.target.value);
-            registerInfoBHYT["fullName"] = e.target.value;
-          }}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Nhập tên của bạn"
-          required
-        /> */}
       </div>
     )
   }
@@ -198,20 +168,6 @@ const UserBuyerPage = (props: Props) => {
           required
         />
 
-        {/* <input
-          type="email"
-          id="email"
-          ref={refs.email}
-          value={email}
-          maxLength={35}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            registerInfoBHYT["email"] = e.target.value;
-          }}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Nhập email của bạn"
-          required
-        /> */}
       </div>
     )
   }
@@ -236,21 +192,7 @@ const UserBuyerPage = (props: Props) => {
           }
           options={convertListToSelect(provinces, 'Chọn tỉnh thành phố')}
         />
-        {/* <select
-          id=""
-          ref={refs.provinceId}
-          value={selectedProvince}
-          onChange={handleProvinceChange}
-          key={selectedProvince}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
-        >
-          <option selected value="0">Chọn tỉnh thành phố</option>
-          {provinces.map((province) => (
-            <option key={province.id} value={province.id}>
-              {province.name}
-            </option>
-          ))}
-        </select> */}
+
       </div>
     )
   }
@@ -276,21 +218,6 @@ const UserBuyerPage = (props: Props) => {
           options={convertListToSelect(districts, 'Chọn quận huyện')}
         />
 
-        {/* <select
-          id=""
-          ref={refs.districtId}
-          value={selectedDistrict}
-          onChange={handleDistrictChange}
-          key={selectedDistrict}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
-        >
-          <option selected value="0">Chọn quận huyện</option>
-          {districts.map((district) => (
-            <option key={district.id} value={district.id}>
-              {district.name}
-            </option>
-          ))}
-        </select> */}
       </div>
     )
   }
@@ -316,22 +243,7 @@ const UserBuyerPage = (props: Props) => {
           options={convertListToSelect(wards, 'Chọn phường xã')}
         />
 
-        {/* <select
-          id=""
-          ref={refs.wardId}
-          value={selectedWard}
-          onChange={handlEwardChange}
-          key={selectedWard}
-          name="view_type_sorting"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 selectCustom"
-        >
-          <option selected value="0">Chọn phường xã</option>
-          {wards.map((ward) => (
-            <option key={ward.id} value={ward.id}>
-              {ward?.name}
-            </option>
-          ))}
-        </select> */}
+
       </div>
     )
   }
@@ -357,20 +269,7 @@ const UserBuyerPage = (props: Props) => {
           required
         />
 
-        {/* <input
-          type="text"
-          id="address"
-          ref={refs.addressDetail}
-          value={addressDetail}
-          maxLength={200}
-          onChange={(e) => {
-            setAddressDetail(e.target.value);
-            registerInfoBHYT["addressDetail"] = e.target.value;
-          }}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="VD: Số nhà, số đường,...."
-          required
-        /> */}
+
       </div>
     )
   }
