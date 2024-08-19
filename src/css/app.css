@@ -210,4 +210,10 @@ body::-webkit-scrollbar {
 
 .ant-select-dropdown {
   z-index: 8; 
+  width: '100px';
+  top: -2
+}
+
+.ant-picker-dropdown {
+  z-index: 8;
 }

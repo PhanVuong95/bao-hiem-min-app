@@ -27,7 +27,7 @@ interface Props {
 
 const UserBeneficiaryBHYTPage = (props: Props) => {
   const { index, price, onClose, refs, provinces } = props;
-
+  const dateFormat = 'DD/MM/YYYY';
   const [districts, setDistricts] = useState<any>([]);
   const [socialInsuranceNumber, setSocialInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].socialInsuranceNumber);
   const [healthInsuranceNumber, setHealthInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].healthInsuranceNumber);
@@ -152,6 +152,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         setIsUploadingPhotoCitizenBack(false)
         setIsUploadingPhotoCitizenFont(false)
       }
+    } else {
+      setIsUploadingPhotoCitizenBack(false)
+      setIsUploadingPhotoCitizenFont(false)
     }
   };
 
@@ -632,15 +635,12 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           placeholder="---"
           required
         />
-
-
-
         {errors.healthInsuranceNumber && <div className="mt-2 text-red-500">{errors.healthInsuranceNumber}</div>}
       </div>
     )
   }
 
-  const dateFormat = 'DD/MM/YYYY';
+
 
   const renderDob = () => {
     return (
@@ -682,6 +682,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.gender}
           placeholder="Chọn giới tính"
@@ -719,7 +720,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
+          dropdownMatchSelectWidth={false}
           ref={refs.ethnic}
           placeholder="Chọn dân tộc"
           value={ethnic}
@@ -853,6 +856,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%] z-1"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.medicalProvinceId}
           placeholder="Chọn tỉnh thành phố"
@@ -885,6 +889,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.medicalDistrictId}
           placeholder="Chọn quận huyện"
@@ -902,7 +907,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           }
           options={convertListToSelect(districts, 'Chọn quận huyện')}
         />
-
       </div>
     )
   }
@@ -917,6 +921,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.hospitalId}
           placeholder="Chọn bệnh viện"
@@ -934,8 +939,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           }
           options={convertListToSelect(listHospitals, 'Chọn bệnh viện')}
         />
-
-        {errors.hispitalRegister && <div className="mt-2 text-red-500">{errors.hispitalRegister}</div>}
       </div>
     )
   }

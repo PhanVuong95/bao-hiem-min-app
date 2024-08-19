@@ -181,6 +181,7 @@ const UserBuyerPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.provinceId}
           placeholder="Chọn tỉnh thành phố"
@@ -207,6 +208,7 @@ const UserBuyerPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.districtId}
           placeholder="Chọn quận huyện"
@@ -233,6 +235,7 @@ const UserBuyerPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
+          dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.wardId}
           placeholder="Chọn phường xã"
