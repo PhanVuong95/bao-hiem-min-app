@@ -28,146 +28,134 @@ import RegisterBHYT from "../pages/BHYT/register_bhyt";
 import ListHistoryBHYT from "../pages/BHYT/list_history_bhyt";
 import InfoDetailBHYT from "../pages/BHYT/info_detail_bhyt";
 import { ProfileProvider } from "./userProfileContext";
-import splash from '../../assets-src/splash.png'
+import splash from "../../assets-src/splash.png";
 import { closeLoading } from "zmp-sdk/apis";
 
 const MyApp = () => {
-
   useEffect(() => {
     closeLoading({
-      success: (data) => {
-      },
+      success: (data) => {},
       fail: (error) => {
         console.log(error);
-      }
+      },
     });
   }, []);
 
   return (
     <ProfileProvider>
-      <RecoilRoot>
-        <Suspense fallback={<img src={splash} />}>
-          <App>
-            <ToastContainer
-              style={{
-                width: "80%",
-                borderRadius: "20px",
-                marginTop: "40px",
-                marginLeft: "10%",
-                marginRight: "10%",
-              }}
-              toastStyle={{
-                borderRadius: "7px",
-              }}
-              position="top-center"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-            <SnackbarProvider>
-              <ZMPRouter>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-
-                      <LayoutPage key="layout" />
-
-                    }
-                  >
-                    <Route index element={<HomePage />} />
-                    <Route path="contract" element={<ContractPage />} />
-                    <Route path="history" element={<HistoryPage />} />
-                    <Route path="user" element={<UserPage />} />
-                  </Route>
-                  <Route
-                    path="/social-insurance"
-                    element={
-                      <SpecificProvider>
-                        <ListSocialInsurance />
-                      </SpecificProvider>
-                    }
-                  />
-                  <Route
-                    path="/health-insurance"
-                    element={<ListHealthInsurance />}
-                  />
-                  <Route
-                    path="/product-detail/:id"
-                    element={<ProductDetailPage />}
-                  />
-                  <Route
-                    path="/product-detail-1/:id"
-                    element={<ProductDetailPage1 />}
-                  />
-                  <Route
-                    path="/buill-pay/:id"
-                    element={
-                      <SpecificProvider>
-                        <BillPayPage w={""} h={""} url={""} />
-                      </SpecificProvider>
-                    }
-                  />
-                  <Route
-                    path="/bill-pay-bhyt/:id"
-                    element={<BillPayBHYTPage />}
-                  />
-                  <Route
-                    path="/buill-detail/:id"
-                    element={
-                      <SpecificProvider>
-                        <BuillDetailPage />
-                      </SpecificProvider>
-                    }
-                  />
-                  <Route
-                    path="/register-BHXH"
-                    element={
-                      <SpecificProvider>
-                        <RegisterBHXH />
-                      </SpecificProvider>
-                    }
-                  />
-                  <Route path="/update-BHXH/:id" element={<UpdateBHXH />} />
-                  <Route path="/register-BHYT/" element={<RegisterBHYT />} />
-                  <Route
-                    path="/lists-history"
-                    element={<ListsHistoryPage w={""} h={""} url={""} />}
-                  />
-                  <Route
-                    path="/info-detail-bhyt/:id"
-                    element={<InfoDetailBHYT />}
-                  />
-                  <Route
-                    path="/list-history-bhyt"
-                    element={<ListHistoryBHYT />}
-                  />
-                  <Route
-                    path="/history-unpaid/:id"
-                    element={<HistoryUnpaidPage />}
-                  />
-                  <Route
-                    path="/history-unpaid-1/:id"
-                    element={<HistoryUnpaid1Page />}
-                  />
-                  <Route
-                    path="/history-unpaid-2/:id"
-                    element={<HistoryUnpaid2Page />}
-                  />
-                </Routes>
-              </ZMPRouter>
-            </SnackbarProvider>
-          </App>
-        </Suspense>
-      </RecoilRoot>
+      <Suspense fallback={<img src={splash} />}>
+        <App>
+          <ToastContainer
+            style={{
+              width: "80%",
+              borderRadius: "20px",
+              marginTop: "40px",
+              marginLeft: "10%",
+              marginRight: "10%",
+            }}
+            toastStyle={{
+              borderRadius: "7px",
+            }}
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          <SnackbarProvider>
+            <ZMPRouter>
+              <Routes>
+                <Route path="/" element={<LayoutPage key="layout" />}>
+                  <Route index element={<HomePage />} />
+                  <Route path="contract" element={<ContractPage />} />
+                  <Route path="history" element={<HistoryPage />} />
+                  <Route path="user" element={<UserPage />} />
+                </Route>
+                <Route
+                  path="/social-insurance"
+                  element={
+                    <SpecificProvider>
+                      <ListSocialInsurance />
+                    </SpecificProvider>
+                  }
+                />
+                <Route
+                  path="/health-insurance"
+                  element={<ListHealthInsurance />}
+                />
+                <Route
+                  path="/product-detail/:id"
+                  element={<ProductDetailPage />}
+                />
+                <Route
+                  path="/product-detail-1/:id"
+                  element={<ProductDetailPage1 />}
+                />
+                <Route
+                  path="/buill-pay/:id"
+                  element={
+                    <SpecificProvider>
+                      <BillPayPage w={""} h={""} url={""} />
+                    </SpecificProvider>
+                  }
+                />
+                <Route
+                  path="/bill-pay-bhyt/:id"
+                  element={<BillPayBHYTPage />}
+                />
+                <Route
+                  path="/buill-detail/:id"
+                  element={
+                    <SpecificProvider>
+                      <BuillDetailPage />
+                    </SpecificProvider>
+                  }
+                />
+                <Route
+                  path="/register-BHXH"
+                  element={
+                    <SpecificProvider>
+                      <RegisterBHXH />
+                    </SpecificProvider>
+                  }
+                />
+                <Route path="/update-BHXH/:id" element={<UpdateBHXH />} />
+                <Route path="/register-BHYT/" element={<RegisterBHYT />} />
+                <Route
+                  path="/lists-history"
+                  element={<ListsHistoryPage w={""} h={""} url={""} />}
+                />
+                <Route
+                  path="/info-detail-bhyt/:id"
+                  element={<InfoDetailBHYT />}
+                />
+                <Route
+                  path="/list-history-bhyt"
+                  element={<ListHistoryBHYT />}
+                />
+                <Route
+                  path="/history-unpaid/:id"
+                  element={<HistoryUnpaidPage />}
+                />
+                <Route
+                  path="/history-unpaid-1/:id"
+                  element={<HistoryUnpaid1Page />}
+                />
+                <Route
+                  path="/history-unpaid-2/:id"
+                  element={<HistoryUnpaid2Page />}
+                />
+              </Routes>
+            </ZMPRouter>
+          </SnackbarProvider>
+        </App>
+      </Suspense>
     </ProfileProvider>
-
   );
 };
 
