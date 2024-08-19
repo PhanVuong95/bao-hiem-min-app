@@ -71,6 +71,8 @@ const UserBuyerPage = (props: Props) => {
   ) => {
     const id = parseInt(value, 10);
     setSelectedProvince(id);
+    setSelectedDistrict(0)
+    setSelectedWard(0)
     registerInfoBHYT["provinceId"] = id;
   };
 
@@ -79,6 +81,7 @@ const UserBuyerPage = (props: Props) => {
   ) => {
     const id = parseInt(value, 10);
     setSelectedDistrict(id);
+    setSelectedWard(0)
     registerInfoBHYT["districtId"] = id;
   };
 

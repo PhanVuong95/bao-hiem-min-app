@@ -389,7 +389,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                 const month = dob.substring(2, 4);
                 const year = dob.substring(4, 8);
 
-                setDob(`${year}-${month}-${day}`)
+                setDob(dayjs(`${day}/${month}/${year}`, dateFormat))
 
                 registerInfoBHYT["listInsuredPerson"][index].doB = formatDate(`${year}-${month}-${day}`);
 
@@ -855,16 +855,21 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         </label>
         <Select
           size="large"
+          onMouseDown={(event) => event.preventDefault()}
           className="w-[100%] z-1"
           dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.medicalProvinceId}
           placeholder="Chọn tỉnh thành phố"
+          virtual={false}
           value={medicalProvinceId}
           dropdownMatchSelectWidth={false}
           onChange={(value) => {
 
             setMedicalProvinceId(value)
+
+            setMedicalDistrictId(0)
+            setHospitalId(0)
 
             registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId = value;
           }}
@@ -898,6 +903,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           onChange={(value) => {
 
             setMedicalDistrictId(value)
+
+            setHospitalId(0)
 
             registerInfoBHYT["listInsuredPerson"][index].medicalDistrictId = value;
           }}
