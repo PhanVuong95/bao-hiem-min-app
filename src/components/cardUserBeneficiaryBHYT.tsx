@@ -897,6 +897,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.medicalDistrictId}
+          virtual={false}
           placeholder="Chọn quận huyện"
           value={medicalDistrictId}
           dropdownMatchSelectWidth={false}
@@ -931,6 +932,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           dropdownStyle={{ maxWidth: '300px' }}
           showSearch
           ref={refs.hospitalId}
+          virtual={false}
           placeholder="Chọn bệnh viện"
           value={hospitalId}
           dropdownMatchSelectWidth={false}
