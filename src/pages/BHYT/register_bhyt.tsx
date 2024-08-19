@@ -101,22 +101,13 @@ const RegisterBHYT = ({ }) => {
   };
 
 
-  const scrollToElement = (input, boxNumber, duration) => {
+  const scrollToElement = (input, boxNumber) => {
     switch (boxNumber) {
       case 1:
-        if (userBuyerPageRefs[input] && userBuyerPageRefs[input].current) {
-          userBuyerPageRefs[input].current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setTimeout(() => {
-            userBuyerPageRefs[input].current.focus();
-          }, duration)
-        }
+        userBuyerPageRefs[input].current.focus();
         break;
       case 2:
-        if (duration != 0)
-          input.current.scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => {
-          input.current.focus();
-        }, duration)
+        input.current.focus();
         break;
       default:
         break;
@@ -186,7 +177,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Số điện thoại không được để trống",
       );
-      scrollToElement("phone", 1, 500)
+      scrollToElement("phone", 1)
 
       return false;
     }
@@ -194,7 +185,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Số điện thoại không hợp lệ",
       );
-      scrollToElement("phone", 1, 500)
+      scrollToElement("phone", 1)
       return false;
     }
 
@@ -203,7 +194,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Họ và tên không được để trống",
       );
-      scrollToElement("fullName", 1, 500)
+      scrollToElement("fullName", 1)
       return false;
     }
 
@@ -211,7 +202,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Họ và tên không hợp lệ",
       );
-      scrollToElement("fullName", 1, 500)
+      scrollToElement("fullName", 1)
       return false;
     }
 
@@ -221,7 +212,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Email không hợp lệ",
         );
-        scrollToElement("email", 1, 500)
+        scrollToElement("email", 1)
         return false;
       }
     }
@@ -231,7 +222,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Vui lòng lựa chọn Thành phố",
       );
-      scrollToElement("provinceId", 1, 500)
+      scrollToElement("provinceId", 1)
       return false;
     }
 
@@ -239,7 +230,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Vui lòng lựa chọn Quận huyện",
       );
-      scrollToElement("districtId", 1, 500)
+      scrollToElement("districtId", 1)
       return false;
     }
 
@@ -247,7 +238,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Vui lòng lựa chọn Phường xã",
       );
-      scrollToElement("wardId", 1, 500)
+      scrollToElement("wardId", 1)
       return false;
     }
 
@@ -255,7 +246,7 @@ const RegisterBHYT = ({ }) => {
       toast.warn(
         "Địa chỉ cụ thể không được để trống",
       );
-      scrollToElement("addressDetail", 1, 500)
+      scrollToElement("addressDetail", 1)
       return false;
     }
 
@@ -271,7 +262,7 @@ const RegisterBHYT = ({ }) => {
       //   toast.warn(
       //     "Số bảo hiểm y tế hoặc CCCD không được để trống",
       //   );
-      //   scrollToElement(beneficiaries[index].socialInsuranceNumber, 2, 500)
+      //   scrollToElement(beneficiaries[index].socialInsuranceNumber, 2)
       //   return false;
       // }
 
@@ -280,7 +271,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Số BHYT không hợp lệ",
         );
-        scrollToElement(beneficiaries[index].socialInsuranceNumber, 2, 500)
+        scrollToElement(beneficiaries[index].socialInsuranceNumber, 2)
         return false;
       }
 
@@ -288,7 +279,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Số căn cước công dân không hợp lệ",
         );
-        scrollToElement(beneficiaries[index].citizenId, 2, 500)
+        scrollToElement(beneficiaries[index].citizenId, 2)
         return false;
       }
 
@@ -296,7 +287,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Số căn cước công dân không hợp lệ",
         );
-        scrollToElement(beneficiaries[index].citizenId, 2, 500)
+        scrollToElement(beneficiaries[index].citizenId, 2)
         return false;
       }
 
@@ -305,7 +296,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Bạn cần tải CCCD mặt trước",
         );
-        scrollToElement(beneficiaries[index].photoCitizenFront, 2, 500)
+        beneficiaries[index].photoCitizenFront.current.scrollIntoView({ behavior: 'smooth' })
         return false;
       }
 
@@ -314,7 +305,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Bạn cần tải CCCD mặt sau",
         );
-        scrollToElement(beneficiaries[index].photoCitizenBack, 2, 500)
+        beneficiaries[index].photoCitizenBack.current.scrollIntoView({ behavior: 'smooth' })
         return false;
       }
 
@@ -322,7 +313,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Họ và tên không được để trống",
         );
-        scrollToElement(beneficiaries[index].fullName, 2, 500)
+        scrollToElement(beneficiaries[index].fullName, 2)
         return false;
       }
 
@@ -330,7 +321,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Ngày sinh không được để trống",
         );
-        scrollToElement(beneficiaries[index].dob, 2, 500)
+        scrollToElement(beneficiaries[index].dob, 2)
         return false;
       }
 
@@ -338,7 +329,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Giới tính không được để trống",
         );
-        scrollToElement(beneficiaries[index].gender, 2, 500)
+        scrollToElement(beneficiaries[index].gender, 2)
         return false;
       }
 
@@ -346,7 +337,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Dân tộc không được để trống",
         );
-        scrollToElement(beneficiaries[index].ethnic, 2, 500)
+        scrollToElement(beneficiaries[index].ethnic, 2)
         return false;
       }
 
@@ -356,7 +347,7 @@ const RegisterBHYT = ({ }) => {
           toast.warn(
             "Mã BHYT 10-15 ký tự bao gồm chữ và số",
           );
-          scrollToElement(beneficiaries[index].healthInsuranceNumber, 2, 500)
+          scrollToElement(beneficiaries[index].healthInsuranceNumber, 2)
           return false;
         }
       }
@@ -395,7 +386,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Ngày hiệu lực của thẻ mới không được để trống",
         );
-        scrollToElement(beneficiaries[index].newCardStartDate, 2, 0)
+        scrollToElement(beneficiaries[index].newCardStartDate, 2)
         return false;
       }
 
@@ -403,7 +394,7 @@ const RegisterBHYT = ({ }) => {
       //   toast.warn(
       //     "Ngày hết hiệu lực của thẻ mới không được để trống",
       //   );
-      //   scrollToElement(beneficiaries[index].newCardEndDate, 2, 0)
+      //   scrollToElement(beneficiaries[index].newCardEndDate, 2)
       //   return false;
       // }
 
@@ -414,7 +405,7 @@ const RegisterBHYT = ({ }) => {
       //   toast.warn(
       //     "Ngày hiệu lực phải trước ngày hết hiệu lực",
       //   );
-      //   scrollToElement(beneficiaries[index].newCardEndDate, 2, 500)
+      //   scrollToElement(beneficiaries[index].newCardEndDate, 2)
       //   return false;
       // }
 
@@ -422,7 +413,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Thành phố khám chữa bệnh không được để trống",
         );
-        scrollToElement(beneficiaries[index].medicalProvinceId, 2, 0)
+        scrollToElement(beneficiaries[index].medicalProvinceId, 2)
         return false;
       }
 
@@ -430,7 +421,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Quận huyện khám chữa bệnh không được để trống",
         );
-        scrollToElement(beneficiaries[index].medicalDistrictId, 2, 0)
+        scrollToElement(beneficiaries[index].medicalDistrictId, 2)
         return false;
       }
 
@@ -438,7 +429,7 @@ const RegisterBHYT = ({ }) => {
         toast.warn(
           "Bệnh viện đăng ký khám chữa bệnh không được để trống",
         );
-        scrollToElement(beneficiaries[index].hospitalId, 2, 0)
+        scrollToElement(beneficiaries[index].hospitalId, 2)
         return false;
       }
     }

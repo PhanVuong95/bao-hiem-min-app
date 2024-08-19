@@ -178,3 +178,29 @@ export const isValidString = (data) => {
   if (typeof data !== "string") return "";
   return data.trim();
 }
+
+interface typeSelect {
+  value: number,
+  label: string
+}
+
+export const convertListToSelect = (data, placeholer) => {
+  let list: typeSelect[] = [];
+  list.push({ value: 0, label: placeholer });
+  data.forEach(element => {
+    list.push({ value: element.id, label: element.name });
+  });
+  return list
+}
+
+export const formatDate2 = (date: Date) => {
+  try {
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year}`;
+  } catch {
+    return ''
+  }
+}
