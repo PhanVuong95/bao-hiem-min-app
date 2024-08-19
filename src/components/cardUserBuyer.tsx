@@ -185,6 +185,7 @@ const UserBuyerPage = (props: Props) => {
           ref={refs.provinceId}
           placeholder="Chọn tỉnh thành phố"
           value={selectedProvince}
+          dropdownMatchSelectWidth={false}
           onChange={handleProvinceChange}
           key={selectedProvince}
           filterOption={(input, option) =>
@@ -210,6 +211,7 @@ const UserBuyerPage = (props: Props) => {
           ref={refs.districtId}
           placeholder="Chọn quận huyện"
           value={selectedDistrict}
+          dropdownMatchSelectWidth={false}
           onChange={handleDistrictChange}
           key={selectedDistrict}
           filterOption={(input, option) =>
@@ -237,6 +239,7 @@ const UserBuyerPage = (props: Props) => {
           value={selectedWard}
           onChange={handlEwardChange}
           key={selectedWard}
+          dropdownMatchSelectWidth={false}
           filterOption={(input, option) =>
             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
           }
@@ -291,10 +294,6 @@ const UserBuyerPage = (props: Props) => {
       {renderWard()}
 
       {renderAddressDetail()}
-
-      <Link to="/" className="text-[#0076B7] text-sm font-normal underline">
-        Xem hướng dẫn sử dụng trên VssID
-      </Link>
     </div>
   );
 };

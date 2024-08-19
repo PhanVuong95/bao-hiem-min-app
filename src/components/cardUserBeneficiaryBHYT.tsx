@@ -45,9 +45,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
       dayjs(registerInfoBHYT["listInsuredPerson"][index].doB.trim(), 'DD/MM/YYYY')
   );
 
-  console.log("data", registerInfoBHYT);
-
-
   const [gender, setGender] = useState(registerInfoBHYT["listInsuredPerson"][index].gender);
   const [ethnic, setEthnic] = useState(registerInfoBHYT["listInsuredPerson"][index].ethnic);
   const [oldCardStartDate, setOldCardStartDate] = useState(
@@ -417,9 +414,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         }
 
 
-        <div className="flex flex-row gap-2 justify-around w-[100%]">
-          <div ref={refs.photoCitizenFront} className="flex flex-row gap-3">
-            <div className="flex flex-col gap-2 " onClick={() => handleCardClick(frontImageInputRef)}>
+        <div className="flex flex-row gap-2 justify-between w-[100%]">
+          <div ref={refs.photoCitizenFront} className="flex gap-3 w-[100%]">
+            <div className="flex flex-col gap-2 w-[100%]" onClick={() => handleCardClick(frontImageInputRef)}>
               <div className={`bg-[#F5F5F5]  rounded-lg p-[${photoCitizenFront ? '0px' : '9px'}]  card-cccd w-[100%] h-[100px]`}>
                 <div className="icon-1">
 
@@ -427,7 +424,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                     <img
                       src={`https://baohiem.dion.vn${photoCitizenFront}`}
                       alt="Mặt trước"
-                      className="w-[140px] h-[100px] object-center rounded-lg"
+                      className="w-[100%] h-[100px] object-center rounded-lg"
                     />
                   ) :
                     <svg
@@ -490,8 +487,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               />
             </div>
 
-            <div ref={refs.photoCitizenBack} className="flex flex-col gap-3 " onClick={() => handleCardClick(backImageInputRef)}>
-              <div className="flex flex-col gap-2">
+            <div ref={refs.photoCitizenBack} className="flex gap-3 w-[100%]" onClick={() => handleCardClick(backImageInputRef)}>
+              <div className="flex flex-col gap-2 w-[100%]">
                 <div className={`bg-[#F5F5F5]  rounded-lg p-[${photoCitizenBack ? '0px' : '9px'}]  card-cccd w-[100%] h-[100px]`}>
                   <div className="icon-1">
 
@@ -499,7 +496,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                       <img
                         src={`https://baohiem.dion.vn${photoCitizenBack}`}
                         alt="Mặt sau"
-                        className="w-[140px] h-[100px] object-center rounded-lg"
+                        className="w-[100%] h-[100px] object-center rounded-lg"
                       />
                     ) :
                       <svg
@@ -840,27 +837,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               format={dateFormat}
             />
           </div>
-          {/* 
-          <div>
-            <label className="block text-sm font-normal pb-2 text-gray-900">
-              Ngày hết hiệu lực <samp className="text-red-600">*</samp>
-            </label>
-            <input
-              type="date"
-              ref={refs.newCardEndDate}
-              value={newCardEndDate}
-              onChange={(e) => {
-                const value = e.target.value;
-
-                setNewCardEndDate(value);
-
-                registerInfoBHYT["listInsuredPerson"][index].newCardEndDate = formatDate(value);
-              }}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Chọn ngày sinh"
-              required
-            />
-          </div> */}
         </div>
 
       </div>
@@ -876,11 +852,12 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         </label>
         <Select
           size="large"
-          className="w-[100%]"
+          className="w-[100%] z-1"
           showSearch
           ref={refs.medicalProvinceId}
           placeholder="Chọn tỉnh thành phố"
           value={medicalProvinceId}
+          dropdownMatchSelectWidth={false}
           onChange={(value) => {
 
             setMedicalProvinceId(value)
@@ -912,6 +889,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           ref={refs.medicalDistrictId}
           placeholder="Chọn quận huyện"
           value={medicalDistrictId}
+          dropdownMatchSelectWidth={false}
           onChange={(value) => {
 
             setMedicalDistrictId(value)
@@ -943,6 +921,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           ref={refs.hospitalId}
           placeholder="Chọn bệnh viện"
           value={hospitalId}
+          dropdownMatchSelectWidth={false}
           onChange={(value) => {
 
             setHospitalId(value)

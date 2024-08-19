@@ -661,7 +661,6 @@ const RegisterBHYT = ({ }) => {
       }
     );
 
-    console.log(response.data);
     if (response.data.message == "CREATED" && response.data.status == "201") {
       registerInfoBHYT["id"] = response.data.data[0]
     }

@@ -207,3 +207,7 @@ body::-webkit-scrollbar {
   background-size: 10px 10px;
   background-position: calc(100% - 10px);
 }
+
+.ant-select-dropdown {
+  z-index: 8; 
+}
