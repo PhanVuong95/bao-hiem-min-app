@@ -18,7 +18,7 @@ const HomePage: React.FunctionComponent = () => {
   const { userProfile, setUserProfile } = profieContext;
 
   return (
-    <div className="home-page min-h-[100vh] pb-[120px] pt-[80px]">
+    <div className="home-page min-h-[100vh] pb-[120px] pt-[75px]">
       <div className="">
         <HeaderBase isHome={true} />
       </div>
