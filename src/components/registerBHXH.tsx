@@ -23,6 +23,7 @@ import dayjs from "dayjs";
 import "../locale/vi";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import locale from "antd/es/date-picker/locale/vi_VN";
+import { formattedEthnics } from "../utils/constants";
 
 dayjs.locale("vi");
 dayjs.extend(customParseFormat);
@@ -31,124 +32,269 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   const [personName, setPersonName] = useState<string>("");
   const [citizenId, setCitizenId] = useState<string>("");
   const [socialInsuranceId, setSocialInsuranceId] = useState<string>("");
-  // const [dob, setDob] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [buyerName, setBuyerName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [addressDetail, setAddressDetail] = useState<string>("");
+
+  const selectedInsuranceProvinceId = useRef<number>(0);
 
   const [temp, setTemp] = useState(false);
-  const [provinces, setProvinces] = useState<Province[]>([]);
-  const [districts, setDistricts] = useState<District[]>([]);
 
-  const [wards, setWards] = useState<Ward[]>([]);
+  const [buyerProvinces, setBuyerProvinces] = useState<Province[]>([]);
+  const [buyerDistricts, setBuyerDistricts] = useState<District[]>([]);
+  const [buyerWards, setBuyerWards] = useState<Ward[]>([]);
+
   const [selectedBuyerProvince, setSelectedBuyerProvince] = useState<number>(0);
-  const [selectedDistrict, setSelectedDistrict] = useState<number>(0);
-  const [selectedWard, setSelectedWard] = useState<number>(0);
+  const [selectedBuyerDistrict, setSelectedBuyerDistrict] = useState<number>(0);
+  const [selectedBuyerWard, setSelectedBuyerWard] = useState<number>(0);
+
+  const [buyerAddressDetail, setBuyerAddressDetail] = useState<string>("");
+
+  const [ksProvinces, setKSprovinces] = useState<Province[]>([]);
+  const [ksDistricts, setKSDistricts] = useState<District[]>([]);
+  const [ksWards, setKSWards] = useState<Ward[]>([]);
+
+  const [selectedKSProvince, setSelectedKSProvince] = useState<number>(0);
+  const [selectedKSDistrict, setSelectedKSDistrict] = useState<number>(0);
+  const [selectedKSWard, setSelectedKSWard] = useState<number>(0);
+
+  const [ksAddressDetail, setKSAddressDetail] = useState<string>("");
+
+  const [ttProvinces, setTTProvinces] = useState<Province[]>([]);
+  const [ttDistricts, setTTDistricts] = useState<District[]>([]);
+  const [ttWards, setTTWards] = useState<Ward[]>([]);
+
+  const [selectedTTProvince, setSelectedTTProvince] = useState<number>(0);
+  const [selectedTTDistrict, setSelectedTTDistrict] = useState<number>(0);
+  const [selectedTTWard, setSelectedTTWard] = useState<number>(0);
+
+  const [ttAddressDetail, setTTAddressDetail] = useState<string>("");
 
   const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] =
     useState(false);
   const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] =
     useState(false);
   const [loading, setLoading] = useState(false);
-  // const [selectedProvince, setSelectedProvince] = useState<number>(0);
-  const selectedProvince = useRef<number>(0);
+
   const [supportBudget, setSupportBudget] = useState<number>(0);
-  // const [wage, setWage] = useState<number>(0);
   const wage = useRef<number>(0);
-  // const [monthCount, setMonthCount] = useState<number>(0);
   const monthCount = useRef<number>(0);
   const [frontImageUrl, setFrontImageUrl] = useState<string>("");
   const [backImageUrl, setBackImageUrl] = useState<string>("");
   const [dateValue, setDateValue] = useState<any>("");
 
-  const { register, handleSubmit, watch, setValue } = useForm();
-  // const [finalPrice, setFinalPrice] = useState<number>(0);
+  const { handleSubmit } = useForm();
   const finalPrice = useRef<number>(0);
-  const specificContext = useContext(SpecificContext);
+  const specificContext = useContext<any>(SpecificContext);
   const [displayValue, setDisplayValue] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [ethnic, setEthnic] = useState(0);
+  const [ethnicLists, setEthnicLists] = useState([]);
 
   const [isShowModelQR, setIsShowModelQR] = useState<boolean>(false);
   const dateFormat = "DD/MM/YYYY";
   const {
-    // frontCitizenidPhoto,
-    // backCitizenidPhoto,
-    // setFrontCitizenidPhoto,
-    // setBackCitizenidPhoto,
-    // insuranceOrderId,
-    // setInsuranceOrderId,
     insuranceOrder,
     setInsuranceOrder,
   } = specificContext;
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
+
+  console.log(insuranceOrder);
+
+  // Load lại tất cả danh sách tỉnh thành
+  useEffect(() => {
+    axios
+      .get("https://baohiem.dion.vn/province/api/list")
+      .then((response) => {
+        // Load tỉnh thành người mua
+        setBuyerProvinces(response.data.data);
+        setBuyerWards([]);
+        setBuyerDistricts([]);
+
+        // Load tỉnh thành thường trú người tham gia
+        setTTProvinces(response.data.data)
+        setTTDistricts([])
+        setTTWards([])
+
+        // Load tỉnh thành khai sinh người tham gia
+        setKSprovinces(response.data.data)
+        setKSDistricts([])
+        setKSWards([])
+      })
+      .catch((error) => {
+        setBuyerProvinces([])
+        setTTProvinces([])
+        setKSprovinces([])
+        console.error(error);
+      });
+  }, []);
+
+  // Cập nhập danh sách quận huyện người mua
+  useEffect(() => {
+    setBuyerDistricts([])
+    setBuyerWards([])
+    setSelectedBuyerDistrict(0)
+    setSelectedBuyerWard(0)
+
+    if (selectedBuyerProvince !== 0) {
+      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedBuyerProvince}`)
+        .then((response) => {
+          setBuyerDistricts(response.data.data);
+          setBuyerWards([]);
+        })
+        .catch((error) => {
+          setBuyerWards([]);
+          console.error(error);
+        });
+    }
+  }, [selectedBuyerProvince]);
+
+  // Cập nhập danh sách phường xã người mua
+  useEffect(() => {
+    setBuyerWards([])
+    setSelectedBuyerWard(0)
+    if (selectedBuyerDistrict !== 0) {
+      axios
+        .get(
+          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedBuyerDistrict}`
+        )
+        .then((response) => {
+          setBuyerWards(response.data.data);
+        })
+        .catch((error) => {
+          setBuyerWards([])
+          console.error(error);
+        });
+    }
+  }, [selectedBuyerDistrict]);
+
+
+  // Cập nhập danh sách quận huyện địa chỉ khai sinh
+  useEffect(() => {
+    setKSDistricts([])
+    setKSWards([])
+    setSelectedBuyerDistrict(0)
+    setSelectedBuyerWard(0)
+
+    if (selectedKSProvince !== 0) {
+      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedKSProvince}`)
+        .then((response) => {
+          setKSDistricts(response.data.data);
+          setKSWards([]);
+        })
+        .catch((error) => {
+          setKSDistricts([]);
+          console.error(error);
+        });
+    }
+  }, [selectedKSProvince]);
+
+  // Cập nhập danh sách phường xã khai sinh
+  useEffect(() => {
+    setKSWards([])
+    setSelectedKSWard(0)
+    if (selectedKSDistrict !== 0) {
+      axios
+        .get(
+          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedKSDistrict}`
+        )
+        .then((response) => {
+          setKSWards(response.data.data);
+        })
+        .catch((error) => {
+          setKSWards([])
+          console.error(error);
+        });
+    }
+  }, [selectedKSDistrict]);
+
+
+  // Cập nhập danh sách quận huyện địa chỉ thường trú
+  useEffect(() => {
+    setTTDistricts([])
+    setTTWards([])
+    setSelectedTTDistrict(0)
+    setSelectedTTWard(0)
+
+    if (selectedTTProvince !== 0) {
+      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedTTProvince}`)
+        .then((response) => {
+          setTTDistricts(response.data.data);
+          setTTWards([]);
+        })
+        .catch((error) => {
+          setTTWards([]);
+          console.error(error);
+        });
+    }
+  }, [selectedTTProvince]);
+
+
+  // Cập nhập danh sách phường xã địa chỉ thường trú
+  useEffect(() => {
+    setTTWards([])
+    setSelectedTTWard(0)
+    if (selectedTTDistrict !== 0) {
+      axios
+        .get(
+          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedTTDistrict}`
+        )
+        .then((response) => {
+          setTTWards(response.data.data);
+        })
+        .catch((error) => {
+          setTTWards([])
+          console.error(error);
+        });
+    }
+  }, [selectedTTDistrict]);
+
+  console.log(selectedBuyerDistrict);
+
   useEffect(() => {
     if (insuranceOrder.id != 0) {
+      // Set thông tin người tham giá BHXH tự nguyện
       setPersonName(insuranceOrder.listInsuredPerson[0].fullName);
-      setValue("name", insuranceOrder.listInsuredPerson[0].fullName);
-      selectedProvince.current =
-        insuranceOrder.listInsuredPerson[0].insuranceProvinceId;
-      setValue(
-        "province",
-        insuranceOrder.listInsuredPerson[0].insuranceProvinceId
-      );
+
+      selectedInsuranceProvinceId.current = insuranceOrder.listInsuredPerson[0].insuranceProvinceId;
+
       setCitizenId(insuranceOrder.listInsuredPerson[0].citizenId);
-      setValue("cccd", insuranceOrder.listInsuredPerson[0].citizenId);
       setSocialInsuranceId(
         insuranceOrder.listInsuredPerson[0].socialInsuranceNumber
-      );
-      setValue(
-        "bhxh",
-        insuranceOrder.listInsuredPerson[0].socialInsuranceNumber
-      );
+      )
       setDateValue(dayjs(insuranceOrder.listInsuredPerson[0].doB, dateFormat));
-      setValue("dob", formatDateToISO(insuranceOrder.listInsuredPerson[0].doB));
       setGender(insuranceOrder.listInsuredPerson[0].gender);
-      setValue("gender", insuranceOrder.listInsuredPerson[0].gender);
+      setEthnic(insuranceOrder.listInsuredPerson[0].ethnicId)
       wage.current = insuranceOrder.listInsuredPerson[0].wage;
-      setValue("salary", insuranceOrder.listInsuredPerson[0].wage);
       monthCount.current = insuranceOrder.listInsuredPerson[0].monthInsured;
-      setValue("months", insuranceOrder.listInsuredPerson[0].monthInsured);
       setSupportBudget(insuranceOrder.listInsuredPerson[0].supportBudget);
-
       setPhone(insuranceOrder.phone);
-      setValue("phone", insuranceOrder.phone);
       setBuyerName(insuranceOrder.fullName);
-      setValue("buyerName", insuranceOrder.fullName);
       setEmail(insuranceOrder.email);
-      setValue("email", insuranceOrder.email);
+
+
       setSelectedBuyerProvince(insuranceOrder.provinceId);
-      setSelectedDistrict(insuranceOrder.districtId);
-      setValue("buyerDistrict", Number(insuranceOrder.districtId));
-      setSelectedWard(insuranceOrder.wardId);
-      setValue("buyerWard", Number(insuranceOrder.wardId));
-      //setValue("province", Number(insuranceOrder);
-      setAddressDetail(insuranceOrder.addressDetail);
-      setValue("address", insuranceOrder.addressDetail);
+      setSelectedBuyerDistrict(insuranceOrder.districtId);
+      setSelectedBuyerWard(insuranceOrder.wardId);
+      setBuyerAddressDetail(insuranceOrder.addressDetail);
       setDisplayValue(
         insuranceOrder.listInsuredPerson[0].wage.toLocaleString("vi-VN")
       );
       finalPrice.current = insuranceOrder.finalPrice;
-      axios
-        .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${insuranceOrder.districtId}`
-        )
-        .then((response) => {
-          setWards(response.data.data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+
+
     }
   }, []);
+
   useEffect(() => {
     setFrontImageUrl(insuranceOrder.photoCitizenFront);
     setBackImageUrl(insuranceOrder.photoCitizenBack);
   }, [insuranceOrder.photoCitizenFront, insuranceOrder.photoCitizenBack]);
+
   const calculateFinalPrice = () => {
-    const budgetPerMonth = selectedProvince.current === 1001 ? 66000 : 33000;
+    const budgetPerMonth = selectedInsuranceProvinceId.current === 1001 ? 66000 : 33000;
     if (wage.current != 0 && monthCount.current != 0) {
       finalPrice.current =
         (wage.current * 0.22 - budgetPerMonth) * monthCount.current;
@@ -166,6 +312,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       setTemp(!temp);
     }
   };
+
   useEffect(() => {
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
@@ -175,78 +322,28 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
 
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/province/api/list")
-      .then((response) => {
-        setProvinces(response.data.data);
-        setWards([]);
-        setDistricts([]);
-        //setSelectedBuyerProvince(Number(response.data.data[0].id));
-        //selectedProvince.current = Number(response.data.data[0].id);
-        //setValue("province", Number(response.data.data[0].id));
-        //setValue("buyerProvince", Number(response.data.data[0].id));
-        setTemp(!temp);
+      .get(
+        `https://baohiem.dion.vn/ethnic/api/list`
+      ).then((response) => {
+        setEthnicLists(response.data.data)
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [])
 
-  useEffect(() => {
-    if (selectedBuyerProvince !== 0) {
-      axios
-        .get(
-          `https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedBuyerProvince}`
-        )
-        .then((response) => {
-          setDistricts(response.data.data);
-          setWards([]);
-          //setSelectedDistrict(Number(response.data.data[0].id));
-          //setValue("buyerDistrict", Number(response.data.data[0].id));
-          // setInsuranceOrder((prevOrder) => ({
-          //   ...prevOrder,
-          //   districtId: Number(response.data.data[0].id),
-          // }));
-          if (selectedDistrict !== 0) {
-            axios
-              .get(
-                `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${insuranceOrder.districtId}`
-              )
-              .then((response) => {
-                setWards(response.data.data);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          }
-          setTemp(!temp);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [selectedBuyerProvince]);
 
-  useEffect(() => {
-    if (selectedDistrict !== 0) {
-      axios
-        .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedDistrict}`
-        )
-        .then((response) => {
-          setWards(response.data.data);
-          // setSelectedWard(Number(response.data.data[0].id));
-          // setValue("buyerWard", Number(response.data.data[0].id));
-          // setInsuranceOrder((prevOrder) => ({
-          //   ...prevOrder,
-          //   wardId: Number(response.data.data[0].id),
-          // }));
-          setTemp(!temp);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [selectedDistrict]);
+  const getDistrictByProvinceId = async (provinceId, setDistrict) => {
+    axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${provinceId}`)
+      .then(
+        (response) => {
+          setDistrict(response.data.data);
+        }
+      ).catch((error) => {
+        setDistrict([])
+      });
+  }
+
   function formatDateString(dateString: string): string {
     // Chuyển chuỗi ngày tháng thành đối tượng Date
     const date = new Date(dateString);
@@ -284,13 +381,10 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       ),
     }));
   };
-  // const convertToISODate = (date) => {
-  //   const [day, month, year] = date.split('/');
-  //   return `${year}-${month}-${day}`;
-  // };
+
   const handleProvinceChange = (value) => {
     const provinceId = value;
-    selectedProvince.current = provinceId;
+    selectedInsuranceProvinceId.current = provinceId;
     calculateSupportBudget(provinceId, monthCount.current);
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
@@ -302,19 +396,15 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
   };
 
   const handleDistrictChange = (value) => {
-    setSelectedDistrict(parseInt(value));
+    setSelectedBuyerDistrict(parseInt(value));
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
       districtId: parseInt(value),
     }));
-    // setInsuranceOrder((prevOrder) => ({
-    //   ...prevOrder,
-    //   wardId: 0,
-    // }));
   };
 
   const calculateSupportBudget = (provinceId: number, months: number) => {
-    const budgetPerMonth = provinceId === 1001 ? 66000 : 33000;
+    const budgetPerMonth = provinceId === 1398 ? 66000 : 33000;
     setSupportBudget(budgetPerMonth * months);
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
@@ -403,10 +493,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       toast.warn("Họ và tên người tham gia không được để trống");
       return false;
     }
-    if (selectedProvince.current == 0) {
+    if (selectedInsuranceProvinceId.current == 0) {
       toast.warn("Vui lòng chọn tỉnh thành nơi tham gia BHXH");
       return false;
     }
+
     if (!isValidEmptyString(citizenId)) {
       toast.warn("Số CCCD không được để trống");
       return false;
@@ -414,6 +505,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       toast.warn("Số CCCD bao gồm 12 ký tự, vui lòng nhập lại");
       return false;
     }
+
     if (
       !(
         socialInsuranceId.length == 0 ||
@@ -424,14 +516,22 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       toast.warn("Số BHXH bao gồm 10 hoặc 15 ký tự, vui lòng nhập lại");
       return false;
     }
+
     if (!isValidEmptyString(dateValue)) {
       toast.warn("Ngày sinh không được để trống");
       return false;
     }
+
     if (!isValidEmptyString(gender)) {
       toast.warn("Giới tính không được để trống");
       return false;
     }
+
+    if (ethnic == 0) {
+      toast.warn("Dân tộc không được để trống");
+      return false;
+    }
+
     if (Number(wage.current) == 0 || Number(wage.current) < 1000000) {
       toast.warn("Mức lương không hợp lệ");
       return false;
@@ -440,33 +540,78 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
       toast.warn("Số tháng tham gia không hợp lệ");
       return false;
     }
+
+    if (selectedKSProvince == 0) {
+      toast.warn("Địa chỉ tỉnh thành khai sinh không được để trống");
+      return false;
+    }
+
+    if (selectedKSDistrict == 0) {
+      toast.warn("Địa chỉ quận huyện khai sinh không được để trống");
+      return false;
+    }
+
+    if (selectedKSWard == 0) {
+      toast.warn("Địa chỉ phường xã khai sinh không được để trống");
+      return false;
+    }
+
+    if (ksAddressDetail == "") {
+      toast.warn("Địa chỉ cụ thể khai sinh không được để trống");
+      return false;
+    }
+
+    if (selectedTTProvince == 0) {
+      toast.warn("Địa chỉ tỉnh thành thường trú không được để trống");
+      return false;
+    }
+
+    if (selectedTTDistrict == 0) {
+      toast.warn("Địa chỉ quận huyện thường trú không được để trống");
+      return false;
+    }
+
+    if (selectedTTWard == 0) {
+      toast.warn("Địa chỉ phường xã thường trú không được để trống");
+      return false;
+    }
+
+    if (ttAddressDetail == "") {
+      toast.warn("Địa chỉ cụ thể thường trú không được để trống");
+      return false;
+    }
+
     if (!isValidPhone(phone)) {
       toast.warn("Số điện thoại không hợp lệ");
       return false;
     }
+
     if (!isValidEmptyString(buyerName)) {
       toast.warn("Họ và tên người mua không được để trống");
       return false;
     }
-    if (Number(selectedBuyerProvince) == 0) {
-      toast.warn("Vui lòng chọn tỉnh thành");
-      return false;
-    }
-    if (Number(selectedDistrict) == 0) {
-      toast.warn("Vui lòng chọn quận huyện");
-      return false;
-    }
-    if (Number(selectedWard) == 0) {
-      toast.warn("Vui lòng chọn phường xã");
-      return false;
-    }
+
     if (isValidEmptyString(email)) {
       if (!isValidEmail(email)) {
         toast.warn("Email không hợp lệ");
         return false;
       }
     }
-    if (!isValidEmptyString(addressDetail)) {
+
+    if (selectedBuyerProvince == 0) {
+      toast.warn("Vui lòng chọn tỉnh thành");
+      return false;
+    }
+    if (selectedBuyerDistrict == 0) {
+      toast.warn("Vui lòng chọn quận huyện");
+      return false;
+    }
+    if (selectedBuyerWard == 0) {
+      toast.warn("Vui lòng chọn phường xã");
+      return false;
+    }
+
+    if (!isValidEmptyString(buyerAddressDetail)) {
       toast.warn("Địa chỉ cụ thể không được để trống");
       return false;
     }
@@ -538,7 +683,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           },
         }
       );
-      // return response.data.data[0];
+
       console.log(response.data);
       if (response.data.status == "200") {
         setLoading(false);
@@ -601,14 +746,14 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                 </div>
                 <Scanner
                   paused={!isShowModelQR}
-                  onError={(error) => {}}
+                  onError={(error) => { }}
                   components={{
                     zoom: true,
                     torch: false,
                     tracker: (
                       detectedCodes: IDetectedBarcode[],
                       ctx: CanvasRenderingContext2D
-                    ) => {},
+                    ) => { },
                   }}
                   onScan={(data) => {
                     const info = data[0]["rawValue"];
@@ -654,11 +799,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                         (person, index) =>
                           index === 0
                             ? {
-                                ...person,
-                                doB: formatDateString(
-                                  `${year}-${month}-${day}`
-                                ),
-                              }
+                              ...person,
+                              doB: formatDateString(
+                                `${year}-${month}-${day}`
+                              ),
+                            }
                             : person
                       ),
                     }));
@@ -698,9 +843,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <div className="flex flex-row gap-2 w-[100%]">
               <div className="flex flex-col gap-2 w-[100%]">
                 <div
-                  className={`bg-[#F5F5F5]  rounded-lg p-[${
-                    frontImageUrl ? "0px" : "4px"
-                  }]  card-cccd w-[100%] h-[100px]`}
+                  className={`bg-[#F5F5F5]  rounded-lg p-[${frontImageUrl ? "0px" : "4px"
+                    }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(frontImageInputRef)}
                 >
                   <div className="icon-1">
@@ -777,9 +921,8 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               </div>
               <div className="flex flex-col gap-2 w-[100%]">
                 <div
-                  className={`bg-[#F5F5F5] rounded-lg p-[${
-                    backImageUrl ? "0px" : "4px"
-                  }]  card-cccd w-[100%] h-[100px]`}
+                  className={`bg-[#F5F5F5] rounded-lg p-[${backImageUrl ? "0px" : "4px"
+                    }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(backImageInputRef)}
                 >
                   <div className="icon-1">
@@ -876,7 +1019,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               type="text"
               id="name"
               value={personName}
-              {...register("name", { required: false })}
               className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
               onChange={(e) => {
@@ -903,16 +1045,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               className="w-[100%]"
               showSearch
               placeholder="Chọn thành phố"
-              value={selectedProvince.current}
+              value={selectedInsuranceProvinceId.current}
               dropdownMatchSelectWidth={false}
               onChange={handleProvinceChange}
-              key={selectedProvince.current}
+              key={selectedInsuranceProvinceId.current}
               filterOption={(input, option) =>
                 (option?.label ?? "")
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={convertListToSelect(provinces, "Chọn tỉnh thành phố")}
+              options={convertListToSelect(buyerProvinces, "Chọn tỉnh thành phố")}
             />
           </div>
           <div>
@@ -923,7 +1065,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               type="text"
               id="cccd"
               value={citizenId}
-              {...register("cccd", { required: false })}
               maxLength={12}
               className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập số CCCD"
@@ -952,7 +1093,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <Input
               type="text"
               id="bhxh"
-              {...register("bhxh", { required: false })}
               maxLength={15}
               value={socialInsuranceId}
               className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -1021,6 +1161,40 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               ]}
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-normal pb-2 text-gray-900">
+              Dân tộc <samp className="text-red-600">*</samp>
+            </label>
+            <Select
+              size="large"
+              className="w-[100%]"
+              dropdownStyle={{ maxWidth: '300px' }}
+              showSearch
+              dropdownMatchSelectWidth={false}
+              placeholder="Chọn dân tộc"
+              value={ethnic}
+              onChange={(value) => {
+                setEthnic(value);
+
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0 ? { ...person, ethnicId: value } : person
+                  ),
+                }));
+              }}
+              key={ethnic}
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={
+                convertListToSelect(ethnicLists, "Chọn dân tộc")
+              }
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-normal text-gray-900 pb-2">
               Mức lương làm căn cứ đóng <samp className="text-red-600">*</samp>
@@ -1029,7 +1203,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               <Input
                 type="text"
                 id="salary"
-                {...register("salary", { required: false })}
                 value={displayValue}
                 className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Nhập mức lương"
@@ -1047,9 +1220,9 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                       (person, index) =>
                         index === 0
                           ? {
-                              ...person,
-                              wage: wage.current,
-                            }
+                            ...person,
+                            wage: wage.current,
+                          }
                           : person
                     ),
                   }));
@@ -1068,71 +1241,75 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               </div>
             </div>
           </div>
+
           <div>
             <label className="block text-sm font-normal text-gray-900 pb-2">
               Số tháng đóng <samp className="text-red-600">*</samp>
             </label>
-            <div className="relative">
-              <Input
-                type="text"
-                id="months"
-                {...register("months", { required: false })}
-                value={monthCount.current}
-                aria-describedby="helper-text-explanation"
-                className="border border-gray-300 text-[#0076B7] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Nhập số tháng"
-                onChange={(e) => {
-                  let numberValue = e.target.value.replace(/\D/g, "");
-                  if (e.target.value != "") {
-                    // console.log(e.target.value);
-                    monthCount.current = Number(numberValue);
-                    setValue("months", numberValue);
-                    calculateSupportBudget(
-                      selectedProvince.current,
-                      parseInt(numberValue, 10)
-                    );
-                    setInsuranceOrder((prevOrder) => ({
-                      ...prevOrder,
-                      listInsuredPerson: prevOrder.listInsuredPerson.map(
-                        (person, index) =>
-                          index === 0
-                            ? {
-                                ...person,
-                                monthInsured: parseInt(numberValue),
-                              }
-                            : person
-                      ),
-                    }));
-                  } else {
-                    monthCount.current = 0;
-                    setValue("months", 0);
-                    calculateSupportBudget(
-                      selectedProvince.current,
-                      parseInt("1", 10)
-                    );
-                  }
+            <Select
+              size="large"
+              className="w-[100%]"
+              placeholder="Chọn giới tính"
+              dropdownMatchSelectWidth={false}
+              value={monthCount.current}
+              onChange={(value) => {
 
+                if (value != 0) {
+                  monthCount.current = Number(value);
+                  calculateSupportBudget(
+                    selectedInsuranceProvinceId.current,
+                    value
+                  );
                   setInsuranceOrder((prevOrder) => ({
                     ...prevOrder,
                     listInsuredPerson: prevOrder.listInsuredPerson.map(
                       (person, index) =>
                         index === 0
                           ? {
-                              ...person,
-                              monthInsured: parseInt(e.target.value),
-                            }
+                            ...person,
+                            monthInsured: value,
+                          }
                           : person
                     ),
                   }));
-                  calculateFinalPrice();
-                }}
-              />
-              <div className="absolute inset-y-0 start-[83%] top-0 flex items-center pointer-events-none">
-                <p className="text-base font-normal text-[#767A7F]">tháng</p>
-              </div>
-            </div>
+                } else {
+                  monthCount.current = 0;
+                  calculateSupportBudget(
+                    selectedInsuranceProvinceId.current,
+                    parseInt("1", 10)
+                  );
+                }
+
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          monthInsured: value,
+                        }
+                        : person
+                  ),
+                }));
+                calculateFinalPrice();
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={[
+                { value: 0, label: "Chọn tháng đóng" },
+                { value: 1, label: "1 Tháng" },
+                { value: 3, label: "3 Tháng" },
+                { value: 6, label: "6 Tháng" },
+                { value: 12, label: "12 Tháng" },
+              ]}
+            />
           </div>
-          <div className="mb-4">
+          {/*---------------------------------------------------------*/}
+          <div>
             <label className="block text-sm font-normal text-gray-900 pb-2">
               Ngân sách hỗ trợ
             </label>
@@ -1148,11 +1325,308 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               </div>
             </div>
           </div>
+
+          <h3 className="text-base font-semibold text-[#0076B7]">
+            Địa chỉ khai sinh{" "}
+          </h3>
+
+
+          {/*---------------------------------------------------------*/}
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Tỉnh thành <samp className="text-red-600">*</samp>
+            </label>
+
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              placeholder="Chọn tỉnh thành phố"
+              dropdownMatchSelectWidth={false}
+              value={selectedKSProvince}
+              onChange={(value) => {
+                setSelectedKSProvince(value);
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          ksTinhThanhMa: value,
+                        }
+                        : person
+                  ),
+                }));
+              }}
+              key={selectedKSProvince}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(ksProvinces, "Chọn tỉnh thành phố")}
+            />
+          </div>
+
+          {/*---------------------------------------------------------*/}
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Quận huyện <samp className="text-red-600">*</samp>
+            </label>
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              dropdownMatchSelectWidth={false}
+              placeholder="Chọn quận huyện"
+              value={selectedKSDistrict}
+              key={selectedKSDistrict}
+              onChange={(value) => {
+                setSelectedKSDistrict(value);
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          ksQuanHuyenMa: value,
+                        }
+                        : person
+                  ),
+                }));
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(ksDistricts, "Chọn quận huyện")}
+            />
+          </div>
+
+          {/*---------------------------------------------------------*/}
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Phường xã <samp className="text-red-600">*</samp>
+            </label>
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              dropdownMatchSelectWidth={false}
+              placeholder="Chọn phường xã"
+              value={selectedKSWard}
+              onChange={(value: any) => {
+                setSelectedKSWard(value);
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          ksXaPhuongMa: value,
+                        }
+                        : person
+                  ),
+                }))
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(ksWards, "Chọn phường xã")}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Địa chỉ cụ thể <samp className="text-red-600">*</samp>
+            </label>
+            <Input
+              type="text"
+              id="address"
+              value={ksAddressDetail}
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="VD: Số nhà, số đường,...."
+              onChange={(e) => {
+                setKSAddressDetail(e.target.value);
+
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          ksDiaChi: e.target.value,
+                        }
+                        : person
+                  ),
+                }));
+              }}
+            />
+          </div>
+
+          <h3 className="text-base font-semibold text-[#0076B7]">
+            Địa chỉ thường trú{" "}
+          </h3>
+
+          {/*---------------------------------------------------------*/}
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Tỉnh thành <samp className="text-red-600">*</samp>
+            </label>
+
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              placeholder="Chọn tỉnh thành phố"
+              dropdownMatchSelectWidth={false}
+              value={selectedTTProvince}
+              onChange={(value) => {
+                setSelectedTTProvince(value);
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          provinceId: value,
+                        }
+                        : person
+                  ),
+                }));
+              }}
+              key={selectedTTProvince}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(ttProvinces, "Chọn tỉnh thành phố")}
+            />
+          </div>
+
+          {/*---------------------------------------------------------*/}
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Quận huyện <samp className="text-red-600">*</samp>
+            </label>
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              dropdownMatchSelectWidth={false}
+              placeholder="Chọn quận huyện"
+              value={selectedTTDistrict}
+              key={selectedTTDistrict}
+              onChange={(value) => {
+                setSelectedTTDistrict(value);
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          districtId: value,
+                        }
+                        : person
+                  ),
+                }));
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(ttDistricts, "Chọn quận huyện")}
+            />
+          </div>
+
+          {/*---------------------------------------------------------*/}
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Phường xã <samp className="text-red-600">*</samp>
+            </label>
+            <Select
+              size="large"
+              className="w-[100%]"
+              showSearch
+              dropdownMatchSelectWidth={false}
+              placeholder="Chọn phường xã"
+              value={selectedTTWard}
+              key={selectedTTWard}
+              onChange={(value: any) => {
+
+                setSelectedTTWard(value);
+
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          wardId: value,
+                        }
+                        : person
+                  ),
+                }));
+
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={convertListToSelect(ttWards, "Chọn phường xã")}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-normal text-gray-900 pb-2">
+              Địa chỉ cụ thể <samp className="text-red-600">*</samp>
+            </label>
+            <Input
+              type="text"
+              id="address"
+              value={ttAddressDetail}
+              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="VD: Số nhà, số đường,...."
+              onChange={(e) => {
+                setTTAddressDetail(e.target.value);
+
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? {
+                          ...person,
+                          addressDetail: e.target.value,
+                        }
+                        : person
+                  ),
+                }));
+              }}
+            />
+          </div>
         </div>
+
+        {/* Người mua */}
         <div className="p-4 mx-4 bg-white rounded-xl flex flex-col gap-6">
           <h3 className="text-[#0076B7] text-lg font-medium">
             Thông tin người mua
           </h3>
+
+
           <div>
             <label className="block text-sm font-normal text-gray-900 pb-2">
               Số điện thoại <samp className="text-red-600">*</samp>
@@ -1161,7 +1635,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               type="text"
               id="phone"
               value={phone}
-              {...register("phone", { required: false })}
               className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Số điện thoại"
               maxLength={12}
@@ -1183,7 +1656,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               type="text"
               id="name"
               value={buyerName}
-              {...register("buyerName", { required: false })}
               className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập tên của bạn"
               onChange={(e) => {
@@ -1202,7 +1674,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <Input
               type="email"
               id="email"
-              {...register("email", { required: false })}
               value={email}
               className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Nhập email của bạn"
@@ -1215,6 +1686,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               }}
             />
           </div>
+
           <div>
             <label className="block text-sm font-normal text-gray-900 pb-2">
               Tỉnh thành <samp className="text-red-600">*</samp>
@@ -1223,24 +1695,16 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <Select
               size="large"
               className="w-[100%]"
-              {...register("buyerProvince", { required: false })}
               showSearch
               placeholder="Chọn tỉnh thành phố"
               dropdownMatchSelectWidth={false}
               value={selectedBuyerProvince}
               onChange={(value) => {
-                let provinceId: number = Number(value);
-                if (provinceId == 0) {
-                  setDistricts([]);
-                  setWards([]);
-                }
-                setSelectedBuyerProvince(provinceId);
+                setSelectedBuyerProvince(value);
                 setInsuranceOrder((prevOrder) => ({
                   ...prevOrder,
-                  provinceId: provinceId,
+                  provinceId: value,
                 }));
-                setSelectedWard(0);
-                setSelectedDistrict(0);
               }}
               key={selectedBuyerProvince}
               filterOption={(input, option) =>
@@ -1248,7 +1712,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={convertListToSelect(provinces, "Chọn tỉnh thành phố")}
+              options={convertListToSelect(buyerProvinces, "Chọn tỉnh thành phố")}
             />
           </div>
           <div>
@@ -1259,20 +1723,27 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               size="large"
               className="w-[100%]"
               showSearch
-              {...register("buyerDistrict", { required: false })}
               dropdownMatchSelectWidth={false}
               placeholder="Chọn quận huyện"
-              value={selectedDistrict}
-              key={selectedDistrict}
-              onChange={handleDistrictChange}
+              value={selectedBuyerDistrict}
+              key={selectedBuyerDistrict}
+              onChange={(value) => {
+                setSelectedBuyerDistrict(value);
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  districtId: value,
+                }))
+              }}
               filterOption={(input, option) =>
                 (option?.label ?? "")
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={convertListToSelect(districts, "Chọn quận huyện")}
+              options={convertListToSelect(buyerDistricts, "Chọn quận huyện")}
             />
           </div>
+
+
           <div>
             <label className="block text-sm font-normal text-gray-900 pb-2">
               Phường xã <samp className="text-red-600">*</samp>
@@ -1281,13 +1752,12 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               size="large"
               className="w-[100%]"
               showSearch
-              {...register("buyerWard", { required: false })}
               dropdownMatchSelectWidth={false}
               placeholder="Chọn phường xã"
-              value={selectedWard}
+              value={selectedBuyerWard}
               onChange={(value: any) => {
                 {
-                  setSelectedWard(parseInt(value));
+                  setSelectedBuyerWard(value);
                   setInsuranceOrder((prevOrder) => ({
                     ...prevOrder,
                     wardId: parseInt(value),
@@ -1299,7 +1769,7 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              options={convertListToSelect(wards, "Chọn phường xã")}
+              options={convertListToSelect(buyerWards, "Chọn phường xã")}
             />
           </div>
           <div>
@@ -1309,12 +1779,11 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             <Input
               type="text"
               id="address"
-              {...register("address", { required: false })}
-              value={addressDetail}
+              value={buyerAddressDetail}
               className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="VD: Số nhà, số đường,...."
               onChange={(e) => {
-                setAddressDetail(e.target.value);
+                setBuyerAddressDetail(e.target.value);
                 setInsuranceOrder((prevOrder) => ({
                   ...prevOrder,
                   addressDetail: e.target.value,
@@ -1324,13 +1793,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
           </div>
         </div>
         <div className="flex mx-4 flex-col gap-2 pb-4">
-          {/* <div>
-            <p className="text-sm font-normal text-[#000]">
-              Thông tin BHXH sẽ được cập nhật trên ứng dụng{" "}
-              <strong className="text-[#0076B7] font-bold">VSSID </strong>
-              trong 15 ngày làm việc.
-            </p>
-          </div> */}
           <div className="flex gap-2">
             <input
               type="checkbox"
@@ -1353,7 +1815,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
             </label>
           </div>
         </div>
-        {/* <FooterPayPage h={""} w={""} url={"/buill-pay/1"} /> */}
         {/* Đưa fotter trực tiếp vào đây để tiện xử lý */}
         <div className="page-2 bg-white">
           <div className="flex flex-col gap-3">
@@ -1375,12 +1836,6 @@ const RegisterBHXH: React.FunctionComponent = (props) => {
               >
                 Tiếp tục
               </button>
-              {/* <Link
-                to={"/buill-pay/1"}
-                className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
-              >
-                Tiếp tục  
-              </Link> */}
             </div>
           </div>
         </div>

@@ -363,11 +363,11 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     if (
       !(
         orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length ==
-          0 ||
+        0 ||
         orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length ==
-          10 ||
+        10 ||
         orderDetail.listInsuredPerson[0].socialInsuranceNumber.trim().length ==
-          15
+        15
       )
     ) {
       toast.warn("Số BHXH bao gồm 10 hoặc 15 ký tự, vui lòng thử lại");
@@ -578,14 +578,14 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
                 </div>
                 <Scanner
                   paused={!isShowModelQR}
-                  onError={(error) => {}}
+                  onError={(error) => { }}
                   components={{
                     zoom: true,
                     torch: false,
                     tracker: (
                       detectedCodes: IDetectedBarcode[],
                       ctx: CanvasRenderingContext2D
-                    ) => {},
+                    ) => { },
                   }}
                   onScan={(data) => {
                     const info = data[0]["rawValue"];
@@ -630,9 +630,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
             <div className="flex flex-row gap-2">
               <div className="flex flex-col gap-2">
                 <div
-                  className={`bg-[#F5F5F5]  rounded-lg p-[${
-                    frontImageUrl ? "0px" : "0px"
-                  }]  card-cccd w-[100%] h-[100px]`}
+                  className={`bg-[#F5F5F5]  rounded-lg p-[${frontImageUrl ? "0px" : "0px"
+                    }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(frontImageInputRef)}
                 >
                   <div className="icon-1">
@@ -709,9 +708,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               </div>
               <div className="flex flex-col gap-2">
                 <div
-                  className={`bg-[#F5F5F5]  rounded-lg p-[${
-                    backImageUrl ? "0px" : "0px"
-                  }]  card-cccd w-[100%] h-[100px]`}
+                  className={`bg-[#F5F5F5]  rounded-lg p-[${backImageUrl ? "0px" : "0px"
+                    }]  card-cccd w-[100%] h-[100px]`}
                   onClick={() => handleCardClick(backImageInputRef)}
                 >
                   <div className="icon-1">
@@ -1001,6 +999,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
               </div>
             </div>
           </div>
+
+
         </div>
         <div className="p-4 mx-4 bg-white rounded-xl flex flex-col gap-6">
           <h3 className="text-[#0076B7] text-lg font-medium">

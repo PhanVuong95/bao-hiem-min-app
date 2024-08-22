@@ -4,6 +4,7 @@ import { Sheet, Button, Page, Text, useNavigate } from "zmp-ui";
 const AboutPage: React.FunctionComponent = (props) => {
   const [actionSheetOpened, setActionSheetOpened] = React.useState(false);
   const navigate = useNavigate()
+
   return (
     <Page className="page">
       <div className="section-container">

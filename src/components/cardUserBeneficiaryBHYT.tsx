@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { ClipLoader, FadeLoader } from "react-spinners";
-import { Modal } from "zmp-ui";
+// import { Modal } from "zmp-ui";
 import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
 import { formattedEthnics, listEthnics } from "../utils/constants";
 import { convertListToSelect, formatDate, formatDate2, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
@@ -13,6 +13,11 @@ import dayjs from 'dayjs';
 import '../locale/vi';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import locale from "antd/es/date-picker/locale/vi_VN";
+import Modal from 'react-modal';
+import Lottie from "lottie-react";
+import lottieScanQR from "../../assets-src/lottie_scan_qr.json";
+import { motion } from 'framer-motion';
+import { Button } from "zmp-ui";
 
 dayjs.locale('vi');
 dayjs.extend(customParseFormat);
@@ -23,10 +28,11 @@ interface Props {
   onClose: (index: number) => void;
   refs: any
   provinces: any
+  windowSize: any
 }
 
 const UserBeneficiaryBHYTPage = (props: Props) => {
-  const { index, price, onClose, refs, provinces } = props;
+  const { index, price, onClose, refs, provinces, windowSize } = props;
   const dateFormat = 'DD/MM/YYYY';
   const [districts, setDistricts] = useState<any>([]);
   const [socialInsuranceNumber, setSocialInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].socialInsuranceNumber);
@@ -35,7 +41,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [citizenId, setCitizenId] = useState(registerInfoBHYT["listInsuredPerson"][index].citizenId);
   const [photoCitizenFront, setPhotoCitizenFront] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenFront);
   const [photoCitizenBack, setPhotoCitizenBack] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenBack);
-  const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] = useState(false)
+  const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] = useState(true)
   const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] = useState(false)
 
   const [fullName, setFullName] = useState(registerInfoBHYT["listInsuredPerson"][index].fullName.trim());
@@ -47,12 +53,12 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
   const [gender, setGender] = useState(registerInfoBHYT["listInsuredPerson"][index].gender);
   const [ethnic, setEthnic] = useState(registerInfoBHYT["listInsuredPerson"][index].ethnic);
-  const [oldCardStartDate, setOldCardStartDate] = useState(
+  const [oldCardStartDate, setOldCardStartDate] = useState<any>(
     registerInfoBHYT["listInsuredPerson"][index].oldCardStartDate == "" ?
       "" :
       dayjs(registerInfoBHYT["listInsuredPerson"][index].oldCardStartDate.trim(), 'DD/MM/YYYY')
   );
-  const [oldCardEndDate, setOldCardEndDate] = useState(
+  const [oldCardEndDate, setOldCardEndDate] = useState<any>(
     registerInfoBHYT["listInsuredPerson"][index].oldCardEndDate == "" ? "" :
       dayjs(registerInfoBHYT["listInsuredPerson"][index].oldCardEndDate.trim(), 'DD/MM/YYYY')
 
@@ -72,6 +78,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [hospitalId, setHospitalId] = useState(registerInfoBHYT["listInsuredPerson"][index].hospitalId);
   const [listHospitals, setListHospitals] = useState<any>([])
   const [isShowModelQR, setIsShowModelQR] = useState<boolean>(false)
+  const [size, setSize] = useState({ width: 200, height: 200 });
+  const [opacityQR, setOpacityQR] = useState(1);
+  const lottieRef = useRef(null);
 
   const calculatePrice = () => {
     switch (index) {
@@ -324,14 +333,66 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           required
         />
 
-
-
         {errors.citizenId && <div className="mt-2 text-red-500">{errors.citizenId}</div>}
       </div>
     )
   }
 
+
+
+  const customStyles = {
+    content: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+    overlay: {
+      background: 'rgba(0, 0, 0, 0.50)'
+    }
+  };
+
+
+
+  const drawRoundedRect = (ctx, x, y, width, height, radius) => {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y)
+    ctx.lineTo(x + width - radius - width * 0.5, y);
+
+    ctx.moveTo(x + width - radius - width * 0.2, y)
+    ctx.lineTo(x + width - radius, y);
+
+    ctx.moveTo(x + width - radius, y)
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+
+    ctx.lineTo(x + width, y + width - radius - width * 0.5);
+
+    ctx.moveTo(x + width, y + width - radius - width * 0.2);
+    ctx.lineTo(x + width, y + width - radius);
+
+    ctx.quadraticCurveTo(x + width, y + width, x + width - radius, y + width);
+    ctx.lineTo(x + width - width * 0.3, y + width);
+
+    ctx.moveTo(x + width - width * 0.6, y + width);
+    ctx.lineTo(x + width * 0.2, y + width);
+
+    ctx.quadraticCurveTo(x, y + width, x, y + width - radius);
+    ctx.lineTo(x, y + radius + width * 0.5);
+
+    ctx.moveTo(x, y + radius + width * 0.2);
+    ctx.lineTo(x, y + radius);
+
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
   const renderUploadImages = () => {
+
     return (
       <div className="p-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
         <div className="flex items-center justify-between">
@@ -345,74 +406,137 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
         {
           <Modal
-            visible={isShowModelQR}
-            onClose={() => {
-              setIsShowModelQR(false)
-            }}
-            modalStyle={{
-              background: 'transparent',
-              width: '400px',
-              height: '600px',
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
+            isOpen={isShowModelQR}
+            onRequestClose={() => setIsShowModelQR(false)}
+            style={customStyles}
+            ariaHideApp={false}
+            contentLabel="QR Code"
           >
-            <div className="text-[#fff]  w-[100%] text-center justify-items-center underline italic ">
-              Quét QR trên CCCD của bạn
+
+            <div className="w-[400px] h-[750px] relative">
+              <div className="text-[#fff] z-10  w-[100%] text-center justify-items-center underline italic ">
+                Quét QR trên CCCD của bạn
+              </div>
+              <motion.div
+                initial={{ opacity: 1 }}
+                animate={{ opacity: opacityQR }}
+                transition={{ duration: 0.5 }}
+                style={{
+                  position: 'absolute',
+                  zIndex: 10,
+                  top: windowSize?.height / 2,
+                  left: windowSize?.width / 2,
+                  transform: 'translate(-50%, -50%)'
+                }}>
+                <Lottie
+                  animationData={lottieScanQR}
+                  ref={lottieRef}
+                  loop={true}
+                  style={{
+                    width: size.width,
+                    height: size.height,
+                  }}
+                  rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }} />
+              </motion.div>
+
+
+
+              <Scanner
+                paused={!isShowModelQR}
+                onError={(error) => {
+
+                }}
+                constraints={{
+                  facingMode: 'environment',
+                  aspectRatio: { ideal: 18 / 6 },
+                  frameRate: { ideal: 50 },
+                  width: { ideal: 2160 },
+                  height: { ideal: 720 },
+                  echoCancellation: true,
+                  latency: { ideal: 0 },
+                  suppressLocalAudioPlayback: true,
+                }}
+                components={{
+                  torch: false,
+                  zoom: true,
+                  finder: false,
+                  tracker: (detectedCodes: IDetectedBarcode[], ctx: CanvasRenderingContext2D) => {
+
+                    if (detectedCodes.length > 0) {
+                      const { boundingBox } = detectedCodes[0];
+
+                      // boundingBox object contains properties like x, y, width, and height
+                      const { x, y, width, height } = boundingBox;
+
+                      setOpacityQR(0)
+
+                      // setPosition({ x: x + width, y: y - height });
+                      setSize({ width: width, height: height })
+
+                      console.log(x);
+                      console.log(y);
+                      console.log(width);
+                      console.log(height);
+
+                      // You can now draw a rectangle or do other operations with this bounding box
+                      // ctx.strokeStyle = '#ccccccc';
+                      // ctx.lineWidth = 1;
+                      // ctx.strokeRect(x, y, width, height);
+
+                      drawRoundedRect(ctx, x, y, width, height, 10);
+                    }
+                  }
+                }}
+                onScan={(data) => {
+                  setTimeout(() => {
+                    const info = data[0]["rawValue"];
+                    const words = info.split("|")
+
+                    setIsShowModelQR(false)
+                    setCitizenId(words[0])
+
+                    registerInfoBHYT["listInsuredPerson"][index].citizenId = words[0];
+
+                    setFullName(words[2])
+                    registerInfoBHYT["listInsuredPerson"][index].fullName = words[2];
+
+                    const dob = words[3];
+                    const day = dob.substring(0, 2);
+                    const month = dob.substring(2, 4);
+                    const year = dob.substring(4, 8);
+
+                    setDob(dayjs(`${day} /${month}/${year}`, dateFormat))
+
+                    registerInfoBHYT["listInsuredPerson"][index].doB = formatDate(`${year}-${month}-${day}`);
+
+                    setGender(words[4])
+                    registerInfoBHYT["listInsuredPerson"][index].gender = words[4];
+                    setOpacityQR(1)
+                  }, 1000)
+
+                }}
+                allowMultiple={false}
+                styles={{
+                  container: {
+                    position: 'fixed',
+                    width: 450,
+                    height: windowSize.height + 20,
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    background: 'white'
+                  },
+                  finderBorder: 2,
+                  video: {
+                    width: 2160,
+                    height: windowSize.height + 20,
+                    objectFit: 'cover',
+                  },
+                }}
+              />
             </div>
-            <Scanner
-              paused={!isShowModelQR}
-              onError={(error) => {
-
-              }}
-              components={{
-                zoom: true,
-                torch: false,
-                tracker: (detectedCodes: IDetectedBarcode[], ctx: CanvasRenderingContext2D) => {
-                }
-              }}
-              onScan={(data) => {
-                const info = data[0]["rawValue"];
-                const words = info.split("|")
-
-                setIsShowModelQR(false)
-                setCitizenId(words[0])
-
-                registerInfoBHYT["listInsuredPerson"][index].citizenId = words[0];
-
-                setFullName(words[2])
-                registerInfoBHYT["listInsuredPerson"][index].fullName = words[2];
-
-                const dob = words[3];
-                const day = dob.substring(0, 2);
-                const month = dob.substring(2, 4);
-                const year = dob.substring(4, 8);
-
-                setDob(dayjs(`${day}/${month}/${year}`, dateFormat))
-
-                registerInfoBHYT["listInsuredPerson"][index].doB = formatDate(`${year}-${month}-${day}`);
-
-                setGender(words[4])
-                registerInfoBHYT["listInsuredPerson"][index].gender = words[4];
-
-              }}
-              allowMultiple={false}
-              constraints={{ facingMode: 'environment' }}
-              styles={{
-                container: {
-                  width: '100%',
-                  height: '100%',
-                  alignSelf: 'center',
-                },
-                finderBorder: 10,
-                video: {
-                  width: '100%',
-                  height: '100%',
-                  alignSelf: 'center'
-                }
-              }}
-            />
           </Modal>
         }
 
@@ -641,7 +765,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   }
 
 
-
   const renderDob = () => {
     return (
       <div>
@@ -741,8 +864,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             formattedEthnics
           }
         />
-
-        {errors.ethnic && <div className="mt-2 text-red-500">{errors.ethnic}</div>}
       </div>
     )
   }
@@ -1021,3 +1142,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 };
 
 export default UserBeneficiaryBHYTPage;
+function useWindowDimensions(): { height: any; width: any; } {
+  throw new Error("Function not implemented.");
+}
+

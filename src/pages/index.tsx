@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { getUserInfo } from "zmp-sdk/apis";
+import { getUserInfo, openWebview } from "zmp-sdk/apis";
 import { useRecoilValue } from "recoil";
 import { userState } from "../state";
 
@@ -16,6 +16,21 @@ import { toast } from "react-toastify";
 const HomePage: React.FunctionComponent = () => {
   const profieContext = useContext(ProfileContext);
   const { userProfile, setUserProfile } = profieContext;
+
+  const openUrlInWebview = async () => {
+    try {
+      await openWebview({
+        url: "https://happy-s.vn/",
+        config: {
+          style: "bottomSheet",
+          leftButton: "back"
+        }
+      });
+    } catch (error) {
+      // xử lý khi gọi api thất bại
+      console.log(error);
+    }
+  };
 
   return (
     <div className="home-page min-h-[100vh] pb-[120px] pt-[75px]">
@@ -244,10 +259,13 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="" onClick={() => {
-          toast.info(
-            "Tính năng này đang phát triển",
-          );
+        <Link to="" onClick={async () => {
+          await openUrlInWebview()
+          console.log('aaaaa');
+
+          // toast.info(
+          //   "Tính năng này đang phát triển",
+          // );
         }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">

@@ -20,6 +20,10 @@ const RegisterBHYT = ({ }) => {
   const fileUploadUrl = useRef<HTMLInputElement>(null);
   const [isLoadingFileUploadUrl, setLoadingFileUploadUrl] = useState(false)
   const [fileUpload, setFileUpload] = useState(registerInfoBHYT["fileUploadUrl"])
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   const userBuyerPageRefs = {
     phone: useRef<any>(null),
@@ -757,6 +761,7 @@ const RegisterBHYT = ({ }) => {
 
               registerInfoBHYT['listInsuredPerson'].splice(index, 1);
             }}
+            windowSize={windowSize}
             provinces={provinces}
             refs={beneficiary}
           />
