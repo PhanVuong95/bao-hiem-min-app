@@ -21,49 +21,49 @@ const ListSocialInsurance: React.FunctionComponent = (props) => {
       });
   }, []);
 
-  // useEffect(() => {
-  //   setInsuranceOrder(() => ({
-  //     id: 0,
-  //     insuranceId: 0,
-  //     accountId: 0,
-  //     citizenId: 0,
-  //     photoCitizenFront: "",
-  //     photoCitizenBack: "",
-  //     phone: "",
-  //     fullName: "",
-  //     email: "",
-  //     provinceId: 0,
-  //     districtId: 0,
-  //     wardId: 0,
-  //     finalPrice: 0,
-  //     addressDetail: "",
-  //     listInsuredPerson: [
-  //       {
-  //         id: 0,
-  //         insuranceProvinceId: 0,
-  //         socialInsuranceNumber: "",
-  //         citizenId: "",
-  //         photoCitizenFront: "",
-  //         photoCitizenBack: "",
-  //         fullName: "",
-  //         doB: "",
-  //         gender: "",
-  //         supportBudget: 0.0,
-  //         wage: 0,
-  //         monthInsured: 0,
-  //         provinceId: 0,
-  //         districtId: 0,
-  //         wardId: 0,
-  //         addressDetail: "",
-  //         ksXaPhuongMa: 0,
-  //         ksQuanHuyenMa: 0,
-  //         ksTinhThanhMa: 0,
-  //         ksDiaChi: "",
-  //         ethnicId: 0,
-  //       },
-  //     ],
-  //   }));
-  // }, []);
+  useEffect(() => {
+    setInsuranceOrder(() => ({
+      id: 0,
+      insuranceId: 0,
+      accountId: 0,
+      citizenId: 0,
+      photoCitizenFront: "",
+      photoCitizenBack: "",
+      phone: "",
+      fullName: "",
+      email: "",
+      provinceId: 0,
+      districtId: 0,
+      wardId: 0,
+      finalPrice: 0,
+      addressDetail: "",
+      listInsuredPerson: [
+        {
+          id: 0,
+          insuranceProvinceId: 0,
+          socialInsuranceNumber: "",
+          citizenId: "",
+          photoCitizenFront: "",
+          photoCitizenBack: "",
+          fullName: "",
+          doB: "",
+          gender: "",
+          supportBudget: 0.0,
+          wage: 0,
+          monthInsured: 0,
+          provinceId: 0,
+          districtId: 0,
+          wardId: 0,
+          addressDetail: "",
+          ksXaPhuongMa: 0,
+          ksQuanHuyenMa: 0,
+          ksTinhThanhMa: 0,
+          ksDiaChi: "",
+          ethnicId: 0,
+        },
+      ],
+    }));
+  }, []);
 
   if (!insurance) {
     return;
