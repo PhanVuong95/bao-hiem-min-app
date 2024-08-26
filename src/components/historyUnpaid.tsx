@@ -1,10 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link, useNavigate } from "react-router-dom";
 import { PulseLoader } from "react-spinners";
+import { formatDate } from "../utils/validateString";
 import FooterPayPage from "./footerPay";
 import HeaderBase from "./headerBase";
+import { SpecificContext } from "./SpecificContext";
 
 const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
@@ -12,6 +14,11 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const [orderDetail, setOrderDetail] = useState<any>();
   const [insuredPerson, setInsuredPerson] = useState<any>();
   const [orderStatusId, setOrderStatusId] = useState<number>(0);
+  const specificContext = useContext<any>(SpecificContext);
+  const {
+    insuranceOrder,
+    setInsuranceOrder,
+  } = specificContext;
   const PENDING = 1001;
   const DONE = 1002;
   const CANCELED = 1003;
@@ -19,13 +26,58 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
+
+
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
+
+        let result = response.data.data[0];
+        let storeage = JSON.parse(JSON.stringify(result));
+        delete storeage.price;
+        delete storeage.discountPrice;
+        delete storeage.fileUploadUrl;
+        storeage.citizenId = 0;
+
+        delete storeage.insuranceOrderPaymentStatusName
+        delete storeage.provinceName
+        delete storeage.wardName
+        delete storeage.insuranceName
+        delete storeage.districtName
+        delete storeage.insurancePrice
+        delete storeage.insuranceOrderStatusId
+        delete storeage.insuranceOrderStatusName
+        delete storeage.createdTime
+
+        delete storeage.listInsuredPerson[0].ethnic;
+        delete storeage.listInsuredPerson[0].oldCardStartDate
+        delete storeage.listInsuredPerson[0].oldCardEndDate
+        delete storeage.listInsuredPerson[0].newCardStartDate
+        delete storeage.listInsuredPerson[0].newCardEndDate
+        delete storeage.listInsuredPerson[0].price
+        delete storeage.listInsuredPerson[0].insuredPersonId
+        delete storeage.listInsuredPerson[0].healthInsuranceNumber
+        delete storeage.listInsuredPerson[0].hospitalName
+        storeage.listInsuredPerson[0].doB = formatDate(storeage.listInsuredPerson[0].doB)
+        delete storeage.listInsuredPerson[0].medicalProvinceName
+
+        storeage.listInsuredPerson[0].houseHold.houseHoldPeoples.map(item => {
+          delete item.createdTime;
+          return item;
+        });
+
+        console.log(storeage);
+
+
+        setInsuranceOrder(storeage);
       })
       .catch((error) => {
         console.error(error);
       });
   }, [id]);
+
+  console.log(insuranceOrder);
+
+
   useEffect(() => {
     axios
       .get(
@@ -113,7 +165,8 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
               {orderStatusId == PENDING ? (
                 <button
                   onClick={() => {
-                    navigate("/update-bhxh/" + id);
+                    // navigate("/update-bhxh/" + id);
+                    navigate("/register-BHXH")
                   }}
                   className="text-sm text-[#0076B7] underline"
                 >
@@ -369,7 +422,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
             <div className="flex flex-col gap-3">
               <div className="flex flex-row content-center justify-center items-center">
                 <Link
-                  to={"/update-bhxh/" + id}
+                  to={"/register-BHXH"}
                   className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
                 >
                   Tra cứu lại

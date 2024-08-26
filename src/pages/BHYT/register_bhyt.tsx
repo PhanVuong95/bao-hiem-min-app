@@ -5,10 +5,9 @@ import { toast } from "react-toastify";
 import { Modal, useNavigate } from "zmp-ui";
 import { Province } from "../../models";
 import { registerInfoBHYT } from "./list_health_insurance";
-import { compareTwoDateString, formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../../utils/validateString";
+import { formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../../utils/validateString";
 import UserBeneficiaryBHYTPage from "../../components/cardUserBeneficiaryBHYT";
 import UserBuyerPage from "../../components/cardUserBuyer";
-import VoucherPage from "../../components/cardVoucher";
 import HeaderBase from "../../components/headerBase";
 import { FadeLoader } from "react-spinners";
 
@@ -116,7 +115,6 @@ const RegisterBHYT = ({ }) => {
       default:
         break;
     }
-
   };
 
   const calculatePrice = () => {
@@ -289,7 +287,7 @@ const RegisterBHYT = ({ }) => {
 
       if (!isValidCitizenId(registerInfoBHYT['listInsuredPerson'][index].citizenId)) {
         toast.warn(
-          "Số căn cước công dân không hợp lệ",
+          "Số căn cước công dân phải là 12 chữ số",
         );
         scrollToElement(beneficiaries[index].citizenId, 2)
         return false;

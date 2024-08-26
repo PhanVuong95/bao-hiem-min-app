@@ -34,7 +34,7 @@ import { closeLoading } from "zmp-sdk/apis";
 const MyApp = () => {
   useEffect(() => {
     closeLoading({
-      success: (data) => {},
+      success: (data) => { },
       fail: (error) => {
         console.log(error);
       },
@@ -140,7 +140,11 @@ const MyApp = () => {
                 />
                 <Route
                   path="/history-unpaid/:id"
-                  element={<HistoryUnpaidPage />}
+                  element={
+                    <SpecificProvider>
+                      <HistoryUnpaidPage />
+                    </SpecificProvider>
+                  }
                 />
                 <Route
                   path="/history-unpaid-1/:id"

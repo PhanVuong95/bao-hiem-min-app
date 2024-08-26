@@ -5,8 +5,8 @@ import HeaderBase from "../components/headerBase";
 import { SpecificContext } from "../components/SpecificContext";
 import logo from "../../assets-src/logo1.png";
 
-const ListSocialInsurance: React.FunctionComponent = (props) => {
-  const specificContext = useContext(SpecificContext);
+const ListSocialInsurance = (props) => {
+  const specificContext = useContext<any>(SpecificContext);
   const [insurance, setInsurance] = useState<any>();
   const { insuranceOrder, setInsuranceOrder } = specificContext;
 
@@ -60,10 +60,117 @@ const ListSocialInsurance: React.FunctionComponent = (props) => {
           ksTinhThanhMa: 0,
           ksDiaChi: "",
           ethnicId: 0,
+          medicalProvinceId: 0,
+          medicalDistrictId: 0,
+          hospitalId: 0,
+          vungLuongToiThieuId: 0,
+          benefitLevel: "",
+          houseHold: {
+            id: 0,
+            chuHoTen: "",
+            ksProvinceId: 0,
+            ksDistrictId: 0,
+            ksWardId: 0,
+            ksAddressDetail: "",
+            hkAddressDetail: "",
+            houseHoldPeoples: [
+              {
+                id: 0,
+                name: "",
+                doB: "",
+                gender: "",
+                ethnicId: 0,
+                relationShipId: "",
+                citizenId: ""
+              }
+            ]
+          },
         },
       ],
     }));
   }, []);
+
+  // useEffect(() => {
+  //   setInsuranceOrder(() => ({
+  //     "id": 1252,
+  //     "insuranceId": 1001,
+  //     "accountId": 1019,
+  //     "citizenId": "0",
+  //     "photoCitizenFront": "/files/upload/account/1019/f54ac0c5-e125-4f40-bada-586fd4aeaa1a.jpg",
+  //     "photoCitizenBack": "/files/upload/account/1019/36a98a86-c57a-4e27-92dc-284bfbb3744c.jpg",
+  //     "phone": "0828782000",
+  //     "fullName": "Vũ Văn D",
+  //     "email": "tuanlbs78@gmail.com",
+  //     "provinceId": 1398,
+  //     "districtId": 2415,
+  //     "wardId": 9673,
+  //     "addressDetail": "Địa chỉ C",
+  //     "price": 0,
+  //     "discountPrice": 0,
+  //     "finalPrice": 17688000,
+  //     "fileUploadUrl": null,
+  //     "listInsuredPerson": [
+  //       {
+  //         "id": 1105,
+  //         "insuranceProvinceId": 1398,
+  //         "socialInsuranceNumber": "1234567890",
+  //         "healthInsuranceNumber": null,
+  //         "citizenId": "030200008757",
+  //         "photoCitizenFront": "/files/upload/account/1019/f54ac0c5-e125-4f40-bada-586fd4aeaa1a.jpg",
+  //         "photoCitizenBack": "/files/upload/account/1019/36a98a86-c57a-4e27-92dc-284bfbb3744c.jpg",
+  //         "fullName": "Vũ Văn A",
+  //         "doB": "01/08/2024",
+  //         "gender": "Nam",
+  //         "ethnic": null,
+  //         "provinceId": 1411,
+  //         "districtId": 1775,
+  //         "wardId": 8564,
+  //         "addressDetail": "Địa chỉ TT",
+  //         "ksXaPhuongMa": 9728,
+  //         "ksTinhThanhMa": 1398,
+  //         "ksQuanHuyenMa": 2345,
+  //         "ksDiaChi": "Địa chỉ Ks",
+  //         "ethnicId": 1001,
+  //         "vungLuongToiThieuId": 1004,
+  //         "benefitLevel": "3000000",
+  //         "houseHold": {
+  //           "id": 1014,
+  //           "chuHoTen": "Vũ Văn A",
+  //           "ksProvinceId": 1398,
+  //           "ksDistrictId": 1777,
+  //           "ksWardId": 8589,
+  //           "ksAddressDetail": "Địa chỉ C",
+  //           "hkAddressDetail": "Địa Chỉ A",
+  //           "insuredPersonId": 1105,
+  //           "houseHoldPeoples": [
+  //             {
+  //               "id": 1043,
+  //               "name": "Vũ Văn D",
+  //               "doB": "20/08/2024",
+  //               "gender": "Nam",
+  //               "ethnicId": 1001,
+  //               "relationShipId": "Bố ruột",
+  //               "citizenId": "030200008767",
+  //               "houseHoldId": 1014,
+  //               "createdTime": null
+  //             }
+  //           ]
+  //         },
+  //         "oldCardStartDate": null,
+  //         "oldCardEndDate": null,
+  //         "newCardStartDate": null,
+  //         "newCardEndDate": null,
+  //         "medicalProvinceId": 1398,
+  //         "hospitalId": 4466,
+  //         "supportBudget": 792000,
+  //         "wage": 7000000,
+  //         "monthInsured": 12,
+  //         "price": null,
+  //         "medicalDistrictId": 0
+  //       }
+  //     ]
+  //   }));
+  // }, []);
 
   if (!insurance) {
     return;

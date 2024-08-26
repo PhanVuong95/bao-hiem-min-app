@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { ClipLoader, FadeLoader } from "react-spinners";
-// import { Modal } from "zmp-ui";
 import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
 import { formattedEthnics, listEthnics } from "../utils/constants";
 import { convertListToSelect, formatDate, formatDate2, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
@@ -17,7 +16,6 @@ import Modal from 'react-modal';
 import Lottie from "lottie-react";
 import lottieScanQR from "../../assets-src/lottie_scan_qr.json";
 import { motion } from 'framer-motion';
-import { Button } from "zmp-ui";
 
 dayjs.locale('vi');
 dayjs.extend(customParseFormat);
@@ -412,7 +410,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             ariaHideApp={false}
             contentLabel="QR Code"
           >
-
             <div className="w-[400px] h-[750px] relative">
               <div className="text-[#fff] z-10  w-[100%] text-center justify-items-center underline italic ">
                 Quét QR trên CCCD của bạn
@@ -438,8 +435,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                   }}
                   rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }} />
               </motion.div>
-
-
 
               <Scanner
                 paused={!isShowModelQR}
@@ -472,16 +467,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
                       // setPosition({ x: x + width, y: y - height });
                       setSize({ width: width, height: height })
-
-                      console.log(x);
-                      console.log(y);
-                      console.log(width);
-                      console.log(height);
-
-                      // You can now draw a rectangle or do other operations with this bounding box
-                      // ctx.strokeStyle = '#ccccccc';
-                      // ctx.lineWidth = 1;
-                      // ctx.strokeRect(x, y, width, height);
 
                       drawRoundedRect(ctx, x, y, width, height, 10);
                     }
@@ -1142,7 +1127,5 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 };
 
 export default UserBeneficiaryBHYTPage;
-function useWindowDimensions(): { height: any; width: any; } {
-  throw new Error("Function not implemented.");
-}
+
 

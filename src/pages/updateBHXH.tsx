@@ -20,9 +20,8 @@ import { FadeLoader } from "react-spinners";
 import { Input, Select, DatePicker } from "antd";
 import dayjs from "dayjs";
 import "../locale/vi";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import locale from "antd/es/date-picker/locale/vi_VN";
-const UpdateBHXH: React.FunctionComponent = (props) => {
+const UpdateBHXH = (props) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] =
@@ -61,6 +60,8 @@ const UpdateBHXH: React.FunctionComponent = (props) => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
+        console.log(response.data.data[0]);
+
         setOrderDetail(response.data.data[0]);
         setDisplayValue(
           response.data.data[0].listInsuredPerson[0].wage.toLocaleString(

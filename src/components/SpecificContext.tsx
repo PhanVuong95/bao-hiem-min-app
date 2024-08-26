@@ -1,5 +1,15 @@
 import React, { createContext, useState, ReactNode } from "react";
 
+interface Member {
+  id?: 0,
+  name?: "",
+  doB?: "",
+  gender?: "",
+  ethnicId?: number,
+  relationShipId?: "",
+  citizenId?: ""
+}
+
 interface InsuredPerson {
   id: number,
   insuranceProvinceId: number;
@@ -22,6 +32,21 @@ interface InsuredPerson {
   ksTinhThanhMa?: number;
   ksDiaChi?: "";
   ethnicId?: number;
+  medicalProvinceId?: number,
+  medicalDistrictId?: number,
+  hospitalId?: number,
+  vungLuongToiThieuId?: number,
+  benefitLevel?: "",
+  houseHold?: {
+    id?: number,
+    chuHoTen?: "",
+    ksProvinceId?: number,
+    ksDistrictId?: number,
+    ksWardId?: number,
+    ksAddressDetail?: "",
+    hkAddressDetail?: "",
+    houseHoldPeoples?: Member[]
+  }
 }
 
 interface InsuranceOrder {

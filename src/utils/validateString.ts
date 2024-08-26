@@ -193,6 +193,15 @@ export const convertListToSelect = (data, placeholer) => {
   return list
 }
 
+export const convertListToSelectVungLuong = (data, placeholer) => {
+  let list: typeSelect[] = [];
+  list.push({ value: 0, label: placeholer });
+  data.forEach(element => {
+    list.push({ value: element.id, label: element.vungLttTen });
+  });
+  return list
+}
+
 export const formatDate2 = (date: Date) => {
   try {
     let year = date.getFullYear();
