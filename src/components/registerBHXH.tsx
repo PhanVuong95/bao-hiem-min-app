@@ -27,6 +27,7 @@ import iconClose from '../../assets-src/close_1.png'
 import { motion } from 'framer-motion';
 import Lottie from "lottie-react";
 import lottieScanQR from "../../assets-src/lottie_scan_qr.json";
+import { BenefitLevevlList } from "../utils/constants";
 
 dayjs.locale("vi");
 dayjs.extend(customParseFormat);
@@ -137,6 +138,8 @@ const RegisterBHXH = (props) => {
   const [size, setSize] = useState({ width: 200, height: 200 });
   const [opacityQR, setOpacityQR] = useState(1);
   const lottieRef = useRef(null);
+
+  const [isShowModalbenefitLevel, setIsShowModalbenefitLevel] = useState(false)
 
 
   // Ref để scroll
@@ -544,7 +547,7 @@ const RegisterBHXH = (props) => {
         setDisplayValue(
           insuranceOrder.listInsuredPerson[0].wage.toLocaleString("vi-VN")
         );
-        finalPrice.current = insuranceOrder.finalPrice;
+        finalPrice.current = Math.ceil(insuranceOrder.finalPrice);
       }
 
       fetchData();
@@ -560,7 +563,7 @@ const RegisterBHXH = (props) => {
     const budgetPerMonth = selectedInsuranceProvinceId.current === 1398 ? 66000 : 33000;
     if (wage.current != 0 && monthCount.current != 0) {
       finalPrice.current =
-        (wage.current * 0.22 - budgetPerMonth) * monthCount.current;
+        Math.ceil((wage.current * 0.22 - budgetPerMonth) * monthCount.current);
       setInsuranceOrder((prevOrder) => ({
         ...prevOrder,
         finalPrice: finalPrice.current,
@@ -1931,6 +1934,7 @@ const RegisterBHXH = (props) => {
           showSearch
           ref={participantRefs.benefitLevelParticipant}
           dropdownMatchSelectWidth={false}
+          dropdownStyle={{ maxWidth: '300px' }}
           placeholder="Mức hưởng"
           value={benefitLevel}
           key={benefitLevel}
@@ -1958,11 +1962,55 @@ const RegisterBHXH = (props) => {
           }
           options={[
             { value: "", label: "Chọn mức hưởng" },
-            { value: "1000000", label: "1.000.000" },
-            { value: "2000000", label: "2.000.000" },
-            { value: "3000000", label: "3.000.000" }
+            { value: "1", label: "Mức 1" },
+            { value: "2", label: "Mức 2" },
+            { value: "3", label: "Mức 3" },
+            { value: "4", label: "Mức 4" },
+            { value: "5", label: "Mức 5" },
           ]}
         />
+
+        <button
+          onClick={() => {
+            setIsShowModalbenefitLevel(!isShowModalbenefitLevel);
+          }}
+
+          className="text-blue-600 mt-2 underline" type="button">Chi tiết mức hưởng</button>
+
+        <Modal
+          isOpen={isShowModalbenefitLevel}
+          onRequestClose={() => setIsShowModalbenefitLevel(false)}
+          style={{
+            content: {
+              top: '50%',
+              left: '50%',
+              right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              border: 'none',
+              padding: 0,
+              width: '90%',
+              height: '75%',
+              overflow: 'auto',
+            },
+            overlay: {
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            },
+          }}
+        >
+          <div className="p-4 w-[100%] relative bg-white">
+            {
+              BenefitLevevlList.map((item) => (
+                <div>
+                  <div className="pb-2 text-blue-600  text-lg font-normal">- Mức hưởng số {item?.value}</div>
+                  <div className="pb-2 text-justify">{item?.label}</div>
+                </div>
+              ))
+            }
+          </div>
+        </Modal>
       </div>
     )
   }

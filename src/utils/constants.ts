@@ -112,3 +112,11 @@ export const formattedEthnics = [
   { value: "Brâu", label: "Brâu" },
   { value: "Ơ Đu", label: "Ơ Đu" }
 ];
+
+export const BenefitLevevlList = [
+  { value: "1", label: "Được quỹ BHYT thanh toán 100% chi phí khám bệnh, chữa bệnh (KCB) thuộc phạm vi chi trả BHYT và không áp dụng giới hạn tỷ lệ thanh toán một số thuốc, hoá chất, vật tư y tế và dịch vụ kỹ thuật theo quy định của Bộ trưởng Bộ Y tế về danh mục và tỷ lệ, điều kiện thanh toán dịch vụ kỹ thuật; chi phí vận chuyển người bệnh từ tuyến huyện lên tuyến trên trong trường hợp cấp cứu hoặc khi đang điều trị nội trú phải chuyển tuyến chuyên môn kỹ thuật, bao gồm các đối tượng hưởng có ký hiệu là: CC, TE" },
+  { value: "2", label: "Được quỹ BHYT thanh toán 100% chi phí KCB thuộc phạm vi chi trả BHYT (có giới hạn tỷ lệ thanh toán một số thuốc, hoá chất, vật tư y tế và dịch vụ kỹ thuật theo quy định của Bộ trưởng Bộ Y tế); chi phí vận chuyển người bệnh từ tuyến huyện lên tuyến trên trong trường hợp cấp cứu hoặc khi đang điều trị nội trú phải chuyển tuyến chuyên môn kỹ thuật, bao gồm các đối tượng hưởng có ký hiệu là: CK, CB, KC, HN, DT, DK, XD, BT, TS" },
+  { value: "3", label: "Được quỹ BHYT thanh toán 95% chi phí KCB thuộc phạm vi chi trả BHYT (có giới hạn tỷ lệ thanh toán một số thuốc, hoá chất, vật tư y tế và dịch vụ kỹ thuật theo quy định của Bộ trưởng Bộ Y tế); 100% chi phí KCB tại tuyến xã và chi phí cho một lần KCB thấp hơn 15% tháng lương cơ sở, bao gồm các đối tượng hưởng có ký hiệu là: HT, TC, CN" },
+  { value: "4", label: "Được quỹ BHYT thanh toán 80% chi phí KCB thuộc phạm vi chi trả BHYT (có giới hạn tỷ lệ thanh toán một số thuốc, hoá chất, vật tư y tế và dịch vụ kỹ thuật theo quy định của Bộ trưởng Bộ Y tế); 100% chi phí KCB tại tuyến xã và chi phí cho một lần KCB thấp hơn 15% tháng lương cơ sở, bao gồm các đối tượng hưởng có ký hiệu là: DN, HX, CH, NN, TK, HC, XK, TB, NO, CT, XB, TN, CS, XN, MS, HD, TQ, TA, TY, HG, LS, PV, HS, SV, GB, GD" },
+  { value: "5", label: "Được quỹ BHYT thanh toán 100% chi phí KCB, kể cả chi phí KCB ngoài phạm vi được hưởng BHYT; chi phí vận chuyển, bao gồm các đối tượng hưởng có ký hiệu là QN, CA, CY" },
+]
