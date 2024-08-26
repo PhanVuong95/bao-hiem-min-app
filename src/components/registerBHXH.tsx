@@ -2592,7 +2592,7 @@ const RegisterBHXH = (props) => {
         }}
       >
         <p className="text-base font-semibold text-[#0076B7]">
-          Thêm người được bảo hiểm
+          Thêm thành viên
         </p>
         <div>
           <svg
