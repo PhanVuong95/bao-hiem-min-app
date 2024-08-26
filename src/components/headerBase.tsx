@@ -38,7 +38,7 @@ const HeaderBase = (props: Props) => {
   return (
     <div className="fixed top-0 z-10">
       <img src={backgroundHeader} />
-      <div className="absolute z-10 top-10 flex left-4 right-4 justify-between items-center">
+      <div className="absolute z-10 top-[50%] flex left-4 right-4 justify-between items-center">
         <div className="flex">
           <div>
             {isHome ? (

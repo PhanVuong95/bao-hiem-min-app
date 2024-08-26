@@ -90,7 +90,11 @@ const MyApp = () => {
                 />
                 <Route
                   path="/product-detail/:id"
-                  element={<ProductDetailPage />}
+                  element={
+                    <SpecificProvider>
+                      <ProductDetailPage />
+                    </SpecificProvider>
+                  }
                 />
                 <Route
                   path="/product-detail-1/:id"
@@ -145,14 +149,6 @@ const MyApp = () => {
                       <HistoryUnpaidPage />
                     </SpecificProvider>
                   }
-                />
-                <Route
-                  path="/history-unpaid-1/:id"
-                  element={<HistoryUnpaid1Page />}
-                />
-                <Route
-                  path="/history-unpaid-2/:id"
-                  element={<HistoryUnpaid2Page />}
                 />
               </Routes>
             </ZMPRouter>

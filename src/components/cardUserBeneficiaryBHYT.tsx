@@ -39,7 +39,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [citizenId, setCitizenId] = useState(registerInfoBHYT["listInsuredPerson"][index].citizenId);
   const [photoCitizenFront, setPhotoCitizenFront] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenFront);
   const [photoCitizenBack, setPhotoCitizenBack] = useState(registerInfoBHYT["listInsuredPerson"][index].photoCitizenBack);
-  const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] = useState(true)
+  const [isUploadingPhotoCitizenFont, setIsUploadingPhotoCitizenFont] = useState(false)
   const [isUploadingPhotoCitizenBack, setIsUploadingPhotoCitizenBack] = useState(false)
 
   const [fullName, setFullName] = useState(registerInfoBHYT["listInsuredPerson"][index].fullName.trim());
@@ -1058,6 +1058,41 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     )
   }
 
+  const styleModal = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      border: 'none',
+      padding: 0,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    },
+  }
+
+  const modalLoading = () => {
+    return (
+      <>
+        <Modal
+          isOpen={isUploadingPhotoCitizenFont || isUploadingPhotoCitizenBack}
+          style={styleModal}
+        >
+          <div className="w-[400px] h-[750px] relative flex justify-center items-center">
+            <FadeLoader height={10} width={3} loading={true} color="#ffffff" />
+          </div>
+        </Modal>
+      </>
+    )
+  }
+
   return (
     <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
       {renderHeader()}
@@ -1100,28 +1135,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
       {renderHispital()}
 
-      <Modal
-        visible={isUploadingPhotoCitizenFont}
-        modalStyle={{
-          background: 'transparent'
-        }}
-      >
-        <div className="justify-center flex">
-          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
-        </div>
-      </Modal>
-
-
-      <Modal
-        visible={isUploadingPhotoCitizenBack}
-        modalStyle={{
-          background: 'transparent'
-        }}
-      >
-        <div className="justify-center flex">
-          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
-        </div>
-      </Modal>
+      {modalLoading()}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Modal, useNavigate } from "zmp-ui";
+import { useNavigate } from "zmp-ui";
 import { Province } from "../../models";
 import { registerInfoBHYT } from "./list_health_insurance";
 import { formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../../utils/validateString";
@@ -10,6 +10,7 @@ import UserBeneficiaryBHYTPage from "../../components/cardUserBeneficiaryBHYT";
 import UserBuyerPage from "../../components/cardUserBuyer";
 import HeaderBase from "../../components/headerBase";
 import { FadeLoader } from "react-spinners";
+import Modal from 'react-modal';
 
 const RegisterBHYT = ({ }) => {
 
@@ -518,6 +519,8 @@ const RegisterBHYT = ({ }) => {
         console.error("Error uploading image:", error);
         setLoadingFileUploadUrl(false)
       }
+    } else {
+      setLoadingFileUploadUrl(false)
     }
   };
 
@@ -741,6 +744,41 @@ const RegisterBHYT = ({ }) => {
     )
   }
 
+  const styleModal = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      border: 'none',
+      padding: 0,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    },
+  }
+
+  const modalLoading = () => {
+    return (
+      <>
+        <Modal
+          isOpen={isLoadingFileUploadUrl}
+          style={styleModal}
+        >
+          <div className="w-[400px] h-[750px] relative flex justify-center items-center">
+            <FadeLoader height={10} width={3} loading={true} color="#ffffff" />
+          </div>
+        </Modal>
+      </>
+    )
+  }
+
   return (
     <div className="pt-20">
       {renderHeader()}
@@ -774,16 +812,7 @@ const RegisterBHYT = ({ }) => {
 
       {renderFooter()}
 
-      <Modal
-        visible={isLoadingFileUploadUrl}
-        modalStyle={{
-          background: 'transparent'
-        }}
-      >
-        <div className="justify-center flex">
-          <FadeLoader height={10} width={3} loading={true} color="#0076B7" />
-        </div>
-      </Modal>
+      {modalLoading()}
     </div>
   );
 };

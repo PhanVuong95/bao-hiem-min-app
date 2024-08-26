@@ -1882,8 +1882,10 @@ const RegisterBHXH = (props) => {
           value={selectedMedicalByProvinceParticipant}
           key={selectedMedicalByProvinceParticipant}
           onChange={(value: any) => {
+            setSelectedMedicalByHospitalParticipant(0)
+
+            infoInsuranceHospital.current = [];
             if (value != 0) {
-              infoInsuranceHospital.current = [];
               setSelectedMedicalByProvinceParticipant(value);
 
               setInsuranceOrder((prevOrder) => ({
@@ -2804,11 +2806,11 @@ const RegisterBHXH = (props) => {
           </h3>
         </div>
 
-        <div ref={participantRefs.uploadCCCD} className="flex flex-row gap-2  justify-around w-[100%]">
-          <div className="flex flex-row gap-2 w-[100%]">
+        <div ref={participantRefs.uploadCCCD} className="flex flex-row gap-2 justify-between w-[100%]">
+          <div className="flex gap-3 w-[100%]">
             <div className="flex flex-col gap-2 w-[100%]">
               <div
-                className={`bg-[#F5F5F5]  rounded-lg p-[${frontImageUrl ? "0px" : "4px"
+                className={`bg-[#F5F5F5]  rounded-lg p-[${frontImageUrl ? "0px" : "9px"
                   }]  card-cccd w-[100%] h-[100px]`}
                 onClick={() => handleCardClick(frontImageInputRef)}
               >
@@ -2823,7 +2825,7 @@ const RegisterBHXH = (props) => {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={"100%"}
-                      height={"90px"}
+                      height={"81px"}
                       viewBox="0 0 130 89"
                       fill="none"
                     >
@@ -2886,7 +2888,7 @@ const RegisterBHXH = (props) => {
             </div>
             <div className="flex flex-col gap-2 w-[100%]">
               <div
-                className={`bg-[#F5F5F5] rounded-lg p-[${backImageUrl ? "0px" : "4px"
+                className={`bg-[#F5F5F5]  rounded-lg p-[${backImageUrl ? "0px" : "9px"
                   }]  card-cccd w-[100%] h-[100px]`}
                 onClick={() => handleCardClick(backImageInputRef)}
               >
@@ -2901,7 +2903,7 @@ const RegisterBHXH = (props) => {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={"100%"}
-                      height={"90px"}
+                      height={"81px"}
                       viewBox="0 0 130 89"
                       fill="none"
                     >
@@ -3292,7 +3294,7 @@ const RegisterBHXH = (props) => {
           isOpen={isUploadingPhotoCitizenFont || isUploadingPhotoCitizenBack || loading}
           style={styleModal}
         >
-          <div className="w-[400px] h-[750px] relative flex justify-center items-center">
+          <div className="w-[100%] h-[100%] relative flex justify-center items-center">
             <FadeLoader height={10} width={3} loading={true} color="#ffffff" />
           </div>
         </Modal>

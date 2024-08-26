@@ -1,12 +1,17 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Page } from "zmp-ui";
 import HeaderBase from "./headerBase";
+import { SpecificContext } from "./SpecificContext";
 
 const ProductDetailPage: React.FunctionComponent = (props) => {
   const [insurance, setInsurance] = useState<any>();
   const [detailSrcs, setDetailSrcs] = useState<string[]>([]);
+  const specificContext = useContext<any>(SpecificContext);
+  const { insuranceOrder, setInsuranceOrder } = specificContext;
+
+
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insurance/api/detail-viewmodel?id=1001")
@@ -18,12 +23,6 @@ const ProductDetailPage: React.FunctionComponent = (props) => {
         console.error(error);
       });
   }, []);
-  // useEffect(() => {
-  //   // Gán giá trị imageSrcs trong useEffect
-  //   setImageSrcs([
-  //     "https://dion.vn/wp-content/uploads/2024/07/image-1005-1.png",
-  //   ]);
-  // }, []);
 
   return (
     <div className="relative min-h-screen flex flex-col">
