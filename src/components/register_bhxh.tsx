@@ -2802,6 +2802,9 @@ const RegisterBHXH = (props) => {
     )
   }
 
+  console.log(insuranceOrder);
+
+
   const buttonAddMember = () => {
     return (
       <button
@@ -2810,7 +2813,7 @@ const RegisterBHXH = (props) => {
         onClick={() => {
           setMembers([...members, createNewMember()])
 
-          let houseHoldPeoples = insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples;
+          let houseHoldPeoples = insuranceOrder.houseHold.houseHoldPeoples;
           houseHoldPeoples.push(
             {
               "id": 0,
@@ -2825,18 +2828,10 @@ const RegisterBHXH = (props) => {
 
           setInsuranceOrder((prevOrder) => ({
             ...prevOrder,
-            listInsuredPerson: prevOrder.listInsuredPerson.map(
-              (person, index) =>
-                index === 0 ?
-                  {
-                    ...person,
-                    houseHold: {
-                      ...person.houseHold,
-                      houseHoldPeoples: houseHoldPeoples
-                    }
-                  }
-                  : person
-            ),
+            houseHold: {
+              ...prevOrder.houseHold,
+              houseHoldPeoples: houseHoldPeoples
+            }
           }));
         }}
       >
@@ -2995,8 +2990,7 @@ const RegisterBHXH = (props) => {
                 members.splice(index, 1);
                 setMembers([...members]);
 
-                let houseHoldPeoples = insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples;
-                houseHoldPeoples.splice(index, 1);
+                insuranceOrder.houseHold.houseHoldPeoples.splice(index, 1);
 
               }
             )
@@ -3087,7 +3081,8 @@ const RegisterBHXH = (props) => {
                       xmlns="http://www.w3.org/2000/svg"
                       width={"100%"}
                       height={"81px"}
-                      viewBox="0 0 130 89"
+                      className="mt-[9px]"
+                      viewBox="0 0 130 90"
                       fill="none"
                     >
                       <path
@@ -3165,7 +3160,8 @@ const RegisterBHXH = (props) => {
                       xmlns="http://www.w3.org/2000/svg"
                       width={"100%"}
                       height={"81px"}
-                      viewBox="0 0 130 89"
+                      className="mt-[9px]"
+                      viewBox="0 0 130 90"
                       fill="none"
                     >
                       <path

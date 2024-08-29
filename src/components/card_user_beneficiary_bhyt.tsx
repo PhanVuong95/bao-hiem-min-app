@@ -689,9 +689,10 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                   ) :
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width={'100%'}
-                      height={'81px'}
-                      viewBox="0 0 130 89"
+                      width={"100%"}
+                      height={"81px"}
+                      className="mt-[9px]"
+                      viewBox="0 0 130 90"
                       fill="none"
                     >
                       <path
@@ -761,9 +762,10 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                     ) :
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width={'100%'}
-                        height={'81px'}
-                        viewBox="0 0 130 89"
+                        width={"100%"}
+                        height={"81px"}
+                        className="mt-[9px]"
+                        viewBox="0 0 130 90"
                         fill="none"
                       >
                         <path
