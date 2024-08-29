@@ -7,7 +7,6 @@ import locale from "antd/es/date-picker/locale/vi_VN";
 import dayjs from "dayjs";
 import { convertListToSelect, formatDate2 } from "../utils/validateString";
 
-
 interface Props {
   item: any;
   index: number;

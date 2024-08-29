@@ -189,11 +189,11 @@ const ListSocialInsurance = () => {
 
               <div className="title-product flex flex-col">
                 <h3 className="text-[#0076B7] text-lg font-medium">
-                  {insurance.name}
+                  {insurance?.name}
                 </h3>
                 <p className="text-[#646464] text-sm font-normal">Theo tháng</p>
                 <span className="text-[#0076B7] text-lg font-bold">
-                  {insurance.discount}
+                  {insurance?.discount}
                   <samp className="text-[#646464] text-sm font-normal"> %</samp>
                 </span>
               </div>
@@ -208,7 +208,7 @@ const ListSocialInsurance = () => {
                 </div>
                 <div>
                   <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                    {insurance.towards}
+                    {insurance?.towards}
                   </p>
                 </div>
               </div>
@@ -221,7 +221,7 @@ const ListSocialInsurance = () => {
                 </div>
                 <div>
                   <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                    {insurance.supportDiscount}
+                    {insurance?.supportDiscount}
                   </p>
                 </div>
               </div>
@@ -234,7 +234,7 @@ const ListSocialInsurance = () => {
                 </div>
                 <div>
                   <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-                    Trên {insurance.ageLimit} tuổi
+                    Trên {insurance?.ageLimit} tuổi
                   </p>
                 </div>
               </div>
@@ -248,7 +248,7 @@ const ListSocialInsurance = () => {
                   Quyền lợi nổi trội
                 </p>
               </div>
-              {insurance.insuranceBenefits.map((item, index) => {
+              {insurance?.insuranceBenefits.map((item, index) => {
                 return (
                   <div className="flex flex-row w-full gap-4">
                     <div>

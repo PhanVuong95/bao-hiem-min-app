@@ -292,7 +292,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
           {listProduct.map((item: any) => {
             return (
               <CardProductBHYT
-                key={`${item?.id}_card_product_bhyt`}
+                key={`${item?.id}`}
                 url={"/register-BHYT"}
                 data={item}
               />

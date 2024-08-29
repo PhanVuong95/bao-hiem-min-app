@@ -2220,9 +2220,6 @@ const RegisterBHXH = (props) => {
     )
   }
 
-  console.log(insuranceOrder);
-
-
   const inputFullNamHouseHoldParticipants = () => {
     return (
       <div>

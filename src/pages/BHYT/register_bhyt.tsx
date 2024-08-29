@@ -1086,6 +1086,7 @@ const RegisterBHYT = ({ }) => {
 
           {members.map((member, index) =>
             <CardMembersHouseHold
+              key={`${index}`}
               item={member}
               index={index}
               members={members}

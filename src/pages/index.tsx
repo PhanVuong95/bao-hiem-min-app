@@ -257,12 +257,10 @@ const HomePage: React.FunctionComponent = () => {
         </Link>
 
         <Link to="" onClick={async () => {
-          await openUrlInWebview()
-          console.log('aaaaa');
-
-          // toast.info(
-          //   "Tính năng này đang phát triển",
-          // );
+          // await openUrlInWebview()
+          toast.info(
+            "Tính năng này đang phát triển",
+          );
         }}>
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
