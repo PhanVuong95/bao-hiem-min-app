@@ -284,12 +284,12 @@ const UserBuyerPage = (props: Props) => {
   }
 
   return (
-    <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
+    <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
       {renderTextHeader()}
 
-      {renderInputPhone()}
-
       {renderFullName()}
+
+      {renderInputPhone()}
 
       {renderEmail()}
 

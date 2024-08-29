@@ -41,9 +41,10 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
         setInsuranceId(data?.insuranceId);
         registerInfoBHYT["id"] = data?.id;
-        registerInfoBHYT["fileUploadUrl"] = data?.fileUploadUrl;
         registerInfoBHYT["insuranceId"] = data?.insuranceId;
+        registerInfoBHYT['accountId'] = data?.id;
         registerInfoBHYT["citizenId"] = data?.citizenId;
+        registerInfoBHYT["fileUploadUrl"] = data?.fileUploadUrl;
         registerInfoBHYT["photoCitizenFront"] = data?.photoCitizenFront;
         registerInfoBHYT["photoCitizenBack"] = data?.photoCitizenBack;
         registerInfoBHYT["phone"] = isValidString(data?.phone);
@@ -54,10 +55,40 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         registerInfoBHYT["wardId"] = data?.wardId;
         registerInfoBHYT["finalPrice"] = data?.finalPrice;
         registerInfoBHYT["addressDetail"] = isValidString(data?.addressDetail);
+        registerInfoBHYT["price"] = data?.price;
+        registerInfoBHYT["discountPrice"] = data?.discountPrice;
+        registerInfoBHYT["finalPrice"] = data?.finalPrice;
+        registerInfoBHYT["houseHold"]["id"] = data?.houseHold?.id;
+        registerInfoBHYT["houseHold"]["chuHoTen"] = data?.houseHold?.chuHoTen;
+        registerInfoBHYT["houseHold"]["ksProvinceId"] = data?.houseHold?.ksProvinceId;
+        registerInfoBHYT["houseHold"]["ksDistrictId"] = data?.houseHold?.ksDistrictId;
+        registerInfoBHYT["houseHold"]["ksWardId"] = data?.houseHold?.ksWardId;
+        registerInfoBHYT["houseHold"]["ksAddressDetail"] = data?.houseHold?.ksAddressDetail;
+        registerInfoBHYT["houseHold"]["hkAddressDetail"] = data?.houseHold?.hkAddressDetail;
+        registerInfoBHYT["houseHold"]["ttProvinceId"] = data?.houseHold?.ttProvinceId;
+        registerInfoBHYT["houseHold"]["ttDistrictId"] = data?.houseHold?.ttDistrictId;
+        registerInfoBHYT["houseHold"]["ttWardId"] = data?.houseHold?.ttWardId;
+        registerInfoBHYT["houseHold"]["soGiayToCaNhan"] = data?.houseHold?.soGiayToCaNhan;
 
+        registerInfoBHYT["houseHold"]["houseHoldPeoples"] = data?.houseHold?.houseHoldPeoples.map(item => {
+          const obj = Object.assign({}, item);
+          obj["id"] = item["id"]
+          obj["name"] = item["name"]
+          obj["doB"] = item["doB"]
+          obj["gender"] = item["gender"]
+          obj["ethnicId"] = item["ethnicId"]
+          obj["relationShipId"] = item["relationShipId"]
+          obj["citizenId"] = item["citizenId"]
+          obj["houseHoldId"] = item["houseHoldId"]
+          return obj;
+        });
 
         registerInfoBHYT["listInsuredPerson"] = data?.listInsuredPerson.map(item => {
           const obj = Object.assign({}, item);
+          obj["id"] = item["id"]
+          obj["insuranceProvinceId"] = item["insuranceProvinceId"]
+          obj["medicalProvinceId"] = item["medicalProvinceId"]
+          obj["medicalDistrictId"] = item["medicalDistrictId"]
           obj["socialInsuranceNumber"] = isValidString(item["socialInsuranceNumber"]);
           obj["healthInsuranceNumber"] = isValidString(item["healthInsuranceNumber"]);
           obj["citizenId"] = isValidString(item["citizenId"]);
@@ -65,12 +96,30 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           obj["photoCitizenBack"] = isValidString(item["photoCitizenBack"]);
           obj["fullName"] = isValidString(item["fullName"]);
           obj["doB"] = formatDate(item["doB"]);
+          obj["gender"] = item["gender"];
+          obj["wage"] = item["wage"];
+          obj["monthInsured"] = formatDate(item["monthInsured"]);
           obj["newCardEndDate"] = formatDate(item["newCardEndDate"]);
           obj["newCardStartDate"] = formatDate(item["newCardStartDate"]);
           obj["oldCardEndDate"] = formatDate(item["oldCardEndDate"]);
           obj["oldCardStartDate"] = formatDate(item["oldCardStartDate"]);
+          obj["price"] = formatDate(item["price"]);
+          obj["hospitalId"] = item["hospitalId"];
+          obj["provinceId"] = item["provinceId"];
+          obj["districtId"] = item["districtId"];
+          obj["wardId"] = item["wardId"];
+          obj["addressDetail"] = item["addressDetail"];
+          obj["ksXaPhuongMaksXaPhuongMa"] = item["ksXaPhuongMa"];
+          obj["ksQuanHuyenMa"] = item["ksQuanHuyenMa"];
+          obj["ksTinhThanhMa"] = item["ksTinhThanhMa"];
+          obj["ksDiaChi"] = item["ksDiaChi"];
+          obj["ethnicId"] = item["ethnicId"];
+          obj["vungLuongToiThieuId"] = item["vungLuongToiThieuId"];
           return obj;
         })
+
+        console.log(registerInfoBHYT);
+
       })
       .catch((error) => {
         console.error(error);

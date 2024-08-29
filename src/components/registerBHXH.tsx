@@ -104,7 +104,7 @@ const RegisterBHXH = (props) => {
     }
   )
 
-  const [members, setMembers] = useState<any>(Array.from({ length: insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples.length }, () => createNewMember()));
+  const [members, setMembers] = useState<any>(Array.from({ length: insuranceOrder.houseHold.houseHoldPeoples.length }, () => createNewMember()));
 
   const [vungLuongToiThieuList, setVungLuongToiThieuList] = useState([]);
   const [vungLuongToiThieuId, setVungLuongToiThieuId] = useState(0);
@@ -118,6 +118,7 @@ const RegisterBHXH = (props) => {
   const [selectedMedicalByHospitalParticipant, setSelectedMedicalByHospitalParticipant] = useState(0);
 
   const [fullNamHouseHoldParticipant, setFullNamHouseHoldParticipant] = useState<string>("");
+  const [cccdHouseHoldParticipant, setCCCDHouseHoldParticipant] = useState<string>("");
 
   const householdProvinces = useRef([]);
   const householdDistricts = useRef([]);
@@ -126,6 +127,14 @@ const RegisterBHXH = (props) => {
   const [selectedHouseholdProvince, setSelectedHouseholdProvince] = useState(0);
   const [selectedHouseholdDistrict, setSelectedHouseholdDistrict] = useState(0);
   const [selectedHouseholdWard, setSelectedHouseholdWard] = useState(0);
+
+  const householdTTProvinces = useRef([]);
+  const householdTTDistricts = useRef([]);
+  const householdTTWards = useRef([]);
+
+  const [selectedTTHouseholdProvince, setSelectedTTHouseholdProvince] = useState(0);
+  const [selectedTTHouseholdDistrict, setSelectedTTHouseholdDistrict] = useState(0);
+  const [selectedTTHouseholdWard, setSelectedTTHouseholdWard] = useState(0);
 
   const [addressDetailHouseHoldParticipant, setAddressDetailHouseHoldParticipant] = useState<string>("");
   const [addressDetailHKHouseHoldParticipant, setAddressDetailHKHouseHoldParticipant] = useState<string>("");
@@ -167,6 +176,10 @@ const RegisterBHXH = (props) => {
     benefitLevelParticipant: useRef<any>(null),
     hospitalExaminationParticipant: useRef<any>(null),
     fullNamHouseHoldParticipant: useRef<any>(null),
+    cccdHouseHoldParticipant: useRef<any>(null),
+    ttProvinceHouseHoldParticipant: useRef<any>(null),
+    ttDistrictHouseHoldParticipant: useRef<any>(null),
+    ttWardHouseHoldParticipant: useRef<any>(null),
     provinceHouseHoldParticipant: useRef<any>(null),
     districtHouseHoldParticipant: useRef<any>(null),
     wardHouseHoldParticipant: useRef<any>(null),
@@ -201,6 +214,8 @@ const RegisterBHXH = (props) => {
         infoInsuranceProvinces.current = response.data.data
 
         householdProvinces.current = response.data.data
+
+        householdTTProvinces.current = response.data.data
 
         setTemp(!temp)
       })
@@ -439,6 +454,50 @@ const RegisterBHXH = (props) => {
     }
   }
 
+  // Cập nhập danh sách quận huyện thường trú hộ gia đình
+  useEffect(() => {
+    fetchTTHouseholdProvinces();
+  }, [selectedTTHouseholdProvince]);
+
+  const fetchTTHouseholdProvinces = () => {
+    if (selectedTTHouseholdProvince !== 0) {
+      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedTTHouseholdProvince}`)
+        .then((response) => {
+          householdTTDistricts.current = response.data.data;
+          householdTTWards.current = [];
+          setTemp(!temp);
+        })
+        .catch((error) => {
+          householdTTDistricts.current = [];
+          setTemp(!temp);
+          console.error(error);
+        });
+    }
+  }
+
+  // Cập nhập danh sách phường xã hộ gia đình
+  useEffect(() => {
+    fetchTTHouseholdWards();
+  }, [selectedTTHouseholdDistrict]);
+
+  const fetchTTHouseholdWards = () => {
+    if (selectedTTHouseholdDistrict !== 0) {
+      axios
+        .get(
+          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedTTHouseholdDistrict}`
+        )
+        .then((response) => {
+          householdTTWards.current = response.data.data;
+          setTemp(!temp)
+        })
+        .catch((error) => {
+          householdTTWards.current = []
+          setTemp(!temp);
+          console.error(error);
+        });
+    }
+  }
+
 
   useEffect(() => {
     axios
@@ -466,12 +525,14 @@ const RegisterBHXH = (props) => {
       const id5 = insuranceOrder.listInsuredPerson[0].provinceId;
       const id6 = insuranceOrder.listInsuredPerson[0].districtId;
       const id7 = insuranceOrder.listInsuredPerson[0].medicalProvinceId;
-      const id8 = insuranceOrder.listInsuredPerson[0].houseHold.ksProvinceId;
-      const id9 = insuranceOrder.listInsuredPerson[0].houseHold.ksDistrictId;
+      const id8 = insuranceOrder.houseHold.ksProvinceId;
+      const id9 = insuranceOrder.houseHold.ksDistrictId;
+      const id10 = insuranceOrder.houseHold.ttProvinceId;
+      const id11 = insuranceOrder.houseHold.ttDistrictId;
 
       // Set thông tin người tham giá BHXH tự nguyện
       const fetchData = async () => {
-        const [response1, response2, response3, response4, response5, response6, response7, response8, response9] = await Promise.all([
+        const [response1, response2, response3, response4, response5, response6, response7, response8, response9, response10, response11] = await Promise.all([
           axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id1}`),
           axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id2}`),
 
@@ -485,6 +546,10 @@ const RegisterBHXH = (props) => {
 
           axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id8}`),
           axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id9}`),
+
+
+          axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id10}`),
+          axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id11}`),
         ]);
 
         buyerDistricts.current = response1.data.data;
@@ -500,6 +565,9 @@ const RegisterBHXH = (props) => {
 
         householdDistricts.current = response8.data.data;
         householdWards.current = response9.data.data;
+
+        householdTTDistricts.current = response10.data.data;
+        householdTTWards.current = response11.data.data;
 
         // Người tham gia
         setPersonName(insuranceOrder.listInsuredPerson[0].fullName);
@@ -528,12 +596,16 @@ const RegisterBHXH = (props) => {
         setSelectedMedicalByHospitalParticipant(insuranceOrder.listInsuredPerson[0].hospitalId)
 
         //Thông tin chủ hộ 
-        setFullNamHouseHoldParticipant(insuranceOrder.listInsuredPerson[0].houseHold.chuHoTen)
-        setSelectedHouseholdProvince(insuranceOrder.listInsuredPerson[0].houseHold.ksProvinceId)
-        setSelectedHouseholdDistrict(insuranceOrder.listInsuredPerson[0].houseHold.ksDistrictId)
-        setSelectedHouseholdWard(insuranceOrder.listInsuredPerson[0].houseHold.ksWardId)
-        setAddressDetailHouseHoldParticipant(insuranceOrder.listInsuredPerson[0].houseHold.ksAddressDetail)
-        setAddressDetailHKHouseHoldParticipant(insuranceOrder.listInsuredPerson[0].houseHold.hkAddressDetail)
+        setFullNamHouseHoldParticipant(insuranceOrder.houseHold.chuHoTen)
+        setSelectedHouseholdProvince(insuranceOrder.houseHold.ksProvinceId)
+        setSelectedHouseholdDistrict(insuranceOrder.houseHold.ksDistrictId)
+        setSelectedHouseholdWard(insuranceOrder.houseHold.ksWardId)
+        setAddressDetailHouseHoldParticipant(insuranceOrder.houseHold.ksAddressDetail)
+        setAddressDetailHKHouseHoldParticipant(insuranceOrder.houseHold.hkAddressDetail)
+        setCCCDHouseHoldParticipant(insuranceOrder.houseHold.soGiayToCaNhan)
+        setSelectedTTHouseholdProvince(insuranceOrder.houseHold.ttProvinceId)
+        setSelectedTTHouseholdDistrict(insuranceOrder.houseHold.ttDistrictId)
+        setSelectedTTHouseholdWard(insuranceOrder.houseHold.ttWardId)
 
         // Người mua
         setPhone(insuranceOrder.phone);
@@ -885,27 +957,55 @@ const RegisterBHXH = (props) => {
       return false;
     }
 
+    if (cccdHouseHoldParticipant == "") {
+      toast.warn("Số CCCD chủ hộ không đượuc để trống");
+      scrollToElement(participantRefs.cccdHouseHoldParticipant)
+      return false;
+    } else if (cccdHouseHoldParticipant.length != 12) {
+      toast.warn("Số căn cước công dân phải là 12 chữ số");
+      scrollToElement(participantRefs.cccdHouseHoldParticipant)
+      return false;
+    }
+
     if (selectedHouseholdProvince == 0) {
-      toast.warn("Thành phố của chủ hộ không được để trống");
+      toast.warn("Thành phố khai sinh của chủ hộ không được để trống");
       scrollToElement(participantRefs.provinceHouseHoldParticipant)
       return false;
     }
 
     if (selectedHouseholdDistrict == 0) {
-      toast.warn("Quận huyện của chủ hộ không được để trống");
+      toast.warn("Quận huyện khai sinh của chủ hộ không được để trống");
       scrollToElement(participantRefs.districtHouseHoldParticipant)
       return false;
     }
 
     if (selectedHouseholdWard == 0) {
-      toast.warn("Phường xã của chủ hộ không được để trống");
+      toast.warn("Phường xã khai sinh của chủ hộ không được để trống");
       scrollToElement(participantRefs.wardHouseHoldParticipant)
       return false;
     }
 
     if (addressDetailHouseHoldParticipant == "") {
-      toast.warn("Địa chỉ cụ thể thường trú của chủ hộ không được để trống");
+      toast.warn("Địa chỉ cụ thể khai sinh của chủ hộ không được để trống");
       scrollToElement(participantRefs.addressDetailHouseHoldParticipant)
+      return false;
+    }
+
+    if (selectedTTHouseholdProvince == 0) {
+      toast.warn("Thành phố thường trú của chủ hộ không được để trống");
+      scrollToElement(participantRefs.ttProvinceHouseHoldParticipant)
+      return false;
+    }
+
+    if (selectedTTHouseholdDistrict == 0) {
+      toast.warn("Quận huyện thường trú của chủ hộ không được để trống");
+      scrollToElement(participantRefs.ttDistrictHouseHoldParticipant)
+      return false;
+    }
+
+    if (selectedTTHouseholdWard == 0) {
+      toast.warn("Phường xã thường trú của chủ hộ không được để trống");
+      scrollToElement(participantRefs.ttWardHouseHoldParticipant)
       return false;
     }
 
@@ -915,8 +1015,8 @@ const RegisterBHXH = (props) => {
       return false;
     }
 
-    for (let index = 0; index < insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples.length; index++) {
-      const intem = insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index];
+    for (let index = 0; index < insuranceOrder.houseHold.houseHoldPeoples.length; index++) {
+      const intem = insuranceOrder.houseHold.houseHoldPeoples[index];
       if (intem.citizenId == "") {
         toast.warn("Số CCCD của thành viên không được để trống");
         scrollToElement(members[index].citizenId)
@@ -1051,7 +1151,7 @@ const RegisterBHXH = (props) => {
         delete result.listInsuredPerson[0].price
         delete result.listInsuredPerson[0].insuredPersonId
 
-        result.listInsuredPerson[0].houseHold.houseHoldPeoples.map(item => {
+        result.houseHold.houseHoldPeoples.map(item => {
           delete item.createdTime;
           return item;
         });
@@ -1274,7 +1374,6 @@ const RegisterBHXH = (props) => {
         <Select
           size="large"
           className="w-[100%]"
-          showSearch
           placeholder="Chọn giới tính"
           ref={participantRefs.genderParticipant}
           dropdownMatchSelectWidth={false}
@@ -2015,9 +2114,6 @@ const RegisterBHXH = (props) => {
     )
   }
 
-  console.log(insuranceOrder);
-
-
   const inputExaminationByDistrictParticipants = () => {
     return (
       <div>
@@ -2109,7 +2205,7 @@ const RegisterBHXH = (props) => {
     return (
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Mức đóng / Hệ số đóng <samp className="text-red-600">*</samp>
+          Mức đóng / Hệ số đóng
         </label>
         <Input
           type="text"
@@ -2123,6 +2219,9 @@ const RegisterBHXH = (props) => {
 
     )
   }
+
+  console.log(insuranceOrder);
+
 
   const inputFullNamHouseHoldParticipants = () => {
     return (
@@ -2142,18 +2241,40 @@ const RegisterBHXH = (props) => {
 
             setInsuranceOrder((prevOrder) => ({
               ...prevOrder,
-              listInsuredPerson: prevOrder.listInsuredPerson.map(
-                (person, index) =>
-                  index === 0
-                    ? {
-                      ...person,
-                      houseHold: {
-                        ...person.houseHold,
-                        chuHoTen: e.target.value
-                      }
-                    }
-                    : person
-              ),
+              houseHold: {
+                ...prevOrder.houseHold,
+                chuHoTen: e.target.value
+              }
+            }));
+          }}
+        />
+      </div>
+    )
+  }
+
+  const inputCCCDHouseHoldParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Số CCCD chủ hộ <samp className="text-red-600">*</samp>
+        </label>
+        <Input
+          type="text"
+          id="address"
+          maxLength={12}
+          value={cccdHouseHoldParticipant}
+          ref={participantRefs.cccdHouseHoldParticipant}
+          className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Số CCCD"
+          onChange={(e) => {
+            setCCCDHouseHoldParticipant(e.target.value);
+
+            setInsuranceOrder((prevOrder) => ({
+              ...prevOrder,
+              houseHold: {
+                ...prevOrder.houseHold,
+                soGiayToCaNhan: e.target.value
+              }
             }));
           }}
         />
@@ -2165,7 +2286,7 @@ const RegisterBHXH = (props) => {
     return (
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Thành phố <samp className="text-red-600">*</samp>
+          Thành phố khai sinh <samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"
@@ -2187,18 +2308,10 @@ const RegisterBHXH = (props) => {
 
             setInsuranceOrder((prevOrder) => ({
               ...prevOrder,
-              listInsuredPerson: prevOrder.listInsuredPerson.map(
-                (person, index) =>
-                  index === 0
-                    ? {
-                      ...person,
-                      houseHold: {
-                        ...person.houseHold,
-                        ksProvinceId: value
-                      }
-                    }
-                    : person
-              ),
+              houseHold: {
+                ...prevOrder.houseHold,
+                ksProvinceId: value
+              }
             }));
 
           }}
@@ -2217,7 +2330,7 @@ const RegisterBHXH = (props) => {
     return (
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Quận huyện <samp className="text-red-600">*</samp>
+          Quận huyện khai sinh <samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"
@@ -2236,20 +2349,11 @@ const RegisterBHXH = (props) => {
 
             setInsuranceOrder((prevOrder) => ({
               ...prevOrder,
-              listInsuredPerson: prevOrder.listInsuredPerson.map(
-                (person, index) =>
-                  index === 0
-                    ? {
-                      ...person,
-                      houseHold: {
-                        ...person.houseHold,
-                        ksDistrictId: value
-                      }
-                    }
-                    : person
-              ),
+              houseHold: {
+                ...prevOrder.houseHold,
+                ksDistrictId: value
+              }
             }));
-
           }}
           filterOption={(input, option) =>
             (option?.label ?? "")
@@ -2266,7 +2370,7 @@ const RegisterBHXH = (props) => {
     return (
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Phường xã <samp className="text-red-600">*</samp>
+          Phường xã khai sinh<samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"
@@ -2282,18 +2386,10 @@ const RegisterBHXH = (props) => {
 
             setInsuranceOrder((prevOrder) => ({
               ...prevOrder,
-              listInsuredPerson: prevOrder.listInsuredPerson.map(
-                (person, index) =>
-                  index === 0
-                    ? {
-                      ...person,
-                      houseHold: {
-                        ...person.houseHold,
-                        ksWardId: value
-                      }
-                    }
-                    : person
-              ),
+              houseHold: {
+                ...prevOrder.houseHold,
+                ksWardId: value
+              }
             }));
 
           }}
@@ -2308,12 +2404,137 @@ const RegisterBHXH = (props) => {
     )
   }
 
+  const inputTTProvinceHouseHoldParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Thành phố thường trú <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          dropdownMatchSelectWidth={false}
+          ref={participantRefs.ttProvinceHouseHoldParticipant}
+          placeholder="Thành phố"
+          value={selectedTTHouseholdProvince}
+          key={selectedTTHouseholdProvince}
+          onChange={(value: any) => {
+
+            setSelectedTTHouseholdProvince(value);
+
+            householdTTDistricts.current = []
+            householdTTWards.current = []
+
+            setSelectedTTHouseholdDistrict(0)
+            setSelectedTTHouseholdWard(0)
+
+            setInsuranceOrder((prevOrder) => ({
+              ...prevOrder,
+              houseHold: {
+                ...prevOrder.houseHold,
+                ttProvinceId: value
+              }
+            }));
+
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(householdTTProvinces.current, "Thành phố")}
+        />
+      </div>
+    )
+  }
+
+  const inputTTDistrictHouseHoldParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Quận huyện thường trú <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          dropdownMatchSelectWidth={false}
+          placeholder="Quận huyện"
+          ref={participantRefs.ttDistrictHouseHoldParticipant}
+          value={selectedTTHouseholdDistrict}
+          key={selectedTTHouseholdDistrict}
+          onChange={(value: any) => {
+            setSelectedTTHouseholdDistrict(value);
+
+            householdTTWards.current = []
+            setSelectedTTHouseholdWard(0)
+
+            setInsuranceOrder((prevOrder) => ({
+              ...prevOrder,
+              houseHold: {
+                ...prevOrder.houseHold,
+                ttDistrictId: value
+              }
+            }));
+
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(householdTTDistricts.current, "Quận huyện")}
+        />
+      </div>
+    )
+  }
+
+  const inputTTWardHouseHoldParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Phường xã thường trú <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          dropdownMatchSelectWidth={false}
+          placeholder="Phường xã"
+          ref={participantRefs.ttWardHouseHoldParticipant}
+          value={selectedTTHouseholdWard}
+          key={selectedTTHouseholdWard}
+          onChange={(value: any) => {
+            setSelectedTTHouseholdWard(value);
+
+            setInsuranceOrder((prevOrder) => ({
+              ...prevOrder,
+              houseHold: {
+                ...prevOrder.houseHold,
+                ttWardId: value
+              }
+            }));
+
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(householdTTWards.current, "Phường xã")}
+        />
+      </div>
+    )
+  }
+
+
   const inputAddressDetailHouseHoldParticipants = () => {
     return (
 
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Địa chỉ cụ thế <samp className="text-red-600">*</samp>
+          Địa chỉ cụ thể khai sinh<samp className="text-red-600">*</samp>
         </label>
         <Input
           type="text"
@@ -2327,18 +2548,10 @@ const RegisterBHXH = (props) => {
 
             setInsuranceOrder((prevOrder) => ({
               ...prevOrder,
-              listInsuredPerson: prevOrder.listInsuredPerson.map(
-                (person, index) =>
-                  index === 0
-                    ? {
-                      ...person,
-                      houseHold: {
-                        ...person.houseHold,
-                        ksAddressDetail: e.target.value
-                      }
-                    }
-                    : person
-              ),
+              houseHold: {
+                ...prevOrder.houseHold,
+                ksAddressDetail: e.target.value
+              }
             }));
           }}
         />
@@ -2365,18 +2578,10 @@ const RegisterBHXH = (props) => {
 
             setInsuranceOrder((prevOrder) => ({
               ...prevOrder,
-              listInsuredPerson: prevOrder.listInsuredPerson.map(
-                (person, index) =>
-                  index === 0
-                    ? {
-                      ...person,
-                      houseHold: {
-                        ...person.houseHold,
-                        hkAddressDetail: e.target.value
-                      }
-                    }
-                    : person
-              ),
+              houseHold: {
+                ...prevOrder.houseHold,
+                hkAddressDetail: e.target.value
+              }
             }));
           }}
         />
@@ -2386,7 +2591,6 @@ const RegisterBHXH = (props) => {
 
 
   const inputCCCDMember = (index) => {
-
     return (
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
@@ -2394,13 +2598,14 @@ const RegisterBHXH = (props) => {
         </label>
         <Input
           type="text"
+          maxLength={12}
           ref={members[index].citizenId}
-          defaultValue={insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].citizenId}
+          defaultValue={insuranceOrder.houseHold.houseHoldPeoples[index].citizenId}
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Nhập CCCD"
           onChange={(e) => {
 
-            insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].citizenId = e.target.value;
+            insuranceOrder.houseHold.houseHoldPeoples[index].citizenId = e.target.value;
 
           }}
         />
@@ -2417,14 +2622,13 @@ const RegisterBHXH = (props) => {
         <Select
           size="large"
           className="w-[100%]"
-          showSearch
           placeholder="Chọn giới tính"
           ref={members[index].gender}
-          defaultValue={insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].gender}
+          defaultValue={insuranceOrder.houseHold.houseHoldPeoples[index].gender}
           dropdownMatchSelectWidth={false}
           onChange={(value) => {
 
-            insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].gender = value;
+            insuranceOrder.houseHold.houseHoldPeoples[index].gender = value;
 
           }}
           key={gender}
@@ -2452,12 +2656,12 @@ const RegisterBHXH = (props) => {
         <Input
           type="text"
           ref={members[index].name}
-          defaultValue={insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].name}
+          defaultValue={insuranceOrder.houseHold.houseHoldPeoples[index].name}
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Họ và tên"
           onChange={(e) => {
 
-            insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].name = e.target.value;
+            insuranceOrder.houseHold.houseHoldPeoples[index].name = e.target.value;
 
           }}
         />
@@ -2478,10 +2682,10 @@ const RegisterBHXH = (props) => {
           ref={members[index].relationShipId}
           placeholder="Chọn mối quan hệ"
           dropdownMatchSelectWidth={false}
-          defaultValue={insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].relationShipId}
+          defaultValue={insuranceOrder.houseHold.houseHoldPeoples[index].relationShipId}
           onChange={(value) => {
 
-            insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].relationShipId = value;
+            insuranceOrder.houseHold.houseHoldPeoples[index].relationShipId = value;
 
           }}
           key={gender}
@@ -2513,7 +2717,7 @@ const RegisterBHXH = (props) => {
           className="w-[100%]"
           ref={members[index].doB}
           placeholder="dd/mm/yyyy"
-          defaultValue={insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].doB == "" ? "" : dayjs(insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].doB, dateFormat)}
+          defaultValue={insuranceOrder.houseHold.houseHoldPeoples[index].doB == "" ? "" : dayjs(insuranceOrder.houseHold.houseHoldPeoples[index].doB, dateFormat)}
           onChange={(value) => {
             const dateObject = dayjs(value.toString());
             const dateStr = `${dateObject.date().toString().padStart(2, "0")}/${(
@@ -2522,7 +2726,7 @@ const RegisterBHXH = (props) => {
               .toString()
               .padStart(2, "0")}/${dateObject.year()}`;
 
-            insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].doB = dateStr;
+            insuranceOrder.houseHold.houseHoldPeoples[index].doB = dateStr;
           }}
           format={dateFormat}
           maxDate={dayjs(formatDate2(new Date()), dateFormat)}
@@ -2545,10 +2749,10 @@ const RegisterBHXH = (props) => {
           showSearch
           dropdownMatchSelectWidth={false}
           placeholder="Chọn dân tộc"
-          defaultValue={insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].ethnicId}
+          defaultValue={insuranceOrder.houseHold.houseHoldPeoples[index].ethnicId}
           onChange={(value) => {
 
-            insuranceOrder.listInsuredPerson[0].houseHold.houseHoldPeoples[index].ethnicId = value;
+            insuranceOrder.houseHold.houseHoldPeoples[index].ethnicId = value;
 
           }}
           filterOption={(input, option) =>
@@ -2760,17 +2964,29 @@ const RegisterBHXH = (props) => {
           {/* Họ tên chủ hộ */}
           {inputFullNamHouseHoldParticipants()}
 
-          {/* Tỉnh thành */}
+          {/* Số CCCD */}
+          {inputCCCDHouseHoldParticipants()}
+
+          {/* Tỉnh thành khai sinh */}
           {inputProvinceHouseHoldParticipants()}
 
-          {/* Quận huyện */}
+          {/* Quận huyện khai sinh */}
           {inputDistrictHouseHoldParticipants()}
 
-          {/* Phường xã */}
+          {/* Phường xã khai sinh */}
           {inputWardHouseHoldParticipants()}
 
           {/* Địa chỉ cụ thể */}
           {inputAddressDetailHouseHoldParticipants()}
+
+          {/* Tỉnh thành thường trú */}
+          {inputTTProvinceHouseHoldParticipants()}
+
+          {/* Quận huyện thường trú */}
+          {inputTTDistrictHouseHoldParticipants()}
+
+          {/* Phường xã thường trú */}
+          {inputTTWardHouseHoldParticipants()}
 
           {/* Địa chỉ hộ khẩu */}
           {inputAddressDetailHKHouseHoldParticipants()}

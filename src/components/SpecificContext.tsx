@@ -1,13 +1,13 @@
 import React, { createContext, useState, ReactNode } from "react";
 
 interface Member {
-  id?: 0,
-  name?: "",
-  doB?: "",
-  gender?: "",
+  id?: number,
+  name?: string,
+  doB?: string,
+  gender?: string,
   ethnicId?: number,
-  relationShipId?: "",
-  citizenId?: ""
+  relationShipId?: string,
+  citizenId?: string
 }
 
 interface InsuredPerson {
@@ -26,27 +26,21 @@ interface InsuredPerson {
   provinceId?: number;
   districtId?: number;
   wardId?: number;
-  addressDetail?: "";
+  addressDetail?: string;
   ksXaPhuongMa?: number;
   ksQuanHuyenMa?: number;
   ksTinhThanhMa?: number;
-  ksDiaChi?: "";
+  ksDiaChi?: string;
+  soGiayToCaNhan?: string;
+  ttTinhThanhMa?: number;
+  ttQuanHuyenMa?: number;
+  ttXaPhuongMa?: number;
   ethnicId?: number;
   medicalProvinceId?: number,
   medicalDistrictId?: number,
   hospitalId?: number,
   vungLuongToiThieuId?: number,
-  benefitLevel?: "",
-  houseHold?: {
-    id?: number,
-    chuHoTen?: "",
-    ksProvinceId?: number,
-    ksDistrictId?: number,
-    ksWardId?: number,
-    ksAddressDetail?: "",
-    hkAddressDetail?: "",
-    houseHoldPeoples?: Member[]
-  }
+  benefitLevel?: string,
 }
 
 interface InsuranceOrder {
@@ -65,6 +59,20 @@ interface InsuranceOrder {
   finalPrice: number;
   addressDetail?: string;
   listInsuredPerson: InsuredPerson[];
+  houseHold?: {
+    "id": number,
+    "chuHoTen": string,
+    "ksProvinceId": number,
+    "ksDistrictId": number,
+    "ksWardId": number,
+    "ksAddressDetail": string,
+    "hkAddressDetail": string,
+    "soGiayToCaNhan": string,
+    "ttProvinceId": number,
+    "ttDistrictId": number,
+    "ttWardId": number,
+    houseHoldPeoples?: Member[]
+  }
 }
 interface SpecificContextType {
   insuranceOrder: InsuranceOrder;
@@ -117,6 +125,30 @@ export const SpecificProvider: React.FC<{ children: ReactNode }> = ({
         ksDiaChi: "",
       },
     ],
+    "houseHold": {
+      "id": 0,
+      "chuHoTen": "",
+      "ksProvinceId": 0,
+      "ksDistrictId": 0,
+      "ksWardId": 0,
+      "ksAddressDetail": "",
+      "hkAddressDetail": "",
+      "soGiayToCaNhan": "",
+      "ttProvinceId": 0,
+      "ttDistrictId": 0,
+      "ttWardId": 0,
+      "houseHoldPeoples": [
+        {
+          "id": 0,
+          "name": "",
+          "doB": "",
+          "gender": "",
+          "ethnicId": 0,
+          "relationShipId": "0",
+          "citizenId": ""
+        }
+      ]
+    },
   });
   return (
     <SpecificContext.Provider

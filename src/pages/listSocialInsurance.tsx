@@ -65,28 +65,32 @@ const ListSocialInsurance = (props) => {
           hospitalId: 0,
           vungLuongToiThieuId: 0,
           benefitLevel: "",
-          houseHold: {
-            id: 0,
-            chuHoTen: "",
-            ksProvinceId: 0,
-            ksDistrictId: 0,
-            ksWardId: 0,
-            ksAddressDetail: "",
-            hkAddressDetail: "",
-            houseHoldPeoples: [
-              {
-                id: 0,
-                name: "",
-                doB: "",
-                gender: "",
-                ethnicId: 0,
-                relationShipId: "",
-                citizenId: ""
-              }
-            ]
-          },
         },
       ],
+      houseHold: {
+        id: 0,
+        chuHoTen: "",
+        ksProvinceId: 0,
+        ksDistrictId: 0,
+        ksWardId: 0,
+        ksAddressDetail: "",
+        hkAddressDetail: "",
+        soGiayToCaNhan: "",
+        ttProvinceId: 0,
+        ttDistrictId: 0,
+        ttWardId: 0,
+        houseHoldPeoples: [
+          {
+            id: 0,
+            name: "",
+            doB: "",
+            gender: "",
+            ethnicId: 0,
+            relationShipId: "",
+            citizenId: ""
+          }
+        ]
+      },
     }));
   }, []);
 

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ClipLoader, FadeLoader } from "react-spinners";
 import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
 import { formattedEthnics, listEthnics } from "../utils/constants";
-import { convertListToSelect, formatDate, formatDate2, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
+import { convertListToSelect, convertListToSelectVungLuong, formatDate, formatDate2, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner';
 import iconClose from '../../assets-src/close_1.png'
 import imageQR from '../../assets-src/icon_qr.png'
@@ -23,14 +23,15 @@ dayjs.extend(customParseFormat);
 interface Props {
   price: number,
   index: number,
-  onClose: (index: number) => void;
-  refs: any
-  provinces: any
-  windowSize: any
+  onClose: (index: number) => void,
+  refs: any,
+  provinces: any,
+  windowSize: any,
+  ethnicLists: any
 }
 
 const UserBeneficiaryBHYTPage = (props: Props) => {
-  const { index, price, onClose, refs, provinces, windowSize } = props;
+  const { index, price, onClose, refs, provinces, windowSize, ethnicLists } = props;
   const dateFormat = 'DD/MM/YYYY';
   const [districts, setDistricts] = useState<any>([]);
   const [socialInsuranceNumber, setSocialInsuranceNumber] = useState(registerInfoBHYT["listInsuredPerson"][index].socialInsuranceNumber);
@@ -50,7 +51,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   );
 
   const [gender, setGender] = useState(registerInfoBHYT["listInsuredPerson"][index].gender);
-  const [ethnic, setEthnic] = useState(registerInfoBHYT["listInsuredPerson"][index].ethnic);
+  const [ethnic, setEthnic] = useState(registerInfoBHYT["listInsuredPerson"][index].ethnicId);
   const [oldCardStartDate, setOldCardStartDate] = useState<any>(
     registerInfoBHYT["listInsuredPerson"][index].oldCardStartDate == "" ?
       "" :
@@ -80,6 +81,27 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [opacityQR, setOpacityQR] = useState(1);
   const lottieRef = useRef(null);
 
+  const ksProvinces = useRef([]);
+  const ksDistricts = useRef([]);
+  const ksWards = useRef([]);
+
+  const [selectedProvinceParticipate, setSelectedProvinceParticipate] = useState(registerInfoBHYT["listInsuredPerson"][index].insuranceProvinceId);
+  const [selectedKSProvince, setSelectedKSProvince] = useState<number>(registerInfoBHYT["listInsuredPerson"][index].ksTinhThanhMa);
+  const [selectedKSDistrict, setSelectedKSDistrict] = useState<number>(registerInfoBHYT["listInsuredPerson"][index].ksQuanHuyenMa);
+  const [selectedKSWard, setSelectedKSWard] = useState<number>(registerInfoBHYT["listInsuredPerson"][index].ksXaPhuongMa);
+  const [ksAddressDetail, setKSAddressDetail] = useState<string>(registerInfoBHYT["listInsuredPerson"][index].ksDiaChi);
+
+  const ttProvinces = useRef([]);
+  const ttDistricts = useRef([]);
+  const ttWards = useRef([]);
+  const [selectedTTProvince, setSelectedTTProvince] = useState<number>(registerInfoBHYT["listInsuredPerson"][index].provinceId);
+  const [selectedTTDistrict, setSelectedTTDistrict] = useState<number>(registerInfoBHYT["listInsuredPerson"][index].districtId);
+  const [selectedTTWard, setSelectedTTWard] = useState<number>(registerInfoBHYT["listInsuredPerson"][index].wardId);
+  const [ttAddressDetail, setTTAddressDetail] = useState<string>(registerInfoBHYT["listInsuredPerson"][index].addressDetail);
+  const [vungLuongToiThieuId, setVungLuongToiThieuId] = useState(registerInfoBHYT["listInsuredPerson"][index].vungLuongToiThieuId);
+  const [vungLuongToiThieuList, setVungLuongToiThieuList] = useState([]);
+  const [temp, setTemp] = useState(false);
+
   const calculatePrice = () => {
     switch (index) {
       case 0:
@@ -97,15 +119,142 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     }
   }
 
+  // Load lại tất cả danh sách tỉnh thành
+  useEffect(() => {
+    axios
+      .get("https://baohiem.dion.vn/province/api/list")
+      .then((response) => {
+
+        // Load tỉnh thành thường trú người tham gia
+        ttProvinces.current = response.data.data
+
+        // Load tỉnh thành khai sinh người tham gia
+        ksProvinces.current = response.data.data
+
+        setTemp(!temp)
+      })
+      .catch((error) => {
+        ttProvinces.current = []
+        ksProvinces.current = []
+        console.error(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://baohiem.dion.vn/VungLuongToiThieu/api/List`
+      )
+      .then((response) => {
+        setVungLuongToiThieuList(response.data.data)
+
+      })
+      .catch((error) => {
+        setVungLuongToiThieuList([])
+        console.error(error);
+      });
+  }, [])
+
+  // Cập nhập danh sách quận huyện địa chỉ khai sinh
+  useEffect(() => {
+    fetchKSDistricts();
+  }, [selectedKSProvince]);
+
+  const fetchKSDistricts = () => {
+    if (selectedKSProvince !== 0) {
+      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedKSProvince}`)
+        .then((response) => {
+          ksDistricts.current = response.data.data;
+
+          ksWards.current = [];
+
+          setTemp(!temp)
+        })
+        .catch((error) => {
+          ksDistricts.current = [];
+          setTemp(!temp);
+          console.error(error);
+        });
+    }
+  }
+
+  // Cập nhập danh sách phường xã khai sinh
+  useEffect(() => {
+    fetchKSWards();
+  }, [selectedKSDistrict]);
+
+  const fetchKSWards = () => {
+    if (selectedKSDistrict !== 0) {
+      axios
+        .get(
+          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedKSDistrict}`
+        )
+        .then((response) => {
+          ksWards.current = response.data.data;
+          setTemp(!temp);
+        })
+        .catch((error) => {
+          ksWards.current = []
+          setTemp(!temp);
+          console.error(error);
+        });
+    }
+  }
+
+  // Cập nhập danh sách quận huyện địa chỉ thường trú
+  useEffect(() => {
+    fetchTTDistricts();
+  }, [selectedTTProvince]);
+
+  const fetchTTDistricts = () => {
+    if (selectedTTProvince !== 0) {
+      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedTTProvince}`)
+        .then((response) => {
+          ttDistricts.current = response.data.data;
+          ttWards.current = [];
+          setTemp(!temp);
+        })
+        .catch((error) => {
+          ttDistricts.current = [];
+          setTemp(!temp);
+          console.error(error);
+        });
+    }
+  }
+
+  // Cập nhập danh sách phường xã địa chỉ thường trú
+  useEffect(() => {
+    fetchTTWards();
+  }, [selectedTTDistrict]);
+
+  const fetchTTWards = () => {
+    if (selectedTTDistrict !== 0) {
+      axios
+        .get(
+          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedTTDistrict}`
+        )
+        .then((response) => {
+          ttWards.current = response.data.data;
+          setTemp(!temp)
+        })
+        .catch((error) => {
+          ttWards.current = []
+          setTemp(!temp);
+          console.error(error);
+        });
+    }
+  }
+
+
   useEffect(() => {
     setDistricts([])
     setListHospitals([])
     if (medicalProvinceId != "0" || medicalProvinceId != 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${medicalProvinceId}`
+          `https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${medicalProvinceId}`
         ).then((response) => {
-          setDistricts(response.data.data);
+          setListHospitals(response.data.data);
         })
         .catch((error) => {
           console.error(error);
@@ -113,21 +262,21 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     }
   }, [medicalProvinceId]);
 
-  useEffect(() => {
-    setListHospitals([])
-    if (medicalDistrictId != "0" || medicalDistrictId != 0) {
-      axios
-        .get(
-          `https://baohiem.dion.vn/hospital/api/list-hospital-by-districtId?districtId=${medicalDistrictId}`
-        ).then((response) => {
-          setListHospitals(response.data.data);
-        })
-        .catch((error) => {
-          setListHospitals([])
-          console.error(error);
-        });
-    }
-  }, [medicalDistrictId])
+  // useEffect(() => {
+  //   setListHospitals([])
+  //   if (medicalDistrictId != "0" || medicalDistrictId != 0) {
+  //     axios
+  //       .get(
+  //         `https://baohiem.dion.vn/hospital/api/list-hospital-by-districtId?districtId=${medicalDistrictId}`
+  //       ).then((response) => {
+  //         setListHospitals(response.data.data);
+  //       })
+  //       .catch((error) => {
+  //         setListHospitals([])
+  //         console.error(error);
+  //       });
+  //   }
+  // }, [medicalDistrictId])
 
 
   const handleImageUpload = async (
@@ -838,7 +987,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
             setEthnic(value);
 
-            registerInfoBHYT["listInsuredPerson"][index].ethnic = value;
+            registerInfoBHYT["listInsuredPerson"][index].ethnicId = value;
 
           }}
           key={ethnic}
@@ -846,7 +995,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
           }
           options={
-            formattedEthnics
+            convertListToSelect(ethnicLists, "Chọn dân tộc")
           }
         />
       </div>
@@ -1093,47 +1242,424 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     )
   }
 
-  return (
-    <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
-      {renderHeader()}
+  const inputProvinceParticipate = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Tỉnh / Thành phố nơi tham gia BHYT{" "}
+          <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          placeholder="Chọn thành phố"
+          ref={refs.insuranceProvinceId}
+          dropdownMatchSelectWidth={false}
+          onChange={(value) => {
+            setSelectedProvinceParticipate(value)
 
+            registerInfoBHYT["listInsuredPerson"][index].insuranceProvinceId = value
+
+          }}
+          value={selectedProvinceParticipate}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(provinces, "Chọn tỉnh thành phố")}
+        />
+      </div>
+    )
+  }
+
+  const inputKSProvinceParticipate = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Tỉnh thành <samp className="text-red-600">*</samp>
+        </label>
+
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          placeholder="Chọn tỉnh thành phố"
+          dropdownMatchSelectWidth={false}
+          ref={refs.selectedKSProvince}
+          value={selectedKSProvince}
+          onChange={(value) => {
+            ksDistricts.current = []
+            ksWards.current = []
+
+            setSelectedKSDistrict(0)
+            setSelectedKSWard(0)
+
+            setSelectedKSProvince(value);
+
+            registerInfoBHYT["listInsuredPerson"][index].ksTinhThanhMa = value
+
+          }}
+          key={selectedKSProvince}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(ksProvinces.current, "Chọn tỉnh thành phố")}
+        />
+      </div>
+    )
+  }
+
+  const inputKSDistrictParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Quận huyện <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          ref={refs.selectedKSDistrict}
+          dropdownMatchSelectWidth={false}
+          placeholder="Chọn quận huyện"
+          value={selectedKSDistrict}
+          key={selectedKSDistrict}
+          onChange={(value) => {
+            ksWards.current = []
+            setSelectedKSWard(0)
+
+            setSelectedKSDistrict(value);
+
+
+            registerInfoBHYT["listInsuredPerson"][index].ksQuanHuyenMa = value
+
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(ksDistricts.current, "Chọn quận huyện")}
+        />
+      </div>
+    )
+  }
+
+  const inputKSWardParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Phường xã <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          ref={refs.selectedKSWard}
+          dropdownMatchSelectWidth={false}
+          placeholder="Chọn phường xã"
+          value={selectedKSWard}
+          onChange={(value: any) => {
+
+            setSelectedKSWard(value);
+
+            registerInfoBHYT["listInsuredPerson"][index].ksXaPhuongMa = value
+
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(ksWards.current, "Chọn phường xã")}
+        />
+      </div>
+    )
+  }
+
+  const inputKSAddrestailParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Địa chỉ cụ thể <samp className="text-red-600">*</samp>
+        </label>
+        <Input
+          type="text"
+          id="address"
+          ref={refs.ksAddressDetail}
+          value={ksAddressDetail}
+          className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="VD: Số nhà, số đường,...."
+          onChange={(e) => {
+            setKSAddressDetail(e.target.value);
+
+            registerInfoBHYT["listInsuredPerson"][index].ksDiaChi = e.target.value
+
+          }}
+        />
+      </div>
+    )
+  }
+
+  const inputTTProvinceParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Tỉnh thành <samp className="text-red-600">*</samp>
+        </label>
+
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          ref={refs.selectedTTProvince}
+          placeholder="Chọn tỉnh thành phố"
+          dropdownMatchSelectWidth={false}
+          value={selectedTTProvince}
+          onChange={(value) => {
+            ttDistricts.current = []
+            ttWards.current = []
+
+            setSelectedTTDistrict(0)
+            setSelectedTTWard(0)
+            setSelectedTTProvince(value);
+
+            registerInfoBHYT["listInsuredPerson"][index].provinceId = value;
+
+          }}
+          key={selectedTTProvince}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(ttProvinces.current, "Chọn tỉnh thành phố")}
+        />
+      </div>
+    )
+  }
+
+  const inputTTDistrictParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Quận huyện <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          ref={refs.selectedTTDistrict}
+          dropdownMatchSelectWidth={false}
+          placeholder="Chọn quận huyện"
+          value={selectedTTDistrict}
+          key={selectedTTDistrict}
+          onChange={(value) => {
+
+            ttWards.current = []
+            setSelectedTTWard(0)
+
+            setSelectedTTDistrict(value);
+
+
+            registerInfoBHYT["listInsuredPerson"][index].districtId = value
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(ttDistricts.current, "Chọn quận huyện")}
+        />
+      </div>
+    )
+  }
+
+  const inputTTWardParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Phường xã <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          ref={refs.selectedTTWard}
+          dropdownMatchSelectWidth={false}
+          placeholder="Chọn phường xã"
+          value={selectedTTWard}
+          key={selectedTTWard}
+          onChange={(value: any) => {
+            setSelectedTTWard(value);
+
+            registerInfoBHYT["listInsuredPerson"][index].wardId = value
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelect(ttWards.current, "Chọn phường xã")}
+        />
+      </div>
+    )
+  }
+
+  const inputTTAddressDetailParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Địa chỉ cụ thể <samp className="text-red-600">*</samp>
+        </label>
+        <Input
+          type="text"
+          id="address"
+          ref={refs.ttAddressDetail}
+          value={ttAddressDetail}
+          className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="VD: Số nhà, số đường,...."
+          onChange={(e) => {
+            setTTAddressDetail(e.target.value);
+
+            registerInfoBHYT["listInsuredPerson"][index].addressDetail = e.target.value
+
+          }}
+        />
+      </div>
+    )
+  }
+
+  const inputAreaSalaryParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Vùng lương tối thiểu <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          dropdownMatchSelectWidth={false}
+          placeholder="Chọn vùng lương"
+          ref={refs.vungLuongToiThieuId}
+          value={vungLuongToiThieuId}
+          key={vungLuongToiThieuId}
+          onChange={(value: any) => {
+            setVungLuongToiThieuId(value);
+
+            registerInfoBHYT["listInsuredPerson"][index].vungLuongToiThieuId = value
+
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={convertListToSelectVungLuong(vungLuongToiThieuList, "Chọn vùng lương")}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
+      {renderHeader()}
+      {/* Tiền bảo hiểm */}
       {renderPrice()}
 
+      {/* Số BHXH*/}
       {renderInputsocialInsuranceNumber()}
 
       {renderLine()}
 
+      {/* Note */}
       {renderNote()}
 
+      {/* CCCD */}
       {renderCitizenId()}
 
+      {/* Ảnh cccd */}
       {renderUploadImages()}
 
+      {/* Họ tên người tham gia */}
       {renderFullName()}
 
+      {/* Ngày sinh người tham gia */}
       {renderDob()}
 
+      {/* Giới tính người tham gia*/}
       {renderGender()}
 
+      {/* Dân tộc người tham gia*/}
       {renderEthnic()}
 
+      {/* Số BHYT người tham gia*/}
       {renderInputBHYT()}
-
-      {/* {renderLine()}
-
-      {renderBoxOldCard()} */}
 
       {renderLine()}
 
+      {/* Thẻ mới */}
       {renderBoxNewCard()}
 
       {renderLine()}
 
-      {renderProvince()}
+      <h3 className="text-base font-semibold text-[#0076B7]">
+        Thông tin bảo hiểm{" "}
+      </h3>
 
-      {renderDistrict()}
+      {/* Thẻ mới người tham gia*/}
+      {inputProvinceParticipate()}
 
+      {/* Thẻ thành phố tham gia khám chữa bệnh */}
+      {/* {renderProvince()} */}
+
+      {/* 
+      {renderDistrict()} */}
+
+      {/* Bệnh viện tham gia khám chữa bệnh */}
       {renderHispital()}
+
+      {/* Vùng lương tôi thiểu */}
+      {inputAreaSalaryParticipants()}
+
+      {renderLine()}
+
+      <h3 className="text-base font-semibold text-[#0076B7]">
+        Địa chỉ khai sinh{" "}
+      </h3>
+
+      {/* Tỉnh thành  khai sinh*/}
+      {inputKSProvinceParticipate()}
+
+      {/* Quận huyện khai sinh*/}
+      {inputKSDistrictParticipants()}
+
+      {/* Phường xã khai sinh*/}
+      {inputKSWardParticipants()}
+
+      {/* Địa chỉ chi tiết khai sinh */}
+      {inputKSAddrestailParticipants()}
+
+      <h3 className="text-base font-semibold text-[#0076B7]">
+        Địa chỉ thường trú{" "}
+      </h3>
+
+      {/* Tỉnh thành thường trú*/}
+      {inputTTProvinceParticipants()}
+
+      {/* Quận huyện thường trú*/}
+      {inputTTDistrictParticipants()}
+
+      {/* Phường xã thường trú */}
+      {inputTTWardParticipants()}
+
+      {/* Địa chỉ cụ thể  thường trú*/}
+      {inputTTAddressDetailParticipants()}
 
       {modalLoading()}
     </div>

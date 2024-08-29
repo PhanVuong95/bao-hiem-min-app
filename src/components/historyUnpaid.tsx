@@ -60,7 +60,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         storeage.listInsuredPerson[0].doB = formatDate(storeage.listInsuredPerson[0].doB)
         delete storeage.listInsuredPerson[0].medicalProvinceName
 
-        storeage.listInsuredPerson[0].houseHold.houseHoldPeoples.map(item => {
+        storeage.houseHold.houseHoldPeoples.map(item => {
           delete item.createdTime;
           return item;
         });
