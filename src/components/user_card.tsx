@@ -1,7 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { GetUserInfoReturns } from "zmp-sdk";
-import { Avatar, Box, Text } from "zmp-ui";
+import { Box } from "zmp-ui";
 import logo from '../../assets-src/logo1.png'
 
 interface UserProps {

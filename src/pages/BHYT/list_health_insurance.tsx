@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { PulseLoader } from "react-spinners";
-import CardProductBHYT from "../../components/cardProductBHYT";
-import HeaderBase from "../../components/headerBase";
+import CardProductBHYT from "../../components/card_product_bhyt";
+import HeaderBase from "../../components/header_base";
 
 
 export let registerInfoBHYT = {
@@ -286,7 +286,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
     <div className="pt-20">
       <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
       <div className="flex flex-col gap-[16px] px-4 py-[15px]">
-        {/* <SelectCategory /> */}
+
         <div className="flex flex-col gap-8 pt-1">
           {/* Danh sách bảo hiểm y tế tự nguyện */}
           {listProduct.map((item: any) => {

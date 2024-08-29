@@ -1,53 +1,29 @@
-import axios from "axios";
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Page } from "zmp-ui";
-import HeaderBase from "./headerBase";
+import React, { useEffect, useState } from "react";
+import HeaderBase from "../components/header_base";
 
-const ProductDetailPage1: React.FunctionComponent = (props) => {
+const ContractPage: React.FunctionComponent = (props) => {
   const [imageSrcs, setImageSrcs] = useState<string[]>([]);
-  const navigate = useNavigate();
-  const insurance = useRef()
 
   useEffect(() => {
     // Gán giá trị imageSrcs trong useEffect
-    setImageSrcs([
-      "https://baohiem.dion.vn/files/upload/account/1019/23397296-cdbe-4ee4-a94a-ddcbd9acdaf9.png",
-      "https://baohiem.dion.vn/files/upload/account/1019/1990eeec-efc5-4cff-8c6a-68055ce9652e.png",
-    ]);
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(
-        "https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002"
-      )
-      .then((response) => {
-        const data = response.data.data.filter((item) => item.id == 1002)[0]
-
-        insurance.current = data;
-
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    setImageSrcs([]);
   }, []);
 
   return (
-    <div className="pt-20">
+    <div>
       <HeaderBase
         isHome={false}
-        title={"Giới thiệu BHYT tự nguyện"}
+        title={"Hợp đồng"}
       />
-      <Page className="p-4 mb-20">
-        <div className="flex flex-wrap items-center justify-center min-h-[95vh]">
+      <div className="p-4 mt-20 mb-28">
+        <div className="bg-white flex flex-wrap items-center justify-center min-h-[95vh]">
           {imageSrcs.length > 0 ? (
             imageSrcs.map((src, index) => (
               <img
                 key={index}
                 src={src}
                 alt={`Product ${index + 1}`}
-                className="max-w-full max-h-full mb-4"
+                className="max-w-full max-h-full m-2"
               />
             ))
           ) : (
@@ -66,23 +42,10 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
             </svg>
           )}
         </div>
-      </Page>
-      <footer className="bg-white fixed bottom-0 left-0 w-full py-3">
-        <div className="flex justify-center w-[90%] mx-auto pb-3">
-
-          <button
-            onClick={() => {
-              navigate('/register-BHYT/', { state: { data: insurance.current, type: 'register' } })
-            }}
-            className="px-[40px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
-          >
-            Mua ngay
-          </button>
-        </div>
-      </footer>
+      </div>
     </div>
 
   );
 };
 
-export default ProductDetailPage1;
+export default ContractPage;

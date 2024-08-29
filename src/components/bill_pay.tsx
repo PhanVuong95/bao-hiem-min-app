@@ -1,13 +1,12 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Widthheight } from "../models";
-import FooterPayPage from "./footerPay";
-import { SpecificContext } from "./SpecificContext";
+import { SpecificContext } from "./specific_context";
 import { Link } from "react-router-dom";
-import HeaderBase from "./headerBase";
+import HeaderBase from "./header_base";
 
 const BillPayPage: React.FC<Widthheight> = ({ url }) => {
-  const specificContext = useContext(SpecificContext);
+  const specificContext = useContext<any>(SpecificContext);
   const { insuranceOrder, setInsuranceOrder } = specificContext;
   const [provinceName, setProvinceName] = useState("");
   const [districtName, setDistrictName] = useState("");
@@ -21,7 +20,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/province/api/detail/" +
-          insuranceOrder.provinceId
+        insuranceOrder.provinceId
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);
@@ -32,7 +31,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/district/api/detail/" +
-          insuranceOrder.districtId
+        insuranceOrder.districtId
       )
       .then((response) => {
         setDistrictName(response.data.data[0].name);
@@ -293,7 +292,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
           </div>
         </div>
       </div>
-      {/* <FooterPayPage w={""} h={""} url={"/buill-detail/1"} /> */}
+
       <div className="page-2 bg-white">
         <div className="flex flex-col gap-3">
           <div className="flex flex-row content-center justify-between">

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Widthheight } from "../models";
 import axios from "axios";
-import HeaderBase from "../components/headerBase";
+import HeaderBase from "../components/header_base";
 import { PulseLoader } from "react-spinners";
 import logo from "../../assets-src/logo1.png"
 

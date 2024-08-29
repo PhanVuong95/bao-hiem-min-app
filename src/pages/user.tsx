@@ -6,15 +6,14 @@ import {
   Box,
   Page,
 } from "zmp-ui";
-import HeaderBase from "../components/headerBase";
-import { ProfileContext } from "../components/userProfileContext";
+import HeaderBase from "../components/header_base";
+import { ProfileContext } from "../components/user_profile_context";
 import logo from '../../assets-src/logo1.png'
 
 const UserPage = () => {
 
   const profieContext = useContext(ProfileContext);
   const { userProfile, setUserProfile } = profieContext;
-
 
   return (
     <div>

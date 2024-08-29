@@ -1,5 +1,4 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "zmp-ui";
 import { closeApp } from "zmp-sdk/apis";
 import backgroundHeader from "../../assets-src/image_header.png";

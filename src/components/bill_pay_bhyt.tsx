@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import HeaderBase from "./headerBase";
+import HeaderBase from "./header_base";
 import { useParams } from "react-router-dom";
 import { formatDate, formatMoneyVND, formatPhoneNumber } from "../utils/validateString";
 
@@ -319,7 +319,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
         </div>
       </div>
-      {/* <FooterPayPage w={""} h={""} url={"/buill-detail/1"} /> */}
+
       <div className="page-2 bg-white">
         <div className="flex flex-col gap-3">
           <div className="flex flex-row content-center justify-between">

@@ -4,9 +4,8 @@ import { useParams } from "react-router";
 import { Link, useNavigate } from "react-router-dom";
 import { PulseLoader } from "react-spinners";
 import { formatDate } from "../utils/validateString";
-import FooterPayPage from "./footerPay";
-import HeaderBase from "./headerBase";
-import { SpecificContext } from "./SpecificContext";
+import HeaderBase from "./header_base";
+import { SpecificContext } from "./specific_context";
 
 const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const { id } = useParams();

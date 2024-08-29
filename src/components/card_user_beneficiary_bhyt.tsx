@@ -1,8 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { ClipLoader, FadeLoader } from "react-spinners";
+import { FadeLoader } from "react-spinners";
 import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
-import { formattedEthnics, listEthnics } from "../utils/constants";
 import { convertListToSelect, convertListToSelectVungLuong, formatDate, formatDate2, formatMoneyVND, formatTimeSql, isValidCitizenId, isValidEmptyString, isValidHealthInsuranceNumber, isValidSocialInsuranceNumber } from "../utils/validateString";
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner';
 import iconClose from '../../assets-src/close_1.png'

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import HeaderBase from "../../components/headerBase";
+import HeaderBase from "../../components/header_base";
 import { useParams } from "react-router-dom";
 import { formatDate, formatMoneyVND, formatPhoneNumber, formatTime, isValidEmptyString, isValidString } from "../../utils/validateString";
 import { registerInfoBHYT } from "./list_health_insurance";

@@ -1,19 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { SpecificContext } from "../components/SpecificContext";
+import { SpecificContext } from "../components/specific_context";
 import html2canvas from "html2canvas";
 import { toast } from "react-toastify";
-import HeaderBase from "../components/headerBase";
+import HeaderBase from "../components/header_base";
 import { FadeLoader, PulseLoader } from "react-spinners";
 import { saveImageToGallery } from "zmp-sdk";
 import { Modal } from "zmp-ui";
 import warningIc from "../../assets-src/warning_icon.png";
+
 const BuillDetailPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const specificContext = useContext(SpecificContext);
+  const specificContext = useContext<any>(SpecificContext);
   const { insuranceOrder, setInsuranceOrder } = specificContext;
   const [base64QRCode, setBase64QRCode] = useState<string>("");
   const [provinceName, setProvinceName] = useState("");
@@ -115,7 +116,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     try {
       const response = await axios.post(
         "https://baohiem.dion.vn/insuranceorder/api/create-payment?orderId=" +
-          id,
+        id,
         {
           headers: {
             "Content-Type": "application/json",

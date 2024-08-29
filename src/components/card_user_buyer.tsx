@@ -1,8 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { registerInfoBHYT } from "../pages/BHYT/list_health_insurance";
-import { Button, Input, Select } from 'antd';
+import { Input, Select } from 'antd';
 import { convertListToSelect } from "../utils/validateString";
 
 interface Props {

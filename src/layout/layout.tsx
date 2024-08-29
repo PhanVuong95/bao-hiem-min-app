@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import HeaderPage from "../components/headerPage";
-import { useRecoilValue } from "recoil";
-import { userState } from "../state";
+import HeaderPage from "../components/header_page";
 import axios from "axios";
 import { authorize, closeApp, getSetting, getUserInfo } from "zmp-sdk/apis";
-import { ProfileContext } from "../components/userProfileContext";
+import { ProfileContext } from "../components/user_profile_context";
 
 export let logged = false;
 

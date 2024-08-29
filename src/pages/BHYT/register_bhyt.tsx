@@ -6,13 +6,13 @@ import { useNavigate } from "zmp-ui";
 import { Province } from "../../models";
 import { registerInfoBHYT } from "./list_health_insurance";
 import { formatMoneyVND, isValidCitizenId, isValidEmail, isValidEmptyString, isValidFullName, isValidHealthInsuranceNumber, isValidPhone, isValidSocialInsuranceNumber } from "../../utils/validateString";
-import UserBeneficiaryBHYTPage from "../../components/cardUserBeneficiaryBHYT";
-import UserBuyerPage from "../../components/cardUserBuyer";
-import HeaderBase from "../../components/headerBase";
+import UserBeneficiaryBHYTPage from "../../components/card_user_beneficiary_bhyt";
+import UserBuyerPage from "../../components/card_user_buyer";
+import HeaderBase from "../../components/header_base";
 import { FadeLoader } from "react-spinners";
 import Modal from 'react-modal';
-import CardHouseHold from "../../components/cardHouseHold";
-import CardMembersHouseHold from "../../components/cardMembersHouseHold";
+import CardHouseHold from "../../components/card_house_hold";
+import CardMembersHouseHold from "../../components/card_members_house_hold";
 
 const RegisterBHYT = ({ }) => {
 
@@ -1122,8 +1122,6 @@ const RegisterBHYT = ({ }) => {
         ))}
 
         {renderAddUserBeneficiary()}
-
-        {/* <VoucherPage /> */}
 
         {renderAttachedFiles()}
       </div>

@@ -1,33 +1,29 @@
 // src/App.js
 
 import React, { Suspense, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { Route, Routes } from "react-router-dom";
 import { App, ZMPRouter, SnackbarProvider } from "zmp-ui";
-import { RecoilRoot } from "recoil";
 import HomePage from "../pages";
-import LayoutPage from "../layout/layuot";
-import ContractPage from "../pages/contractPage";
-import HistoryPage from "../pages/historyPage";
+import LayoutPage from "../layout/layout";
+import ContractPage from "../pages/contract_page";
+import HistoryPage from "../pages/history_page";
 import UserPage from "../pages/user";
-import ListSocialInsurance from "../pages/listSocialInsurance";
+import ListSocialInsurance from "../pages/list_social_insurance";
 import ListHealthInsurance from "../pages/BHYT/list_health_insurance";
-import ProductDetailPage from "./productDetail";
-import BillPayPage from "./billPay";
-import BillPayBHYTPage from "./billPayBHYT";
-import BuillDetailPage from "../pages/billDetail";
-import RegisterBHXH from "./registerBHXH";
-import ProductDetailPage1 from "./productDetail-1";
-import HistoryUnpaidPage from "./historyUnpaid";
-import ListsHistoryPage from "../pages/listsHistoryPage";
-import HistoryUnpaid1Page from "./historyUnpaid1";
-import HistoryUnpaid2Page from "./historyUnpaid2";
-import { SpecificProvider } from "./SpecificContext";
-import UpdateBHXH from "../pages/updateBHXH";
+import ProductDetailPage from "./product_detail";
+import BillPayPage from "./bill_pay";
+import BillPayBHYTPage from "./bill_pay_bhyt";
+import BuillDetailPage from "../pages/bill_detail";
+import RegisterBHXH from "./register_bhxh";
+import ProductDetailPage1 from "./product_detail_1";
+import HistoryUnpaidPage from "./history_unpaid";
+import ListsHistoryPage from "../pages/lists_history_page";
+import { SpecificProvider } from "./specific_context";
 import RegisterBHYT from "../pages/BHYT/register_bhyt";
 import ListHistoryBHYT from "../pages/BHYT/list_history_bhyt";
 import InfoDetailBHYT from "../pages/BHYT/info_detail_bhyt";
-import { ProfileProvider } from "./userProfileContext";
+import { ProfileProvider } from "./user_profile_context";
 import splash from "../../assets-src/splash.png";
 import { closeLoading } from "zmp-sdk/apis";
 
@@ -128,7 +124,6 @@ const MyApp = () => {
                     </SpecificProvider>
                   }
                 />
-                <Route path="/update-BHXH/:id" element={<UpdateBHXH />} />
                 <Route path="/register-BHYT/" element={<RegisterBHYT />} />
                 <Route
                   path="/lists-history"

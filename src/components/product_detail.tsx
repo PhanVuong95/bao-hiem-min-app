@@ -1,31 +1,36 @@
-import React, { useEffect, useState } from "react";
-import HeaderBase from "../components/headerBase";
+import axios from "axios";
+import React, { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
+import { Page } from "zmp-ui";
+import HeaderBase from "./header_base";
+import { SpecificContext } from "./specific_context";
 
-const ContractPage: React.FunctionComponent = (props) => {
-  const [imageSrcs, setImageSrcs] = useState<string[]>([]);
+const ProductDetailPage: React.FunctionComponent = (props) => {
+  const [insurance, setInsurance] = useState<any>();
+  const [detailSrcs, setDetailSrcs] = useState<string[]>([]);
+  const specificContext = useContext<any>(SpecificContext);
+  const { insuranceOrder, setInsuranceOrder } = specificContext;
+
 
   useEffect(() => {
-    // Gán giá trị imageSrcs trong useEffect
-    setImageSrcs([]);
+    axios
+      .get("https://baohiem.dion.vn/insurance/api/detail-viewmodel?id=1001")
+      .then((response) => {
+        setInsurance(response.data.data[0]);
+        setDetailSrcs(response.data.data[0].info);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   return (
-    <div>
-      <HeaderBase
-        isHome={false}
-        title={"Hợp đồng"}
-      />
-      <div className="p-4 mt-20 mb-28">
+    <div className="relative min-h-screen flex flex-col">
+      <HeaderBase isHome={false} title={"Chi tiết BHXH tự nguyện"} />
+      <Page className="p-4 !pt-24 flex-grow pb-20">
         <div className="bg-white flex flex-wrap items-center justify-center min-h-[95vh]">
-          {imageSrcs.length > 0 ? (
-            imageSrcs.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt={`Product ${index + 1}`}
-                className="max-w-full max-h-full m-2"
-              />
-            ))
+          {detailSrcs ? (
+            <div dangerouslySetInnerHTML={{ __html: detailSrcs }} />
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -42,10 +47,20 @@ const ContractPage: React.FunctionComponent = (props) => {
             </svg>
           )}
         </div>
-      </div>
+      </Page>
+      <footer className="bg-white fixed bottom-0 left-0 w-full py-3">
+        <div className="flex justify-center w-[90%] mx-auto">
+          <Link
+            className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center mb-3"
+            type="submit"
+            to="/register-BHXH"
+          >
+            Mua ngay
+          </Link>
+        </div>
+      </footer>
     </div>
-
   );
 };
 
-export default ContractPage;
+export default ProductDetailPage;

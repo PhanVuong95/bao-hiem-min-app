@@ -3,10 +3,10 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FadeLoader } from "react-spinners";
 import Modal from 'react-modal';
-import { SpecificContext } from "./SpecificContext";
+import { SpecificContext } from "./specific_context";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import HeaderBase from "./headerBase";
+import HeaderBase from "./header_base";
 import imageQR from "../../assets-src/icon_qr.png";
 import {
   convertListToSelect,

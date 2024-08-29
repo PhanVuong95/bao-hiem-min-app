@@ -1,11 +1,11 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import HeaderBase from "../components/headerBase";
-import { SpecificContext } from "../components/SpecificContext";
+import HeaderBase from "../components/header_base";
+import { SpecificContext } from "../components/specific_context";
 import logo from "../../assets-src/logo1.png";
 
-const ListSocialInsurance = (props) => {
+const ListSocialInsurance = () => {
   const specificContext = useContext<any>(SpecificContext);
   const [insurance, setInsurance] = useState<any>();
   const { insuranceOrder, setInsuranceOrder } = specificContext;
@@ -176,16 +176,13 @@ const ListSocialInsurance = (props) => {
   //   }));
   // }, []);
 
-  if (!insurance) {
-    return;
-  }
+
   return (
     <div className="">
       <HeaderBase isHome={false} title={"BHXH tự nguyện"} />
       <div className="px-4 mt-8 pt-[68px] gap-[16px] py-[24px] flex flex-col ">
-        {/* <SelectCategory /> */}
+
         <div className="flex flex-col gap-8">
-          {/* <CardProduct w={""} h={""} url={"/register-BHXH"} /> */}
           <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
             <div className="flex gap-[10px]">
               <img src={logo} className="w-20 h-20" />

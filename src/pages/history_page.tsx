@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sheet, Button, Page, Text } from "zmp-ui";
-import HeaderBase from "../components/headerBase";
+import HeaderBase from "../components/header_base";
 
 const HistoryPage: React.FunctionComponent = (props) => {
   const navigate = useNavigate();

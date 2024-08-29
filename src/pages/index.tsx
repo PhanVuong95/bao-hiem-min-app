@@ -1,20 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { getUserInfo, openWebview } from "zmp-sdk/apis";
-import { useRecoilValue } from "recoil";
-import { userState } from "../state";
-
-import UserCard from "../components/user-card";
-import HeaderPage from "../components/headerPage";
-import CardNewPage from "../components/cardNew";
+import { openWebview } from "zmp-sdk/apis";
+import UserCard from "../components/user_card";
+import HeaderPage from "../components/header_page";
+import CardNewPage from "../components/card_new";
 import { Link } from "react-router-dom";
-import HeaderBase from "../components/headerBase";
-import { ProfileContext } from "../components/userProfileContext";
+import HeaderBase from "../components/header_base";
+import { ProfileContext } from "../components/user_profile_context";
 import banner from '../../assets-src/banner.png'
 import { toast } from "react-toastify";
 
 const HomePage: React.FunctionComponent = () => {
-  const profieContext = useContext(ProfileContext);
+  const profieContext = useContext<any>(ProfileContext);
   const { userProfile, setUserProfile } = profieContext;
 
   const openUrlInWebview = async () => {
