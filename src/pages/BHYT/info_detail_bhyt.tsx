@@ -36,6 +36,8 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       .get("https://baohiem.dion.vn/insuranceorder/api/detail-by-vm/" + id)
       .then((response) => {
         const data = response.data.data[0]
+        console.log(data);
+
         setBillPay(data);
         setLoading(false);
 
@@ -80,6 +82,10 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           obj["relationShipId"] = item["relationShipId"]
           obj["citizenId"] = item["citizenId"]
           obj["houseHoldId"] = item["houseHoldId"]
+          obj["ksProvinceId"] = item["ksProvinceId"]
+          obj["ksDistrictId"] = item["ksDistrictId"]
+          obj["ksWardId"] = item["ksWardId"]
+          obj["ksAddressDetail"] = item["ksAddressDetail"]
           return obj;
         });
 
@@ -118,7 +124,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           return obj;
         })
 
-        console.log(registerInfoBHYT);
+        // console.log(registerInfoBHYT);
 
       })
       .catch((error) => {

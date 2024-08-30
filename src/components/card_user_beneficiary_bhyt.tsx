@@ -1106,7 +1106,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
-          Thành phố khám chữa bệnh
+          Tỉnh thành phố khám chữa bệnh
           <samp className="text-red-600"> *</samp>
         </label>
         <Select
@@ -1614,13 +1614,13 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
       </h3>
 
       {/* Thẻ mới người tham gia*/}
-      {inputProvinceParticipate()}
+      {/* {inputProvinceParticipate()} */}
 
       {/* Thẻ thành phố tham gia khám chữa bệnh */}
-      {/* {renderProvince()} */}
+      {renderProvince()}
 
-      {/* 
-      {renderDistrict()} */}
+      {/* Bệnh viện tham gia khám chữa bệnh */}
+      {/* {renderDistrict()} */}
 
       {/* Bệnh viện tham gia khám chữa bệnh */}
       {renderHispital()}

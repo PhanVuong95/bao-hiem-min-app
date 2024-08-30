@@ -178,7 +178,7 @@ const UserBuyerPage = (props: Props) => {
     return (
       <div>
         <label className="block text-sm font-normal pb-2 text-gray-900">
-          Tỉnh thành <samp className="text-red-600">*</samp>
+          Tỉnh thành phố <samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"

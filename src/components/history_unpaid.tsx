@@ -26,7 +26,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
 
-
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
 
@@ -65,7 +64,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         });
 
         console.log(storeage);
-
 
         setInsuranceOrder(storeage);
       })

@@ -7,7 +7,11 @@ interface Member {
   gender?: string,
   ethnicId?: number,
   relationShipId?: string,
-  citizenId?: string
+  citizenId?: string,
+  ksProvinceId?: number,
+  ksDistrictId?: number,
+  ksWardId?: number,
+  ksAddressDetail?: string
 }
 
 interface InsuredPerson {

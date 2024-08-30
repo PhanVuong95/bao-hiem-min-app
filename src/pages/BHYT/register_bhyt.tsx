@@ -89,6 +89,10 @@ const RegisterBHYT = ({ }) => {
       gender: React.createRef(),
       name: React.createRef(),
       relationShipId: React.createRef(),
+      ksProvinceId: React.createRef(),
+      ksDistrictId: React.createRef(),
+      ksWardId: React.createRef(),
+      ksAddressDetail: React.createRef(),
     }
   )
 
@@ -482,6 +486,30 @@ const RegisterBHYT = ({ }) => {
         return false;
       }
 
+      if (item.ksProvinceId == 0) {
+        toast.warn(
+          "Tỉnh thành phố khai sinh không được để trống",
+        );
+        scrollToElement(members[index].ksProvinceId, 2)
+        return false;
+      }
+
+      if (item.ksDistrictId == 0) {
+        toast.warn(
+          "Quận huyện khai sinh không được để trống",
+        );
+        scrollToElement(members[index].ksDistrictId, 2)
+        return false;
+      }
+
+      if (item.ksWardId == 0) {
+        toast.warn(
+          "Địa chỉ cụ thể khai sinh không được để trống",
+        );
+        scrollToElement(members[index].ksWardId, 2)
+        return false;
+      }
+
     }
 
     // Thông tin người tham gia
@@ -586,21 +614,21 @@ const RegisterBHYT = ({ }) => {
         return false;
       }
 
-      if (registerInfoBHYT['listInsuredPerson'][index].insuranceProvinceId == 0) {
-        toast.warn(
-          "Tỉnh / Thành phố nơi tham gia BHYT",
-        );
-        scrollToElement(beneficiaries[index].insuranceProvinceId, 2)
-        return false;
-      }
-
-      // if (registerInfoBHYT['listInsuredPerson'][index].medicalProvinceId == 0) {
+      // if (registerInfoBHYT['listInsuredPerson'][index].insuranceProvinceId == 0) {
       //   toast.warn(
-      //     "Thành phố khám chữa bệnh không được để trống",
+      //     "Tỉnh / Thành phố nơi tham gia BHYT",
       //   );
-      //   scrollToElement(beneficiaries[index].medicalProvinceId, 2)
+      //   scrollToElement(beneficiaries[index].insuranceProvinceId, 2)
       //   return false;
       // }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].medicalProvinceId == 0) {
+        toast.warn(
+          "Thành phố khám chữa bệnh không được để trống",
+        );
+        scrollToElement(beneficiaries[index].medicalProvinceId, 2)
+        return false;
+      }
 
       // if (registerInfoBHYT['listInsuredPerson'][index].medicalDistrictId == 0) {
       //   toast.warn(
@@ -1091,6 +1119,7 @@ const RegisterBHYT = ({ }) => {
               index={index}
               members={members}
               ethnicLists={ethnicLists}
+              provinces={provinces}
               onClose={(index) => {
                 console.log(index);
                 members.splice(index, 1);

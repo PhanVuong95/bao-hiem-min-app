@@ -28,6 +28,7 @@ import { motion } from 'framer-motion';
 import Lottie from "lottie-react";
 import lottieScanQR from "../../assets-src/lottie_scan_qr.json";
 import { BenefitLevevlList } from "../utils/constants";
+import CardMembersHouseHoldBHXH from "./card_members_house_hold_bhxh";
 
 dayjs.locale("vi");
 dayjs.extend(customParseFormat);
@@ -101,6 +102,10 @@ const RegisterBHXH = (props) => {
       ethnicId: React.createRef(),
       relationShipId: React.createRef(),
       citizenId: React.createRef(),
+      ksDistrictId: React.createRef(),
+      ksProvinceId: React.createRef(),
+      ksWardId: React.createRef(),
+      ksAddressDetail: React.createRef(),
     }
   )
 
@@ -149,7 +154,6 @@ const RegisterBHXH = (props) => {
   const lottieRef = useRef(null);
 
   const [isShowModalbenefitLevel, setIsShowModalbenefitLevel] = useState(false)
-
 
   // Ref để scroll
   const participantRefs = {
@@ -1056,6 +1060,24 @@ const RegisterBHXH = (props) => {
       if (intem.doB == "") {
         toast.warn("Ngày sinh của thành viên không được để trống");
         scrollToElement(members[index].doB)
+        return false;
+      }
+
+      if (intem.ksProvinceId == 0) {
+        toast.warn("Tỉnh thành phố khai sinh không được để trống");
+        scrollToElement(members[index].ksProvinceId)
+        return false;
+      }
+
+      if (intem.ksDistrictId == 0) {
+        toast.warn("Quận huyện khai sinh không được để trống");
+        scrollToElement(members[index].ksDistrictId)
+        return false;
+      }
+
+      if (intem.ksWardId == 0) {
+        toast.warn("Phường xã khai sinh không được để trống");
+        scrollToElement(members[index].ksWardId)
         return false;
       }
     }
@@ -2670,7 +2692,7 @@ const RegisterBHXH = (props) => {
     return (
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Môi quan hệ <samp className="text-red-600">*</samp>
+          Mối quan hệ <samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"
@@ -2693,8 +2715,29 @@ const RegisterBHXH = (props) => {
           }
           options={[
             { value: "", label: "Chọn mối quan hệ" },
-            { value: "Bố ruột", label: "Bố ruột" },
-            { value: "Mẹ ruột", label: "Mẹ ruột" },
+            { value: "00", label: "Chủ hộ" },
+            { value: "01", label: "Vợ" },
+            { value: "02", label: "Chồng" },
+            { value: "03", label: "Bố" },
+            { value: "04", label: "Mẹ" },
+            { value: "05", label: "Em" },
+            { value: "06", label: "Anh" },
+            { value: "07", label: "Chị" },
+            { value: "08", label: "Con" },
+            { value: "09", label: "Cháu" },
+            { value: "10", label: "Ông" },
+            { value: "11", label: "Bà" },
+            { value: "12", label: "Cô" },
+            { value: "13", label: "Dì" },
+            { value: "14", label: "Chú" },
+            { value: "15", label: "Thím" },
+            { value: "16", label: "Bác" },
+            { value: "17", label: "Cậu" },
+            { value: "18", label: "Mợ" },
+            { value: "19", label: "Con dâu" },
+            { value: "20", label: "Con rể" },
+            { value: "21", label: "Chắt" },
+            { value: "99", label: "Khác" },
           ]}
         />
       </div>
@@ -2764,8 +2807,9 @@ const RegisterBHXH = (props) => {
   }
 
   const boxhHouseHoldParticipants = (index, onClose) => {
+
     return (
-      <div className="p-4 rounded-xl flex flex-col gap-6 border border-gray-300">
+      <div key={`${index}`} className="p-4 rounded-xl flex flex-col gap-6 border border-gray-300">
         <div className="flex justify-between">
           <div className="text-[#0076B7] text-sm font-medium">Thông tin thành viên số {index + 1}</div>
           {index != 0 ?
@@ -2984,16 +3028,32 @@ const RegisterBHXH = (props) => {
           {inputAddressDetailHKHouseHoldParticipants()}
 
           {members.map((item, index) =>
-            boxhHouseHoldParticipants(
-              index,
-              (index) => {
-                members.splice(index, 1);
-                setMembers([...members]);
+            <CardMembersHouseHoldBHXH
+              key={`member_${index}`}
+              members={members}
+              insuranceOrder={insuranceOrder}
+              ethnicLists={ethnicLists}
+              provinces={buyerProvinces.current}
+              index={index}
+              onClose={
+                (index) => {
+                  const newMembers = members.filter((_, i) => i !== index);
+                  setMembers([...newMembers]);
 
-                insuranceOrder.houseHold.houseHoldPeoples.splice(index, 1);
-
+                  insuranceOrder.houseHold.houseHoldPeoples.splice(index, 1);
+                }
               }
-            )
+            />
+            // boxhHouseHoldParticipants(
+            //   index,
+            //   (index) => {
+            //     const newMembers = members.filter((_, i) => i !== index);
+            //     setMembers([...newMembers]);
+
+            //     insuranceOrder.houseHold.houseHoldPeoples.splice(index, 1);
+
+            //   }
+            // )
           )}
 
           {buttonAddMember()}

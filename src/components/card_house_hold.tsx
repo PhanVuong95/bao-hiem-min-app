@@ -159,7 +159,6 @@ const CardHouseHold = (props: Props) => {
         </label>
         <Input
           type="text"
-          id="address"
           ref={refs.fullNamHouseHoldParticipant}
           value={fullNamHouseHoldParticipant}
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -184,7 +183,8 @@ const CardHouseHold = (props: Props) => {
         </label>
         <Input
           type="text"
-          id="address"
+
+          maxLength={12}
           ref={refs.cccdHouseHoldParticipant}
           value={cccdHouseHoldParticipant}
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -203,7 +203,7 @@ const CardHouseHold = (props: Props) => {
     return (
       <div className="mt-4">
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Thành phố khai sinh <samp className="text-red-600">*</samp>
+          Tỉnh thành phố khai sinh <samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"
@@ -312,7 +312,7 @@ const CardHouseHold = (props: Props) => {
         </label>
         <Input
           type="text"
-          id="address"
+
           ref={refs.addressDetailHouseHoldParticipant}
           value={addressDetailHouseHoldParticipant}
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -331,7 +331,7 @@ const CardHouseHold = (props: Props) => {
     return (
       <div className="mt-4">
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Thành phố thường trú <samp className="text-red-600">*</samp>
+          Tỉnh thành phố thường trú <samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"
@@ -441,7 +441,7 @@ const CardHouseHold = (props: Props) => {
         </label>
         <Input
           type="text"
-          id="address"
+
           ref={refs.addressDetailHKHouseHoldParticipant}
           value={addressDetailHKHouseHoldParticipant}
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"

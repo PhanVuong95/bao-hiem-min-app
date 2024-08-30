@@ -87,7 +87,11 @@ const ListSocialInsurance = () => {
             gender: "",
             ethnicId: 0,
             relationShipId: "",
-            citizenId: ""
+            citizenId: "",
+            ksProvinceId: 0,
+            ksDistrictId: 0,
+            ksWardId: 0,
+            ksAddressDetail: ""
           }
         ]
       },
@@ -113,6 +117,32 @@ const ListSocialInsurance = () => {
   //     "discountPrice": 0,
   //     "finalPrice": 17688000,
   //     "fileUploadUrl": null,
+  //     "houseHold": {
+  //       "id": 1014,
+  //       "chuHoTen": "Vũ Văn A",
+  //       "ksProvinceId": 1398,
+  //       "ksDistrictId": 1777,
+  //       "ksWardId": 8589,
+  //       "ksAddressDetail": "Địa chỉ C",
+  //       "hkAddressDetail": "Địa Chỉ A",
+  //       "insuredPersonId": 1105,
+  //       "houseHoldPeoples": [
+  //         {
+  //           "id": 1043,
+  //           "name": "Vũ Văn D",
+  //           "doB": "20/08/2024",
+  //           "gender": "Nam",
+  //           "ethnicId": 1001,
+  //           "relationShipId": "Bố ruột",
+  //           "citizenId": "030200008767",
+  //           "houseHoldId": 1014,
+  //           "ksProvinceId": 0,
+  //           "ksDistrictId": 0,
+  //           "ksWardId": 0,
+  //           "ksAddressDetail": ""
+  //         }
+  //       ]
+  //     },
   //     "listInsuredPerson": [
   //       {
   //         "id": 1105,
@@ -137,29 +167,6 @@ const ListSocialInsurance = () => {
   //         "ethnicId": 1001,
   //         "vungLuongToiThieuId": 1004,
   //         "benefitLevel": "3000000",
-  //         "houseHold": {
-  //           "id": 1014,
-  //           "chuHoTen": "Vũ Văn A",
-  //           "ksProvinceId": 1398,
-  //           "ksDistrictId": 1777,
-  //           "ksWardId": 8589,
-  //           "ksAddressDetail": "Địa chỉ C",
-  //           "hkAddressDetail": "Địa Chỉ A",
-  //           "insuredPersonId": 1105,
-  //           "houseHoldPeoples": [
-  //             {
-  //               "id": 1043,
-  //               "name": "Vũ Văn D",
-  //               "doB": "20/08/2024",
-  //               "gender": "Nam",
-  //               "ethnicId": 1001,
-  //               "relationShipId": "Bố ruột",
-  //               "citizenId": "030200008767",
-  //               "houseHoldId": 1014,
-  //               "createdTime": null
-  //             }
-  //           ]
-  //         },
   //         "oldCardStartDate": null,
   //         "oldCardEndDate": null,
   //         "newCardStartDate": null,
