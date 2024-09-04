@@ -24,6 +24,7 @@ import InfoDetailBHYT from "../pages/BHYT/info_detail_bhyt";
 import { ProfileProvider } from "./user_profile_context";
 import splash from "../../assets-src/splash.png";
 import { closeLoading } from "zmp-sdk/apis";
+import CheckStatusProcedure from "../pages/check_status_procedure";
 
 const MyApp = () => {
   useEffect(() => {
@@ -134,6 +135,10 @@ const MyApp = () => {
                 <Route
                   path="/list-history-bhyt"
                   element={<ListHistoryBHYT />}
+                />
+                <Route
+                  path="/check-status-procedure/:id"
+                  element={<CheckStatusProcedure />}
                 />
                 <Route
                   path="/history-unpaid/:id"

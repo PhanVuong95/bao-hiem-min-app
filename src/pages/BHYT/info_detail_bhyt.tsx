@@ -337,7 +337,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
   const boxInfo = () => {
     return (
-      <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
+      <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-32">
         <h3 className="text-[#0076B7] text-lg font-medium">
           Danh mục sản phẩm
         </h3>
@@ -402,7 +402,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
   const boxFooterPayment = () => {
     return (
-      <div className="page-2 bg-white">
+      <div className="page-2 bg-white fixed bottom-0 w-[100%]">
         <div className="flex flex-col gap-3">
           <div className="flex flex-row content-center justify-between">
             <p className="block text-sm font-normal text-gray-900">
@@ -427,7 +427,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
   const lookUpAgain = () => {
     return (
-      <div className="page-2 bg-white">
+      <div className="page-2 bg-white fixed bottom-0 w-[100%]">
         <div className="flex flex-col">
           <div className="flex flex-row content-center justify-center items-center">
             <button

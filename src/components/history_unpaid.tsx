@@ -63,7 +63,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
           return item;
         });
 
-        console.log(storeage);
+        // console.log(storeage);
 
         setInsuranceOrder(storeage);
       })
@@ -71,9 +71,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         console.error(error);
       });
   }, [id]);
-
-  console.log(insuranceOrder);
-
 
   useEffect(() => {
     axios
@@ -135,6 +132,20 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
       </>
     );
   }
+
+  const renderBackground = () => {
+    switch (orderStatusId) {
+      case PENDING:
+        return `#FAAD14`
+      case CANCELED:
+        return `#F00`
+      case DONE:
+        return `#00BA00`
+      default:
+        return `#FAAD14`
+    }
+  }
+
   return (
     <div>
       <HeaderBase
@@ -142,11 +153,9 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         onBack={() => navigate("/lists-history")}
         title={"Thông tin chi tiết"}
       />
-      <div className="pt-20">
+      <div className="pt-20 relative">
         <div
-          className={`bg-[${orderStatusId == PENDING ? "#FAAD14" : ""}${orderStatusId == CANCELED ? "#F00" : ""
-            }${orderStatusId == DONE ? "#00BA00" : ""
-            }] py-[12px] px-4 flex flex-row items-center justify-between`}
+          className={`bg-[${renderBackground()}] py-[12px] px-4 flex flex-row items-center justify-between`}
         >
           <p className="text-white text-sm font-normal">Trạng thái</p>
           <p className="text-white text-sm font-semibold">
@@ -343,7 +352,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
               </div>
             </div>
           </div>
-          <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
+          <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-24">
             <h3 className="text-[#0076B7] text-lg font-medium">
               Danh mục sản phẩm
             </h3>
@@ -393,7 +402,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
           </div>
         </div>
         {!(orderStatusId == CANCELED || orderStatusId == DONE) && (
-          <div className="page-2 bg-white">
+          <div className="page-2 bg-white fixed bottom-0 w-[100%]">
             <div className="flex flex-col gap-3">
               <div className="flex flex-row content-center justify-between">
                 <p className="block text-sm font-normal text-gray-900">
@@ -415,7 +424,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
           </div>
         )}
         {orderStatusId == CANCELED && (
-          <div className="page-2 bg-white">
+          <div className="page-2 bg-white fixed bottom-0 w-[100%]">
             <div className="flex flex-col gap-3">
               <div className="flex flex-row content-center justify-center items-center">
                 <Link
@@ -423,6 +432,21 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                   className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
                 >
                   Tra cứu lại
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {orderStatusId == DONE && (
+          <div className="page-2 bg-white fixed bottom-0 w-[100%]">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-row content-center justify-center items-center">
+                <Link
+                  to={`/check-status-procedure/${orderDetail.id}`}
+                  className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+                >
+                  Kiểm tra trạng thái thủ tục
                 </Link>
               </div>
             </div>

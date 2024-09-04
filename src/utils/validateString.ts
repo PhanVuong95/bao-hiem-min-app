@@ -4,7 +4,6 @@ export const formatMoneyVND = (amount) => {
   } catch (error) {
     return 0
   }
-
 };
 
 export function isValidDate(date: any) {
@@ -56,12 +55,31 @@ export const convertPayloadToQueryString = (payload: object = {}) => {
 };
 
 export const formatTime = (dates: string) => {
-  var date = dates.split('T')[0]?.split('-')
-  var time = dates.split('T')[1]?.split(':')
-  if (date) {
-    return `${time[0]}:${time[1]} - ${date[2]}/${date[1]}/${date[0]}`
+  try {
+    var date = dates.split('T')[0]?.split('-')
+
+    var time = dates.split('T')[1]?.split(':')
+    if (date) {
+      return `${time[0]}:${time[1]} - ${date[2]}/${date[1]}/${date[0]}`
+    }
+  } catch (error) {
+    console.log(error);
+    return ''
   }
-  return ''
+}
+
+export const formatTime1 = (dates: string) => {
+  try {
+    var date = dates.split('T')[0]?.split('-')
+
+    var time = dates.split('T')[1]?.split(':')
+    if (date) {
+      return ` ${date[2]}/${date[1]}/${date[0]}`
+    }
+  } catch (error) {
+    console.log(error);
+    return ''
+  }
 }
 
 export const formatTimeSql = (dates: string) => {
@@ -209,6 +227,22 @@ export const formatDate2 = (date: Date) => {
     let day = date.getDate().toString().padStart(2, '0');
 
     return `${day}/${month}/${year}`;
+  } catch {
+    return ''
+  }
+}
+
+export const formatDateByTime = (date: Date) => {
+  try {
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+    let seconds = date.getSeconds().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
   } catch {
     return ''
   }
