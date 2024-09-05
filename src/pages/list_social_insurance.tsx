@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "../components/header_base";
 import { SpecificContext } from "../components/specific_context";
 import logo from "../../assets-src/logo1.png";
@@ -9,6 +9,7 @@ const ListSocialInsurance = () => {
   const specificContext = useContext<any>(SpecificContext);
   const [insurance, setInsurance] = useState<any>();
   const { insuranceOrder, setInsuranceOrder } = specificContext;
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -185,7 +186,7 @@ const ListSocialInsurance = () => {
 
 
   return (
-    <div className="">
+    <div >
       <HeaderBase isHome={false} title={"BHXH tự nguyện"} />
       <div className="px-4 mt-8 pt-[68px] gap-[16px] py-[24px] flex flex-col ">
 
@@ -283,11 +284,30 @@ const ListSocialInsurance = () => {
               })}
             </div>
 
-            <div className="flex flex-row justify-between items-center gap-[10px] my-4 ">
+            <div className="flex flex-row justify-between items-center gap-[10px] my-2 ">
+              <button type="button"
+                onClick={() => {
+                  navigate("/product-detail/" + 1001)
+                }}
+                className="px-[10px] py-3 w-[46%] rounded-full bg-[#DEE7FE] text-[15px] font-medium text-[#0076B7]"
+              >
+                Xem chi tiết
+              </button>
+              <button type="button"
+                onClick={() => {
+                  navigate('/register-BHXH')
+                }}
+                className="px-[10px] py-3 w-[46%] rounded-full bg-[#0076B7] text-[15px] font-medium text-[#fff]"
+              >
+                Mua ngay
+              </button>
+            </div>
+
+            {/* <div className="flex flex-row justify-between items-center my-4 ">
               <div>
                 <Link
                   to={"/product-detail/" + 1001}
-                  className="px-[38px] py-3 rounded-full bg-[#DEE7FE] text-[15px] font-medium text-[#0076B7]"
+                  className="px-[25px] py-3 rounded-full bg-[#DEE7FE] text-[15px] font-medium text-[#0076B7]"
                 >
                   Xem chi tiết
                 </Link>
@@ -295,12 +315,12 @@ const ListSocialInsurance = () => {
               <div>
                 <Link
                   to={"/register-BHXH"}
-                  className="px-[38px] py-3 rounded-full bg-[#0076B7] text-[15px] font-medium text-[#fff]"
+                  className="px-[25px] py-3 rounded-full bg-[#0076B7] text-[15px] font-medium text-[#fff]"
                 >
                   Mua ngay
                 </Link>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

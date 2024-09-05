@@ -78,6 +78,7 @@ const RegisterBHYT = ({ }) => {
       selectedKSWard: React.createRef(),
       selectedKSDistrict: React.createRef(),
       selectedKSProvince: React.createRef(),
+      benefitLevel: React.createRef(),
     }
   )
 
@@ -139,6 +140,7 @@ const RegisterBHYT = ({ }) => {
       "ksDiaChi": "",
       "ethnicId": 0,
       "vungLuongToiThieuId": 0,
+      "benefitLevel": ""
     }
 
     registerInfoBHYT['listInsuredPerson'].push(itemBeneficiary)
@@ -156,6 +158,10 @@ const RegisterBHYT = ({ }) => {
       "ethnicId": 0,
       "relationShipId": "",
       "citizenId": "",
+      "ksProvinceId": 0,
+      "ksDistrictId": 0,
+      "ksWardId": 0,
+      "ksAddressDetail": ""
     }
 
     registerInfoBHYT["houseHold"]['houseHoldPeoples'].push(itemMember)
@@ -653,6 +659,15 @@ const RegisterBHYT = ({ }) => {
         scrollToElement(beneficiaries[index].vungLuongToiThieuId, 2)
         return false;
       }
+
+      if (registerInfoBHYT['listInsuredPerson'][index].benefitLevel == "") {
+        toast.warn(
+          "Mức hưởng không được để trống",
+        );
+        scrollToElement(beneficiaries[index].benefitLevel, 2)
+        return false;
+      }
+
 
       if (registerInfoBHYT['listInsuredPerson'][index].ksTinhThanhMa == 0) {
         toast.warn(

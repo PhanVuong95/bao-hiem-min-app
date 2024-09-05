@@ -937,11 +937,11 @@ const RegisterBHXH = (props) => {
       return false;
     }
 
-    if (benefitLevel == "") {
-      toast.warn("Mức hưởng không được để trống");
-      scrollToElement(participantRefs.benefitLevelParticipant)
-      return false;
-    }
+    // if (benefitLevel == "") {
+    //   toast.warn("Mức hưởng không được để trống");
+    //   scrollToElement(participantRefs.benefitLevelParticipant)
+    //   return false;
+    // }
 
     if (selectedMedicalByProvinceParticipant == 0) {
       toast.warn("Tỉnh thành khám chữa bệnh không được để trống");
@@ -2846,7 +2846,7 @@ const RegisterBHXH = (props) => {
     )
   }
 
-  console.log(insuranceOrder);
+  // console.log(insuranceOrder);
 
 
   const buttonAddMember = () => {
@@ -2979,7 +2979,7 @@ const RegisterBHXH = (props) => {
           {inputAreaSalaryParticipants()}
 
           {/* Mức hưởng */}
-          {inputBenefitLevelParticipants()}
+          {/* {inputBenefitLevelParticipants()} */}
 
           {/* Tỉnh thành khám chữa bệnh */}
           {inputMedicalByProvinceParticipants()}
@@ -3611,7 +3611,7 @@ const RegisterBHXH = (props) => {
           isOpen={isUploadingPhotoCitizenFont || isUploadingPhotoCitizenBack || loading}
           style={styleModal}
         >
-          <div className="w-[100%] h-[100%] relative flex justify-center items-center">
+          <div className="w-[400px] h-[750px] relative flex justify-center items-center">
             <FadeLoader height={10} width={3} loading={true} color="#ffffff" />
           </div>
         </Modal>

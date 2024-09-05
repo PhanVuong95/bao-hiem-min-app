@@ -55,7 +55,7 @@ const CheckStatusProcedure = () => {
 
   const headerContent = () => {
     let date = new Date(detail?.ketQuaTiepNhanHoSoResponse?.lastModifiedDate)
-    date.setHours(date.getHours() + 7)
+    date.setHours(date.getHours())
 
     return (
       <div className="p-4">
@@ -65,12 +65,23 @@ const CheckStatusProcedure = () => {
 
         <div className="flex justify-between mt-4">
           <div className="text-[#646464]">
+            Sổ hồ sơ
+          </div>
+          <div className="text-[#2E2E2E] font-medium">
+            {detail?.ketQuaTiepNhanHoSoResponse?.soHoSo}
+          </div>
+        </div>
+
+        <div className="flex justify-between mt-4">
+          <div className="text-[#646464]">
             Mã kết quả
           </div>
           <div className="text-[#2E2E2E] font-medium">
             {detail?.ketQuaTiepNhanHoSoResponse?.ketQuaMa}
           </div>
         </div>
+
+
 
         <div className="flex justify-between mt-4">
           <div className="text-[#646464]">

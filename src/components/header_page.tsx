@@ -5,10 +5,10 @@ const HeaderPage: React.FunctionComponent = (props) => {
   const location = useLocation();
 
   return (
-    <div className="header-page fixed bottom-0 flex justify-between items-center px-4 h-m-[101px] py-[22px] gap-4 bg-white">
+    <div className="header-page fixed bottom-0 flex justify-between items-center px-3 py-4 gap-3 bg-white">
       <Link
         to="/"
-        className="flex flex-col justify-center items-center gap-1 max-w-[122px] w-full"
+        className="flex flex-col justify-center items-center gap-1 w-full"
       >
         {location.pathname === "/" ? (
           <svg
@@ -38,7 +38,7 @@ const HeaderPage: React.FunctionComponent = (props) => {
           </svg>
         )}
 
-        <p>Trang chủ</p>
+        <p className={location.pathname === "/" ? 'text-[#0076B7] font-normal' : 'text-[#8C8C8C] font-normal'}>Trang chủ</p>
       </Link>
 
       <Link
@@ -86,7 +86,7 @@ const HeaderPage: React.FunctionComponent = (props) => {
           </svg>
         )}
 
-        <p>Hợp đồng</p>
+        <p className={location.pathname === "/contract" ? 'text-[#0076B7] font-normal' : 'text-[#8C8C8C] font-normal'}>Hợp đồng</p>
       </Link>
 
       <Link
@@ -125,7 +125,7 @@ const HeaderPage: React.FunctionComponent = (props) => {
           </svg>
         )}
 
-        <p>Hoạt động</p>
+        <p className={location.pathname === "/history" ? 'text-[#0076B7] font-normal' : 'text-[#8C8C8C] font-normal'}>Hoạt động</p>
       </Link>
 
       <Link
@@ -161,7 +161,7 @@ const HeaderPage: React.FunctionComponent = (props) => {
             />
           </svg>
         )}
-        <p>Cá nhân</p>
+        <p className={location.pathname === "/user" ? 'text-[#0076B7] font-normal' : 'text-[#8C8C8C] font-normal'}>Cá nhân</p>
       </Link>
     </div>
   );

@@ -26,6 +26,8 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
 
+        console.log(response.data.data[0]);
+
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
 
@@ -146,6 +148,19 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
     }
   }
 
+  const headerStatus = () => {
+    return (
+      <div
+        className={`bg-[${renderBackground()}] py-[12px] px-4 flex flex-row items-center justify-between`}
+      >
+        <p className="text-white text-sm font-normal">Trạng thái</p>
+        <p className="text-white text-sm font-semibold">
+          {orderDetail.insuranceOrderStatusName}
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div>
       <HeaderBase
@@ -154,16 +169,11 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         title={"Thông tin chi tiết"}
       />
       <div className="pt-20 relative">
-        <div
-          className={`bg-[${renderBackground()}] py-[12px] px-4 flex flex-row items-center justify-between`}
-        >
-          <p className="text-white text-sm font-normal">Trạng thái</p>
-          <p className="text-white text-sm font-semibold">
-            {orderDetail.insuranceOrderStatusName}
-          </p>
-        </div>
+        {headerStatus()}
+
         <div className="page-1 flex flex-col gap-4 mb-4">
           <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
+
             <div className="flex justify-between items-center">
               <h3 className="text-base font-medium text-[#0076B7]">
                 Người mua bảo hiểm
@@ -182,6 +192,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 <></>
               )}
             </div>
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">
@@ -194,6 +205,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Họ và tên</p>
@@ -204,7 +216,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Email</p>
@@ -215,7 +227,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">
@@ -228,7 +240,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Địa chỉ</p>
@@ -240,13 +252,13 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
-
+            {/* --------------------------------------------- */}
             <h3 className="text-base font-medium text-[#0076B7]">
               Thông tin người được bảo hiểm
             </h3>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Họ và tên</p>
@@ -257,7 +269,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Số CCCD</p>
@@ -268,7 +280,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Số BHXH</p>
@@ -279,18 +291,18 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Ngày sinh</p>
               </div>
               <div>
                 <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                  {formatDateString(insuredPerson.doB)}
+                  {insuredPerson.doB}
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Giới tính</p>
@@ -301,7 +313,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">Mức lương</p>
@@ -312,7 +324,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">
@@ -325,7 +337,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">
@@ -338,7 +350,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
-
+            {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
               <div>
                 <p className="text-[#646464] text-sm font-normal">
@@ -351,8 +363,46 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </p>
               </div>
             </div>
+
+            {/* <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr> */}
+            {/* --------------------------------------------- */}
+            {/* <h3 className="text-base font-medium text-[#0076B7]">
+              Thông tin hộ gia đình
+            </h3> */}
+
+            {/* --------------------------------------------- */}
+            {/* <div className="flex flex-row justify-between w-full">
+              <div>
+                <p className="text-[#646464] text-sm font-normal">
+                  Tên chủ hộ
+                </p>
+              </div>
+              <div>
+                <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
+                  {orderDetail.houseHold.chuHoTen}
+                </p>
+              </div>
+            </div> */}
+
+            {/* --------------------------------------------- */}
+            {/* <div className="flex flex-row justify-between w-full">
+              <div>
+                <p className="text-[#646464] text-sm font-normal">
+                  Tên chủ hộ
+                </p>
+              </div>
+              <div>
+                <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
+                  {orderDetail.houseHold.chuHoTen}
+                </p>
+              </div>
+            </div> */}
           </div>
-          <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-24">
+
+
+
+          {/* --------------------------------------------- */}
+          <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-[30%]">
             <h3 className="text-[#0076B7] text-lg font-medium">
               Danh mục sản phẩm
             </h3>
@@ -401,6 +451,8 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
             </div>
           </div>
         </div>
+
+
         {!(orderStatusId == CANCELED || orderStatusId == DONE) && (
           <div className="page-2 bg-white fixed bottom-0 w-[100%]">
             <div className="flex flex-col gap-3">

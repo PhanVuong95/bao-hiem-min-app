@@ -15,6 +15,7 @@ import Modal from 'react-modal';
 import Lottie from "lottie-react";
 import lottieScanQR from "../../assets-src/lottie_scan_qr.json";
 import { motion } from 'framer-motion';
+import { BenefitLevevlList } from "../utils/constants";
 
 dayjs.locale('vi');
 dayjs.extend(customParseFormat);
@@ -99,6 +100,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [ttAddressDetail, setTTAddressDetail] = useState<string>(registerInfoBHYT["listInsuredPerson"][index].addressDetail);
   const [vungLuongToiThieuId, setVungLuongToiThieuId] = useState(registerInfoBHYT["listInsuredPerson"][index].vungLuongToiThieuId);
   const [vungLuongToiThieuList, setVungLuongToiThieuList] = useState([]);
+  const [benefitLevel, setBenefitLevel] = useState(registerInfoBHYT["listInsuredPerson"][index].benefitLevel);
+  const [isShowModalbenefitLevel, setIsShowModalbenefitLevel] = useState(false)
+
   const [temp, setTemp] = useState(false);
 
   const calculatePrice = () => {
@@ -409,7 +413,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
               }
             }}
             className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Nhập số BHYT"
+            placeholder="Nhập số BHXH"
             required
           />
 
@@ -1185,7 +1189,14 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <Select
           size="large"
           className="w-[100%]"
-          dropdownStyle={{ maxWidth: '300px' }}
+          dropdownStyle={{
+            maxWidth: '300px',
+          }}
+          style={{
+            fontSize: "20px",
+            border: "none",
+            wordWrap: "break-word"
+          }}
           showSearch
           ref={refs.hospitalId}
           virtual={false}
@@ -1567,6 +1578,91 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     )
   }
 
+  const inputBenefitLevelParticipants = () => {
+    return (
+      <div>
+        <label className="block text-sm font-normal text-gray-900 pb-2">
+          Mức hưởng <samp className="text-red-600">*</samp>
+        </label>
+        <Select
+          size="large"
+          className="w-[100%]"
+          showSearch
+          ref={refs.benefitLevel}
+          dropdownMatchSelectWidth={false}
+          dropdownStyle={{
+            maxWidth: '300px',
+
+          }}
+          placeholder="Mức hưởng"
+          value={benefitLevel}
+          key={benefitLevel}
+          onChange={(value: any) => {
+            setBenefitLevel(value);
+
+            registerInfoBHYT["listInsuredPerson"][index].benefitLevel = value
+
+          }}
+          filterOption={(input, option) =>
+            (option?.label ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+          options={[
+            { value: "", label: "Chọn mức hưởng" },
+            { value: "1", label: "Mức 1" },
+            { value: "2", label: "Mức 2" },
+            { value: "3", label: "Mức 3" },
+            { value: "4", label: "Mức 4" },
+            { value: "5", label: "Mức 5" },
+          ]}
+        />
+
+        <button
+          onClick={() => {
+            setIsShowModalbenefitLevel(!isShowModalbenefitLevel);
+          }}
+
+          className="text-blue-600 mt-2 underline" type="button">Chi tiết mức hưởng</button>
+
+        <Modal
+          isOpen={isShowModalbenefitLevel}
+          onRequestClose={() => setIsShowModalbenefitLevel(false)}
+          style={{
+            content: {
+              top: '50%',
+              left: '50%',
+              right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              border: 'none',
+              padding: 0,
+              width: '90%',
+              height: '75%',
+              overflow: 'auto',
+            },
+            overlay: {
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            },
+          }}
+        >
+          <div className="p-4 w-[100%] relative bg-white">
+            {
+              BenefitLevevlList.map((item) => (
+                <div>
+                  <div className="pb-2 text-blue-600  text-lg font-normal">- Mức hưởng số {item?.value}</div>
+                  <div className="pb-2 text-justify">{item?.label}</div>
+                </div>
+              ))
+            }
+          </div>
+        </Modal>
+      </div>
+    )
+  }
+
   return (
     <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
       {renderHeader()}
@@ -1627,6 +1723,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
       {/* Vùng lương tôi thiểu */}
       {inputAreaSalaryParticipants()}
+
+      {/* Mức hưởng */}
+      {inputBenefitLevelParticipants()}
 
       {renderLine()}
 
