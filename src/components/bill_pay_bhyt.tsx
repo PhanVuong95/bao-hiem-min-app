@@ -89,7 +89,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {billPay?.email ? billPay?.email.trim() : "Đang tải"}
+              {billPay?.email ? billPay?.email.trim() : ""}
             </p>
           </div>
         </div>

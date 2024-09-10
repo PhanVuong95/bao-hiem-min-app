@@ -103,7 +103,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           obj["photoCitizenFront"] = isValidString(item["photoCitizenFront"]);
           obj["photoCitizenBack"] = isValidString(item["photoCitizenBack"]);
           obj["fullName"] = isValidString(item["fullName"]);
-          obj["doB"] = formatDate(item["doB"]);
+          obj["doB"] = item["doB"];
           obj["gender"] = item["gender"];
           obj["wage"] = item["wage"];
           obj["monthInsured"] = formatDate(item["monthInsured"]);
@@ -252,7 +252,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {!isValidEmptyString(item?.doB) ? "Chưa cập nhật" : formatDate(item?.doB.trim())}
+              {!isValidEmptyString(item?.doB) ? "Chưa cập nhật" : item?.doB.trim()}
             </p>
           </div>
         </div>
