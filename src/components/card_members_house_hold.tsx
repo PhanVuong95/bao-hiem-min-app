@@ -30,7 +30,7 @@ const CardMembersHouseHold = (props: Props) => {
   const [selectedMemberWard, setSelectedMemberWard] = useState(registerInfoBHYT.houseHold.houseHoldPeoples[index].ksWardId);
   const [addressDetailMember, setAddressDetailMember] = useState<string>(registerInfoBHYT.houseHold.houseHoldPeoples[index].ksAddressDetail);
 
-  const [temp, setTemp] = useState(false);
+  const [temp, setTemp] = useState(0);
 
   // Cập nhập danh sách quận huyện hộ gia đình
   useEffect(() => {
@@ -43,11 +43,11 @@ const CardMembersHouseHold = (props: Props) => {
         .then((response) => {
           memberDistricts.current = response.data.data;
           memberWards.current = [];
-          setTemp(!temp);
+          setTemp(Math.random());
         })
         .catch((error) => {
           memberDistricts.current = [];
-          setTemp(!temp);
+          setTemp(Math.random());
           console.error(error);
         });
     }
@@ -66,11 +66,11 @@ const CardMembersHouseHold = (props: Props) => {
         )
         .then((response) => {
           memberWards.current = response.data.data;
-          setTemp(!temp)
+          setTemp(Math.random())
         })
         .catch((error) => {
           memberWards.current = []
-          setTemp(!temp);
+          setTemp(Math.random());
           console.error(error);
         });
     }

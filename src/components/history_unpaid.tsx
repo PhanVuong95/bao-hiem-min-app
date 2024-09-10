@@ -60,12 +60,43 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         storeage.listInsuredPerson[0].doB = formatDate(storeage.listInsuredPerson[0].doB)
         delete storeage.listInsuredPerson[0].medicalProvinceName
 
-        storeage.houseHold.houseHoldPeoples.map(item => {
-          delete item.createdTime;
-          return item;
-        });
+        if (storeage.houseHold != null) {
+          storeage.houseHold.houseHoldPeoples.map(item => {
+            delete item.createdTime;
+            return item;
+          });
+        } else {
+          storeage.houseHold = {
+            "id": 0,
+            "chuHoTen": "",
+            "ksProvinceId": 0,
+            "ksDistrictId": 0,
+            "ksWardId": 0,
+            "ksAddressDetail": "",
+            "hkAddressDetail": "",
+            "soGiayToCaNhan": "",
+            "ttProvinceId": 0,
+            "ttDistrictId": 0,
+            "ttWardId": 0,
+            "houseHoldPeoples": [
+              {
+                "id": 0,
+                "name": "",
+                "doB": "",
+                "gender": "",
+                "ethnicId": 0,
+                "relationShipId": "",
+                "citizenId": "",
+                "ksProvinceId": 0,
+                "ksDistrictId": 0,
+                "ksWardId": 0,
+                "ksAddressDetail": ""
+              }
+            ]
+          }
+        }
 
-        // console.log(storeage);
+        console.log("user", storeage);
 
         setInsuranceOrder(storeage);
       })

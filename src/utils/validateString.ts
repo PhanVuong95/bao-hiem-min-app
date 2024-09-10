@@ -247,3 +247,19 @@ export const formatDateByTime = (date: Date) => {
     return ''
   }
 }
+
+export const convertListToSelectObjectTypeGroupList = (data) => {
+  let list: typeSelect[] = [];
+  data.forEach(element => {
+    list.push({ value: element.id, label: element.nhomLoaiDoiTuongTen });
+  });
+  return list
+}
+
+export const convertListToSelectObjectTypeGroup = (data) => {
+  let list: typeSelect[] = [];
+  data.forEach(element => {
+    list.push({ value: element.id, label: element.doiTuongTen });
+  });
+  return list
+}

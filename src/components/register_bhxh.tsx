@@ -18,7 +18,7 @@ import {
   isValidPhone,
 } from "../utils/validateString";
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
-import { Input, Select, DatePicker } from "antd";
+import { Input, Select, DatePicker, Checkbox } from "antd";
 import dayjs from "dayjs";
 import "../locale/vi";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -200,6 +200,8 @@ const RegisterBHXH = (props) => {
     selectedBuyerWard: useRef<any>(null),
     buyerAddressDetail: useRef<any>(null),
   }
+
+  const [isHadBHXH, setIsHadBHXH] = useState(false);
 
   // Load lại tất cả danh sách tỉnh thành
   useEffect(() => {
@@ -519,6 +521,7 @@ const RegisterBHXH = (props) => {
   }, [])
 
 
+
   // Update BHXH
   useEffect(() => {
     if (insuranceOrder.id != 0) {
@@ -536,7 +539,8 @@ const RegisterBHXH = (props) => {
 
       // Set thông tin người tham giá BHXH tự nguyện
       const fetchData = async () => {
-        const [response1, response2, response3, response4, response5, response6, response7, response8, response9, response10, response11] = await Promise.all([
+
+        const [response1, response2, response3, response4, response5, response6, response7] = await Promise.all([
           axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id1}`),
           axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id2}`),
 
@@ -548,12 +552,6 @@ const RegisterBHXH = (props) => {
 
           axios.get(`https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${id7}`),
 
-          axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id8}`),
-          axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id9}`),
-
-
-          axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id10}`),
-          axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id11}`),
         ]);
 
         buyerDistricts.current = response1.data.data;
@@ -567,11 +565,28 @@ const RegisterBHXH = (props) => {
 
         infoInsuranceHospital.current = response7.data.data;
 
-        householdDistricts.current = response8.data.data;
-        householdWards.current = response9.data.data;
+        if (insuranceOrder.houseHold.soGiayToCaNhan != "") {
+          const [response8, response9, response10, response11] = await Promise.all([
+            axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id8}`),
+            axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id9}`),
 
-        householdTTDistricts.current = response10.data.data;
-        householdTTWards.current = response11.data.data;
+
+            axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id10}`),
+            axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id11}`),
+          ]);
+
+          console.log("Aaa");
+
+          householdDistricts.current = response8.data.data;
+          householdWards.current = response9.data.data;
+
+          householdTTDistricts.current = response10.data.data;
+          householdTTWards.current = response11.data.data;
+        } else {
+          insuranceOrder.houseHold.soGiayToCaNhan = ""
+        }
+
+        setIsHadBHXH(insuranceOrder.houseHold.soGiayToCaNhan == "" ? true : false)
 
         // Người tham gia
         setPersonName(insuranceOrder.listInsuredPerson[0].fullName);
@@ -600,16 +615,18 @@ const RegisterBHXH = (props) => {
         setSelectedMedicalByHospitalParticipant(insuranceOrder.listInsuredPerson[0].hospitalId)
 
         //Thông tin chủ hộ 
-        setFullNamHouseHoldParticipant(insuranceOrder.houseHold.chuHoTen)
-        setSelectedHouseholdProvince(insuranceOrder.houseHold.ksProvinceId)
-        setSelectedHouseholdDistrict(insuranceOrder.houseHold.ksDistrictId)
-        setSelectedHouseholdWard(insuranceOrder.houseHold.ksWardId)
-        setAddressDetailHouseHoldParticipant(insuranceOrder.houseHold.ksAddressDetail)
-        setAddressDetailHKHouseHoldParticipant(insuranceOrder.houseHold.hkAddressDetail)
-        setCCCDHouseHoldParticipant(insuranceOrder.houseHold.soGiayToCaNhan)
-        setSelectedTTHouseholdProvince(insuranceOrder.houseHold.ttProvinceId)
-        setSelectedTTHouseholdDistrict(insuranceOrder.houseHold.ttDistrictId)
-        setSelectedTTHouseholdWard(insuranceOrder.houseHold.ttWardId)
+        if (insuranceOrder.houseHold.soGiayToCaNhan != "") {
+          setFullNamHouseHoldParticipant(insuranceOrder.houseHold.chuHoTen)
+          setSelectedHouseholdProvince(insuranceOrder.houseHold.ksProvinceId)
+          setSelectedHouseholdDistrict(insuranceOrder.houseHold.ksDistrictId)
+          setSelectedHouseholdWard(insuranceOrder.houseHold.ksWardId)
+          setAddressDetailHouseHoldParticipant(insuranceOrder.houseHold.ksAddressDetail)
+          setAddressDetailHKHouseHoldParticipant(insuranceOrder.houseHold.hkAddressDetail)
+          setCCCDHouseHoldParticipant(insuranceOrder.houseHold.soGiayToCaNhan)
+          setSelectedTTHouseholdProvince(insuranceOrder.houseHold.ttProvinceId)
+          setSelectedTTHouseholdDistrict(insuranceOrder.houseHold.ttDistrictId)
+          setSelectedTTHouseholdWard(insuranceOrder.houseHold.ttWardId)
+        }
 
         // Người mua
         setPhone(insuranceOrder.phone);
@@ -752,6 +769,9 @@ const RegisterBHXH = (props) => {
     setIsUploadingPhotoCitizenFont(false);
   };
 
+  console.log(insuranceOrder);
+
+
   const updateBackCitizenPhoto = (img) => {
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
@@ -839,18 +859,6 @@ const RegisterBHXH = (props) => {
     } else if (citizenId.length != 12) {
       toast.warn("Số căn cước công dân phải là 12 chữ số");
       scrollToElement(participantRefs.cccdParticipant)
-      return false;
-    }
-
-    if (
-      !(
-        socialInsuranceId.length == 0 ||
-        socialInsuranceId.length == 10 ||
-        socialInsuranceId.length == 15
-      )
-    ) {
-      toast.warn("Số BHXH bao gồm 10 hoặc 15 ký tự, vui lòng nhập lại");
-      scrollToElement(participantRefs.bhxhParticipant)
       return false;
     }
 
@@ -954,131 +962,144 @@ const RegisterBHXH = (props) => {
       scrollToElement(participantRefs.hospitalExaminationParticipant)
       return false;
     }
-
-    if (fullNamHouseHoldParticipant == "") {
-      toast.warn("Họ tên chủ hộ không được để trống");
-      scrollToElement(participantRefs.fullNamHouseHoldParticipant)
-      return false;
-    }
-
-    if (cccdHouseHoldParticipant == "") {
-      toast.warn("Số CCCD chủ hộ không đượuc để trống");
-      scrollToElement(participantRefs.cccdHouseHoldParticipant)
-      return false;
-    } else if (cccdHouseHoldParticipant.length != 12) {
-      toast.warn("Số căn cước công dân phải là 12 chữ số");
-      scrollToElement(participantRefs.cccdHouseHoldParticipant)
-      return false;
-    }
-
-    if (selectedHouseholdProvince == 0) {
-      toast.warn("Thành phố khai sinh của chủ hộ không được để trống");
-      scrollToElement(participantRefs.provinceHouseHoldParticipant)
-      return false;
-    }
-
-    if (selectedHouseholdDistrict == 0) {
-      toast.warn("Quận huyện khai sinh của chủ hộ không được để trống");
-      scrollToElement(participantRefs.districtHouseHoldParticipant)
-      return false;
-    }
-
-    if (selectedHouseholdWard == 0) {
-      toast.warn("Phường xã khai sinh của chủ hộ không được để trống");
-      scrollToElement(participantRefs.wardHouseHoldParticipant)
-      return false;
-    }
-
-    if (addressDetailHouseHoldParticipant == "") {
-      toast.warn("Địa chỉ cụ thể khai sinh của chủ hộ không được để trống");
-      scrollToElement(participantRefs.addressDetailHouseHoldParticipant)
-      return false;
-    }
-
-    if (selectedTTHouseholdProvince == 0) {
-      toast.warn("Thành phố thường trú của chủ hộ không được để trống");
-      scrollToElement(participantRefs.ttProvinceHouseHoldParticipant)
-      return false;
-    }
-
-    if (selectedTTHouseholdDistrict == 0) {
-      toast.warn("Quận huyện thường trú của chủ hộ không được để trống");
-      scrollToElement(participantRefs.ttDistrictHouseHoldParticipant)
-      return false;
-    }
-
-    if (selectedTTHouseholdWard == 0) {
-      toast.warn("Phường xã thường trú của chủ hộ không được để trống");
-      scrollToElement(participantRefs.ttWardHouseHoldParticipant)
-      return false;
-    }
-
-    if (addressDetailHKHouseHoldParticipant == "") {
-      toast.warn("Địa chỉ cụ thể hộ khẩu của chủ hộ không được để trống");
-      scrollToElement(participantRefs.addressDetailHKHouseHoldParticipant)
-      return false;
-    }
-
-    for (let index = 0; index < insuranceOrder.houseHold.houseHoldPeoples.length; index++) {
-      const intem = insuranceOrder.houseHold.houseHoldPeoples[index];
-      if (intem.citizenId == "") {
-        toast.warn("Số CCCD của thành viên không được để trống");
-        scrollToElement(members[index].citizenId)
+    if (isHadBHXH) {
+      if (
+        !(
+          socialInsuranceId.length == 0 ||
+          socialInsuranceId.length == 10 ||
+          socialInsuranceId.length == 15
+        )
+      ) {
+        toast.warn("Số BHXH bao gồm 10 hoặc 15 ký tự, vui lòng nhập lại");
+        scrollToElement(participantRefs.bhxhParticipant)
+        return false;
+      }
+    } else {
+      if (fullNamHouseHoldParticipant == "") {
+        toast.warn("Họ tên chủ hộ không được để trống");
+        scrollToElement(participantRefs.fullNamHouseHoldParticipant)
         return false;
       }
 
-      if (!isValidCitizenId(intem.citizenId)) {
+      if (cccdHouseHoldParticipant == "") {
+        toast.warn("Số CCCD chủ hộ không đượuc để trống");
+        scrollToElement(participantRefs.cccdHouseHoldParticipant)
+        return false;
+      } else if (cccdHouseHoldParticipant.length != 12) {
         toast.warn("Số căn cước công dân phải là 12 chữ số");
-        scrollToElement(members[index].citizenId)
+        scrollToElement(participantRefs.cccdHouseHoldParticipant)
         return false;
       }
 
-      if (intem.ethnicId == 0) {
-        toast.warn("Vui lòng chọn dân tộc");
-        scrollToElement(members[index].ethnicId)
+      if (selectedHouseholdProvince == 0) {
+        toast.warn("Thành phố khai sinh của chủ hộ không được để trống");
+        scrollToElement(participantRefs.provinceHouseHoldParticipant)
         return false;
       }
 
-      if (intem.gender == "") {
-        toast.warn("Vui lòng chọn giới tính");
-        scrollToElement(members[index].gender)
+      if (selectedHouseholdDistrict == 0) {
+        toast.warn("Quận huyện khai sinh của chủ hộ không được để trống");
+        scrollToElement(participantRefs.districtHouseHoldParticipant)
         return false;
       }
 
-      if (intem.name == "") {
-        toast.warn("Họ và tên thành viên không được để trống");
-        scrollToElement(members[index].name)
+      if (selectedHouseholdWard == 0) {
+        toast.warn("Phường xã khai sinh của chủ hộ không được để trống");
+        scrollToElement(participantRefs.wardHouseHoldParticipant)
         return false;
       }
 
-      if (intem.relationShipId == "") {
-        toast.warn("Mối quan hệ với thành viên không được để trống");
-        scrollToElement(members[index].relationShipId)
+      if (addressDetailHouseHoldParticipant == "") {
+        toast.warn("Địa chỉ cụ thể khai sinh của chủ hộ không được để trống");
+        scrollToElement(participantRefs.addressDetailHouseHoldParticipant)
         return false;
       }
 
-      if (intem.doB == "") {
-        toast.warn("Ngày sinh của thành viên không được để trống");
-        scrollToElement(members[index].doB)
+      if (selectedTTHouseholdProvince == 0) {
+        toast.warn("Thành phố thường trú của chủ hộ không được để trống");
+        scrollToElement(participantRefs.ttProvinceHouseHoldParticipant)
         return false;
       }
 
-      if (intem.ksProvinceId == 0) {
-        toast.warn("Tỉnh thành phố khai sinh không được để trống");
-        scrollToElement(members[index].ksProvinceId)
+      if (selectedTTHouseholdDistrict == 0) {
+        toast.warn("Quận huyện thường trú của chủ hộ không được để trống");
+        scrollToElement(participantRefs.ttDistrictHouseHoldParticipant)
         return false;
       }
 
-      if (intem.ksDistrictId == 0) {
-        toast.warn("Quận huyện khai sinh không được để trống");
-        scrollToElement(members[index].ksDistrictId)
+      if (selectedTTHouseholdWard == 0) {
+        toast.warn("Phường xã thường trú của chủ hộ không được để trống");
+        scrollToElement(participantRefs.ttWardHouseHoldParticipant)
         return false;
       }
 
-      if (intem.ksWardId == 0) {
-        toast.warn("Phường xã khai sinh không được để trống");
-        scrollToElement(members[index].ksWardId)
+      if (addressDetailHKHouseHoldParticipant == "") {
+        toast.warn("Địa chỉ cụ thể hộ khẩu của chủ hộ không được để trống");
+        scrollToElement(participantRefs.addressDetailHKHouseHoldParticipant)
         return false;
+      }
+
+      for (let index = 0; index < insuranceOrder.houseHold.houseHoldPeoples.length; index++) {
+        const intem = insuranceOrder.houseHold.houseHoldPeoples[index];
+        if (intem.citizenId == "") {
+          toast.warn("Số CCCD của thành viên không được để trống");
+          scrollToElement(members[index].citizenId)
+          return false;
+        }
+
+        if (!isValidCitizenId(intem.citizenId)) {
+          toast.warn("Số căn cước công dân phải là 12 chữ số");
+          scrollToElement(members[index].citizenId)
+          return false;
+        }
+
+        if (intem.ethnicId == 0) {
+          toast.warn("Vui lòng chọn dân tộc");
+          scrollToElement(members[index].ethnicId)
+          return false;
+        }
+
+        if (intem.gender == "") {
+          toast.warn("Vui lòng chọn giới tính");
+          scrollToElement(members[index].gender)
+          return false;
+        }
+
+        if (intem.name == "") {
+          toast.warn("Họ và tên thành viên không được để trống");
+          scrollToElement(members[index].name)
+          return false;
+        }
+
+        if (intem.relationShipId == "") {
+          toast.warn("Mối quan hệ với thành viên không được để trống");
+          scrollToElement(members[index].relationShipId)
+          return false;
+        }
+
+        if (intem.doB == "") {
+          toast.warn("Ngày sinh của thành viên không được để trống");
+          scrollToElement(members[index].doB)
+          return false;
+        }
+
+        if (intem.ksProvinceId == 0) {
+          toast.warn("Tỉnh thành phố khai sinh không được để trống");
+          scrollToElement(members[index].ksProvinceId)
+          return false;
+        }
+
+        if (intem.ksDistrictId == 0) {
+          toast.warn("Quận huyện khai sinh không được để trống");
+          scrollToElement(members[index].ksDistrictId)
+          return false;
+        }
+
+        if (intem.ksWardId == 0) {
+          toast.warn("Phường xã khai sinh không được để trống");
+          scrollToElement(members[index].ksWardId)
+          return false;
+        }
       }
     }
 
@@ -2846,8 +2867,6 @@ const RegisterBHXH = (props) => {
     )
   }
 
-  // console.log(insuranceOrder);
-
 
   const buttonAddMember = () => {
     return (
@@ -2916,9 +2935,6 @@ const RegisterBHXH = (props) => {
 
           {/* Số CCCCD */}
           {inputCCCDParticipants()}
-
-          {/* Số BHXH */}
-          {inputBHXHParticipants()}
 
           {/* Ngày sinh */}
           {inputDobParticipants()}
@@ -2993,70 +3009,127 @@ const RegisterBHXH = (props) => {
           {/* Mức đóng / Hệ số đóng */}
           {inputClosingRateParticipants()}
 
-          <h3 className="text-base font-semibold text-[#0076B7]">
-            Thông tin hộ gia đình{" "}
-          </h3>
+          <Checkbox
+            checked={isHadBHXH}
+            onChange={(e) => {
+              if (isHadBHXH) {
+                setSocialInsuranceId("")
 
-          {/* Họ tên chủ hộ */}
-          {inputFullNamHouseHoldParticipants()}
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  listInsuredPerson: prevOrder.listInsuredPerson.map(
+                    (person, index) =>
+                      index === 0
+                        ? { ...person, socialInsuranceNumber: "" }
+                        : person
+                  ),
+                }));
 
-          {/* Số CCCD */}
-          {inputCCCDHouseHoldParticipants()}
-
-          {/* Tỉnh thành khai sinh */}
-          {inputProvinceHouseHoldParticipants()}
-
-          {/* Quận huyện khai sinh */}
-          {inputDistrictHouseHoldParticipants()}
-
-          {/* Phường xã khai sinh */}
-          {inputWardHouseHoldParticipants()}
-
-          {/* Địa chỉ cụ thể */}
-          {inputAddressDetailHouseHoldParticipants()}
-
-          {/* Tỉnh thành thường trú */}
-          {inputTTProvinceHouseHoldParticipants()}
-
-          {/* Quận huyện thường trú */}
-          {inputTTDistrictHouseHoldParticipants()}
-
-          {/* Phường xã thường trú */}
-          {inputTTWardHouseHoldParticipants()}
-
-          {/* Địa chỉ hộ khẩu */}
-          {inputAddressDetailHKHouseHoldParticipants()}
-
-          {members.map((item, index) =>
-            <CardMembersHouseHoldBHXH
-              key={`member_${index}`}
-              members={members}
-              insuranceOrder={insuranceOrder}
-              ethnicLists={ethnicLists}
-              provinces={buyerProvinces.current}
-              index={index}
-              onClose={
-                (index) => {
-                  const newMembers = members.filter((_, i) => i !== index);
-                  setMembers([...newMembers]);
-
-                  insuranceOrder.houseHold.houseHoldPeoples.splice(index, 1);
+              } else {
+                setInsuranceOrder((prevOrder) => ({
+                  ...prevOrder,
+                  houseHold: {
+                    id: 0,
+                    chuHoTen: "",
+                    ksProvinceId: 0,
+                    ksDistrictId: 0,
+                    ksWardId: 0,
+                    ksAddressDetail: "",
+                    hkAddressDetail: "",
+                    soGiayToCaNhan: "",
+                    ttProvinceId: 0,
+                    ttDistrictId: 0,
+                    ttWardId: 0,
+                    houseHoldPeoples: [
+                      {
+                        id: 0,
+                        name: "",
+                        doB: "",
+                        gender: "",
+                        ethnicId: 0,
+                        relationShipId: "",
+                        citizenId: "",
+                        ksProvinceId: 0,
+                        ksDistrictId: 0,
+                        ksWardId: 0,
+                        ksAddressDetail: ""
+                      }
+                    ]
+                  },
                 }
+                ));
               }
-            />
-            // boxhHouseHoldParticipants(
-            //   index,
-            //   (index) => {
-            //     const newMembers = members.filter((_, i) => i !== index);
-            //     setMembers([...newMembers]);
 
-            //     insuranceOrder.houseHold.houseHoldPeoples.splice(index, 1);
 
-            //   }
-            // )
-          )}
+              setIsHadBHXH(!isHadBHXH)
 
-          {buttonAddMember()}
+            }}>
+            <div className="font-normal text-base">Người tham gia có mã BHXH</div>
+          </Checkbox>
+
+          {/* Số BHXH */}
+          {isHadBHXH && inputBHXHParticipants()}
+
+
+          {!isHadBHXH && (
+            <div className="flex flex-col gap-6">
+              <h3 className="text-base font-semibold text-[#0076B7]">
+                Thông tin hộ gia đình{" "}
+              </h3>
+
+              {/* Họ tên chủ hộ */}
+              {inputFullNamHouseHoldParticipants()}
+
+              {/* Số CCCD */}
+              {inputCCCDHouseHoldParticipants()}
+
+              {/* Tỉnh thành khai sinh */}
+              {inputProvinceHouseHoldParticipants()}
+
+              {/* Quận huyện khai sinh */}
+              {inputDistrictHouseHoldParticipants()}
+
+              {/* Phường xã khai sinh */}
+              {inputWardHouseHoldParticipants()}
+
+              {/* Địa chỉ cụ thể */}
+              {inputAddressDetailHouseHoldParticipants()}
+
+              {/* Tỉnh thành thường trú */}
+              {inputTTProvinceHouseHoldParticipants()}
+
+              {/* Quận huyện thường trú */}
+              {inputTTDistrictHouseHoldParticipants()}
+
+              {/* Phường xã thường trú */}
+              {inputTTWardHouseHoldParticipants()}
+
+              {/* Địa chỉ hộ khẩu */}
+              {inputAddressDetailHKHouseHoldParticipants()}
+
+              {members.map((item, index) =>
+                <CardMembersHouseHoldBHXH
+                  key={`member_${index}`}
+                  members={members}
+                  insuranceOrder={insuranceOrder}
+                  ethnicLists={ethnicLists}
+                  provinces={buyerProvinces.current}
+                  index={index}
+                  onClose={
+                    (index) => {
+                      const newMembers = members.filter((_, i) => i !== index);
+                      setMembers([...newMembers]);
+
+                      insuranceOrder.houseHold.houseHoldPeoples.splice(index, 1);
+                    }
+                  }
+                />
+              )}
+
+              {buttonAddMember()}
+            </div>)}
+
+
 
         </>
       </div>
@@ -3640,8 +3713,8 @@ const RegisterBHXH = (props) => {
               style={{
                 position: 'absolute',
                 zIndex: 10,
-                top: windowSize?.height / 2,
-                left: windowSize?.width / 2,
+                top: '50%',
+                left: '50%',
                 transform: 'translate(-50%, -50%)'
               }}>
               <Lottie
@@ -3692,68 +3765,76 @@ const RegisterBHXH = (props) => {
                 },
               }}
               onScan={(data) => {
-                setTimeout(() => {
-                  const info = data[0]["rawValue"];
-                  const words = info.split("|");
+                try {
+                  setTimeout(() => {
+                    const info = data[0]["rawValue"];
+                    const words = info.split("|");
 
-                  setIsShowModelQR(false);
-                  setCitizenId(words[0]);
+                    setIsShowModelQR(false);
+                    setCitizenId(words[0]);
 
-                  // số căn cước
-                  setCitizenId(words[0]);
-                  setInsuranceOrder((prevOrder) => ({
-                    ...prevOrder,
-                    listInsuredPerson: prevOrder.listInsuredPerson.map(
-                      (person, index) =>
-                        index === 0
-                          ? { ...person, citizenId: words[0] }
-                          : person
-                    ),
-                  }));
-                  // họ và tên
-                  setPersonName(words[2]);
-                  setInsuranceOrder((prevOrder) => ({
-                    ...prevOrder,
-                    listInsuredPerson: prevOrder.listInsuredPerson.map(
-                      (person, index) =>
-                        index === 0
-                          ? { ...person, fullName: words[2] }
-                          : person
-                    ),
-                  }));
+                    // số căn cước
+                    setCitizenId(words[0]);
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0
+                            ? { ...person, citizenId: words[0] }
+                            : person
+                      ),
+                    }));
+                    // họ và tên
+                    setPersonName(words[2]);
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0
+                            ? { ...person, fullName: words[2] }
+                            : person
+                      ),
+                    }));
 
-                  const dob = words[3];
-                  const day = dob.substring(0, 2);
-                  const month = dob.substring(2, 4);
-                  const year = dob.substring(4, 8);
+                    const dob = words[3];
+                    const day = dob.substring(0, 2);
+                    const month = dob.substring(2, 4);
+                    const year = dob.substring(4, 8);
 
-                  // set năm sinh
-                  setDateValue(dayjs(`${day}-${month}-${year}`, dateFormat));
+                    // set năm sinh
+                    setDateValue(dayjs(`${day}-${month}-${year}`, dateFormat));
 
-                  setInsuranceOrder((prevOrder) => ({
-                    ...prevOrder,
-                    listInsuredPerson: prevOrder.listInsuredPerson.map(
-                      (person, index) =>
-                        index === 0
-                          ? {
-                            ...person,
-                            doB: formatDateString(
-                              `${year}-${month}-${day}`
-                            ),
-                          }
-                          : person
-                    ),
-                  }));
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0
+                            ? {
+                              ...person,
+                              doB: formatDateString(
+                                `${year}-${month}-${day}`
+                              ),
+                            }
+                            : person
+                      ),
+                    }));
 
-                  setGender(words[4]); // giới tính
-                  setInsuranceOrder((prevOrder) => ({
-                    ...prevOrder,
-                    listInsuredPerson: prevOrder.listInsuredPerson.map(
-                      (person, index) =>
-                        index === 0 ? { ...person, gender: words[4] } : person
-                    ),
-                  }));
-                }, 1000)
+                    setGender(words[4]); // giới tính
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      listInsuredPerson: prevOrder.listInsuredPerson.map(
+                        (person, index) =>
+                          index === 0 ? { ...person, gender: words[4] } : person
+                      ),
+                    }));
+
+                    setSize({ width: 200, height: 200 })
+                  }, 1000)
+                } catch (error) {
+
+                }
+
+
               }}
               allowMultiple={false}
 

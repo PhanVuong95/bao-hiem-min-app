@@ -145,7 +145,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.doB.trim() == "" ? "Chưa cập nhật" : formatDate(item?.doB.trim())}
+              {item?.doB.trim() == "" ? "Chưa cập nhật" : item?.doB.trim()}
             </p>
           </div>
         </div>

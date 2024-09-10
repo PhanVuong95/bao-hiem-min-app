@@ -13,6 +13,7 @@ import { FadeLoader } from "react-spinners";
 import Modal from 'react-modal';
 import CardHouseHold from "../../components/card_house_hold";
 import CardMembersHouseHold from "../../components/card_members_house_hold";
+import CardObject from "../../components/card_object";
 
 const RegisterBHYT = ({ }) => {
 
@@ -27,15 +28,10 @@ const RegisterBHYT = ({ }) => {
     height: window.innerHeight,
   });
 
-  const userBuyerPageRefs = {
-    phone: useRef<any>(null),
-    fullName: useRef<any>(null),
-    email: useRef<any>(null),
-    provinceId: useRef<any>(null),
-    districtId: useRef<any>(null),
-    wardId: useRef<any>(null),
-    addressDetail: useRef<any>(null),
-  };
+  const ObjectTypeRefs = {
+    nhomLoaiDoiTuongId: useRef<any>(null),
+    loaiDoiTuongId: useRef<any>(null),
+  }
 
   const houseHoldRefs = {
     fullNamHouseHoldParticipant: useRef<any>(null),
@@ -96,6 +92,16 @@ const RegisterBHYT = ({ }) => {
       ksAddressDetail: React.createRef(),
     }
   )
+
+  const userBuyerPageRefs = {
+    phone: useRef<any>(null),
+    fullName: useRef<any>(null),
+    email: useRef<any>(null),
+    provinceId: useRef<any>(null),
+    districtId: useRef<any>(null),
+    wardId: useRef<any>(null),
+    addressDetail: useRef<any>(null),
+  };
 
   const policyTerm2 = useRef(false);
 
@@ -263,83 +269,19 @@ const RegisterBHYT = ({ }) => {
     registerInfoBHYT['finalPrice'] = calculatePrice()
     registerInfoBHYT["insuranceId"] = state.data.insuranceTypeId
 
-    // Thông tin người mua
-
-    // Validate họ và tên
-    if (!isValidEmptyString(registerInfoBHYT["fullName"])) {
+    if (registerInfoBHYT.nhomLoaiDoiTuongId == null) {
       toast.warn(
-        "Họ và tên không được để trống",
+        "Nhóm loại đối tượng không được để trống",
       );
-      scrollToElement("fullName", 1)
+      scrollToElement(ObjectTypeRefs.nhomLoaiDoiTuongId, 2)
       return false;
     }
 
-    // Validate số điện thoại
-    if (!isValidEmptyString(registerInfoBHYT["phone"])) {
+    if (registerInfoBHYT.loaiDoiTuongId == null) {
       toast.warn(
-        "Số điện thoại không được để trống",
+        "Loại đối tượng không được để trống",
       );
-      scrollToElement("phone", 1)
-
-      return false;
-    }
-    if (!isValidPhone(registerInfoBHYT["phone"])) {
-      toast.warn(
-        "Số điện thoại không hợp lệ",
-      );
-      scrollToElement("phone", 1)
-      return false;
-    }
-
-    if (!isValidFullName(registerInfoBHYT["fullName"])) {
-      toast.warn(
-        "Họ và tên không hợp lệ",
-      );
-      scrollToElement("fullName", 1)
-      return false;
-    }
-
-    // Validate email
-    if (isValidEmptyString(registerInfoBHYT["email"])) {
-      if (!isValidEmail(registerInfoBHYT["email"])) {
-        toast.warn(
-          "Email không hợp lệ",
-        );
-        scrollToElement("email", 1)
-        return false;
-      }
-    }
-
-    // Validate địa chỉ
-    if (registerInfoBHYT["provinceId"] == 0) {
-      toast.warn(
-        "Vui lòng lựa chọn Thành phố",
-      );
-      scrollToElement("provinceId", 1)
-      return false;
-    }
-
-    if (registerInfoBHYT["districtId"] == 0) {
-      toast.warn(
-        "Vui lòng lựa chọn Quận huyện",
-      );
-      scrollToElement("districtId", 1)
-      return false;
-    }
-
-    if (registerInfoBHYT["wardId"] == 0) {
-      toast.warn(
-        "Vui lòng lựa chọn Phường xã",
-      );
-      scrollToElement("wardId", 1)
-      return false;
-    }
-
-    if (!isValidEmptyString(registerInfoBHYT["addressDetail"])) {
-      toast.warn(
-        "Địa chỉ cụ thể không được để trống",
-      );
-      scrollToElement("addressDetail", 1)
+      scrollToElement(ObjectTypeRefs.loaiDoiTuongId, 2)
       return false;
     }
 
@@ -732,7 +674,86 @@ const RegisterBHYT = ({ }) => {
         scrollToElement(beneficiaries[index].ttAddressDetail, 2)
         return false;
       }
+    }
 
+    // Thông tin người mua
+
+    // Validate họ và tên
+    if (!isValidEmptyString(registerInfoBHYT["fullName"])) {
+      toast.warn(
+        "Họ và tên không được để trống",
+      );
+      scrollToElement("fullName", 1)
+      return false;
+    }
+
+    // Validate số điện thoại
+    if (!isValidEmptyString(registerInfoBHYT["phone"])) {
+      toast.warn(
+        "Số điện thoại không được để trống",
+      );
+      scrollToElement("phone", 1)
+
+      return false;
+    }
+    if (!isValidPhone(registerInfoBHYT["phone"])) {
+      toast.warn(
+        "Số điện thoại không hợp lệ",
+      );
+      scrollToElement("phone", 1)
+      return false;
+    }
+
+    if (!isValidFullName(registerInfoBHYT["fullName"])) {
+      toast.warn(
+        "Họ và tên không hợp lệ",
+      );
+      scrollToElement("fullName", 1)
+      return false;
+    }
+
+    // Validate email
+    if (isValidEmptyString(registerInfoBHYT["email"])) {
+      if (!isValidEmail(registerInfoBHYT["email"])) {
+        toast.warn(
+          "Email không hợp lệ",
+        );
+        scrollToElement("email", 1)
+        return false;
+      }
+    }
+
+    // Validate địa chỉ
+    if (registerInfoBHYT["provinceId"] == 0) {
+      toast.warn(
+        "Vui lòng lựa chọn Thành phố",
+      );
+      scrollToElement("provinceId", 1)
+      return false;
+    }
+
+    if (registerInfoBHYT["districtId"] == 0) {
+      toast.warn(
+        "Vui lòng lựa chọn Quận huyện",
+      );
+      scrollToElement("districtId", 1)
+      return false;
+    }
+
+    if (registerInfoBHYT["wardId"] == 0) {
+      toast.warn(
+        "Vui lòng lựa chọn Phường xã",
+      );
+      scrollToElement("wardId", 1)
+      return false;
+    }
+
+    if (!isValidEmptyString(registerInfoBHYT["addressDetail"])) {
+      toast.warn(
+        "Địa chỉ cụ thể không được để trống",
+      );
+      scrollToElement("addressDetail", 1)
+      return false;
     }
 
     if (!policyTerm2.current) {
@@ -1120,8 +1141,10 @@ const RegisterBHYT = ({ }) => {
     <div className="pt-20">
       {renderHeader()}
       <div className="page-1 flex flex-col gap-4">
-        <div >
-          <UserBuyerPage data={state.data} refs={userBuyerPageRefs} />
+
+
+        <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
+          <CardObject refs={ObjectTypeRefs} />
         </div>
 
         <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
@@ -1167,6 +1190,10 @@ const RegisterBHYT = ({ }) => {
         ))}
 
         {renderAddUserBeneficiary()}
+
+        <div >
+          <UserBuyerPage data={state.data} refs={userBuyerPageRefs} />
+        </div>
 
         {renderAttachedFiles()}
       </div>

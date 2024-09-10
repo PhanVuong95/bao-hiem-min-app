@@ -47,6 +47,8 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         registerInfoBHYT['accountId'] = data?.id;
         registerInfoBHYT["citizenId"] = data?.citizenId;
         registerInfoBHYT["fileUploadUrl"] = data?.fileUploadUrl;
+        registerInfoBHYT["nhomLoaiDoiTuongId"] = data?.nhomLoaiDoiTuongId;
+        registerInfoBHYT["loaiDoiTuongId"] = data?.loaiDoiTuongId;
         registerInfoBHYT["photoCitizenFront"] = data?.photoCitizenFront;
         registerInfoBHYT["photoCitizenBack"] = data?.photoCitizenBack;
         registerInfoBHYT["phone"] = isValidString(data?.phone);
@@ -477,6 +479,21 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       {billPay?.insuranceOrderStatusId == CANCELED &&
         lookUpAgain()
       }
+
+      {billPay?.insuranceOrderStatusId == DONE && (
+        <div className="page-2 bg-white fixed bottom-0 w-[100%]">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-row content-center justify-center items-center">
+              <Link
+                to={`/check-status-procedure/${billPay?.id}`}
+                className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
+              >
+                Kiểm tra trạng thái thủ tục
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

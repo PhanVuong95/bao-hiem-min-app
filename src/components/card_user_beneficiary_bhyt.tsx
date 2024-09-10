@@ -103,7 +103,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
   const [benefitLevel, setBenefitLevel] = useState(registerInfoBHYT["listInsuredPerson"][index].benefitLevel);
   const [isShowModalbenefitLevel, setIsShowModalbenefitLevel] = useState(false)
 
-  const [temp, setTemp] = useState(false);
+  const [temp, setTemp] = useState(0);
 
   const calculatePrice = () => {
     switch (index) {
@@ -134,7 +134,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         // Load tỉnh thành khai sinh người tham gia
         ksProvinces.current = response.data.data
 
-        setTemp(!temp)
+        setTemp(Math.random())
       })
       .catch((error) => {
         ttProvinces.current = []
@@ -171,11 +171,11 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
           ksWards.current = [];
 
-          setTemp(!temp)
+          setTemp(Math.random())
         })
         .catch((error) => {
           ksDistricts.current = [];
-          setTemp(!temp);
+          setTemp(Math.random());
           console.error(error);
         });
     }
@@ -194,11 +194,11 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         )
         .then((response) => {
           ksWards.current = response.data.data;
-          setTemp(!temp);
+          setTemp(Math.random());
         })
         .catch((error) => {
           ksWards.current = []
-          setTemp(!temp);
+          setTemp(Math.random());
           console.error(error);
         });
     }
@@ -215,11 +215,11 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         .then((response) => {
           ttDistricts.current = response.data.data;
           ttWards.current = [];
-          setTemp(!temp);
+          setTemp(Math.random());
         })
         .catch((error) => {
           ttDistricts.current = [];
-          setTemp(!temp);
+          setTemp(Math.random());
           console.error(error);
         });
     }
@@ -238,11 +238,11 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         )
         .then((response) => {
           ttWards.current = response.data.data;
-          setTemp(!temp)
+          setTemp(Math.random())
         })
         .catch((error) => {
           ttWards.current = []
-          setTemp(!temp);
+          setTemp(Math.random());
           console.error(error);
         });
     }
@@ -573,8 +573,8 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                 style={{
                   position: 'absolute',
                   zIndex: 10,
-                  top: windowSize?.height / 2,
-                  left: windowSize?.width / 2,
+                  top: '50%',
+                  left: '50%',
                   transform: 'translate(-50%, -50%)'
                 }}>
                 <Lottie
@@ -625,31 +625,38 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                   }
                 }}
                 onScan={(data) => {
-                  setTimeout(() => {
-                    const info = data[0]["rawValue"];
-                    const words = info.split("|")
+                  try {
+                    setTimeout(() => {
+                      const info = data[0]["rawValue"];
+                      const words = info.split("|")
 
-                    setIsShowModelQR(false)
-                    setCitizenId(words[0])
+                      setIsShowModelQR(false)
+                      setCitizenId(words[0])
 
-                    registerInfoBHYT["listInsuredPerson"][index].citizenId = words[0];
+                      registerInfoBHYT["listInsuredPerson"][index].citizenId = words[0];
 
-                    setFullName(words[2])
-                    registerInfoBHYT["listInsuredPerson"][index].fullName = words[2];
+                      setFullName(words[2])
+                      registerInfoBHYT["listInsuredPerson"][index].fullName = words[2];
 
-                    const dob = words[3];
-                    const day = dob.substring(0, 2);
-                    const month = dob.substring(2, 4);
-                    const year = dob.substring(4, 8);
+                      const dob = words[3];
+                      const day = dob.substring(0, 2);
+                      const month = dob.substring(2, 4);
+                      const year = dob.substring(4, 8);
 
-                    setDob(dayjs(`${day} /${month}/${year}`, dateFormat))
+                      setDob(dayjs(`${day} /${month}/${year}`, dateFormat))
 
-                    registerInfoBHYT["listInsuredPerson"][index].doB = formatDate(`${year}-${month}-${day}`);
+                      registerInfoBHYT["listInsuredPerson"][index].doB = formatDate(`${year}-${month}-${day}`);
 
-                    setGender(words[4])
-                    registerInfoBHYT["listInsuredPerson"][index].gender = words[4];
-                    setOpacityQR(1)
-                  }, 1000)
+                      setGender(words[4])
+                      registerInfoBHYT["listInsuredPerson"][index].gender = words[4];
+                      setOpacityQR(1)
+
+                      setSize({ width: 200, height: 200 })
+                    }, 1000)
+                  } catch (error) {
+
+                  }
+
 
                 }}
                 allowMultiple={false}
@@ -1346,7 +1353,6 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
 
             setSelectedKSDistrict(value);
 
-
             registerInfoBHYT["listInsuredPerson"][index].ksQuanHuyenMa = value
 
           }}
@@ -1501,6 +1507,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
           size="large"
           className="w-[100%]"
           showSearch
+          loading={true}
           ref={refs.selectedTTWard}
           dropdownMatchSelectWidth={false}
           placeholder="Chọn phường xã"
