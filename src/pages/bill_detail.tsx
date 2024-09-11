@@ -345,7 +345,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                BH Xã Hội Tự Nguyện
+                {orderDetail.insuranceName}
               </p>
             </div>
           </div>
