@@ -157,6 +157,23 @@ const ListHistoryBHYT = ({ }) => {
                       <div className="flex flex-row justify-between w-full">
                         <div>
                           <p className="text-[#646464] text-sm font-normal">
+                            Mã đơn
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            className={`text-black text-sm font-semibold max-w-[142px] text-right`}
+                          >
+                            #{item.id}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-row justify-between w-full">
+                        <div>
+                          <p className="text-[#646464] text-sm font-normal">
                             Trạng thái
                           </p>
                         </div>

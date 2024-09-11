@@ -204,6 +204,16 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
 
         <div className="page-1 flex flex-col gap-4 mb-4">
           <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
+            <div className="flex justify-between">
+              <h3 className="text-base font-medium text-[#0076B7]">
+                Mã đơn
+              </h3>
+              <div className="text-black text-sm font-semibold max-w-[142px] text-right">
+                #{orderDetail?.id}
+              </div>
+            </div>
+
+            <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
 
             <div className="flex justify-between items-center">
               <h3 className="text-base font-medium text-[#0076B7]">
@@ -222,19 +232,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
               ) : (
                 <></>
               )}
-            </div>
-            {/* --------------------------------------------- */}
-            <div className="flex flex-row justify-between w-full">
-              <div>
-                <p className="text-[#646464] text-sm font-normal">
-                  Mã đơn hàng
-                </p>
-              </div>
-              <div>
-                <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-                  #{orderDetail.id}
-                </p>
-              </div>
             </div>
             {/* --------------------------------------------- */}
             <div className="flex flex-row justify-between w-full">
@@ -433,7 +430,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
 
 
           {/* --------------------------------------------- */}
-          <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-[30%]">
+          <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-[35%]">
             <h3 className="text-[#0076B7] text-lg font-medium">
               Danh mục sản phẩm
             </h3>

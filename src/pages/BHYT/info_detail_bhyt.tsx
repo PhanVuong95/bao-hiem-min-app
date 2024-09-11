@@ -156,6 +156,17 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
         <div className="flex justify-between">
           <h3 className="text-base font-medium text-[#0076B7]">
+            Mã đơn
+          </h3>
+          <div className="text-black text-sm font-semibold max-w-[142px] text-right">
+            #{billPay?.id}
+          </div>
+        </div>
+
+
+        {line()}
+        <div className="flex justify-between">
+          <h3 className="text-base font-medium text-[#0076B7]">
             Người mua bảo hiểm
           </h3>
 
