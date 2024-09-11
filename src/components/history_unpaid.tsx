@@ -6,6 +6,7 @@ import { PulseLoader } from "react-spinners";
 import { formatDate } from "../utils/validateString";
 import HeaderBase from "./header_base";
 import { SpecificContext } from "./specific_context";
+import logo from "../../assets-src/logo1.png"
 
 const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
@@ -435,7 +436,9 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
               Danh mục sản phẩm
             </h3>
             <div className="flex gap-[10px]">
-              <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+
+              <img src={logo} className="w-16 h-16" />
+
               <div className="title-product flex flex-col">
                 <h3 className="text-[#0076B7] text-lg font-medium">
                   BH Xã Hội Tự nguyện

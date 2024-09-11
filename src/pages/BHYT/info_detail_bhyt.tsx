@@ -5,6 +5,7 @@ import HeaderBase from "../../components/header_base";
 import { useParams } from "react-router-dom";
 import { formatDate, formatMoneyVND, formatPhoneNumber, formatTime, isValidEmptyString, isValidString } from "../../utils/validateString";
 import { registerInfoBHYT } from "./list_health_insurance";
+import logo from "../../../assets-src/logo1.png"
 
 const InfoDetailBHYT: React.FunctionComponent = () => {
   const { id } = useParams();
@@ -355,7 +356,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           Danh mục sản phẩm
         </h3>
         <div className="flex gap-[10px]">
-          <img src="https://dion.vn/wp-content/uploads/2024/07/image-1004.png" />
+          <img src={logo} className="w-16 h-16" />
+
+
           <div className="title-product flex flex-col">
             <h3 className="text-[#0076B7] text-lg font-medium">
               {billPay?.insuranceOrderStatusName}
