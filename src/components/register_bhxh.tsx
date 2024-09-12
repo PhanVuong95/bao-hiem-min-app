@@ -575,8 +575,6 @@ const RegisterBHXH = (props) => {
             axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id11}`),
           ]);
 
-          console.log("Aaa");
-
           householdDistricts.current = response8.data.data;
           householdWards.current = response9.data.data;
 
@@ -768,9 +766,6 @@ const RegisterBHXH = (props) => {
     }));
     setIsUploadingPhotoCitizenFont(false);
   };
-
-  console.log(insuranceOrder);
-
 
   const updateBackCitizenPhoto = (img) => {
     setInsuranceOrder((prevOrder) => ({
@@ -1178,7 +1173,6 @@ const RegisterBHXH = (props) => {
         }
       );
 
-      console.log(response.data);
       if (response.data.status == "201") {
         let result = response.data.data[0];
         delete result.price;
@@ -1228,7 +1222,6 @@ const RegisterBHXH = (props) => {
         }
       );
 
-      console.log(response.data);
       if (response.data.status == "200") {
         setLoading(false);
         toast.success("Cập nhật đơn đăng ký bảo hiểm xã hội thành công");
@@ -3371,7 +3364,7 @@ const RegisterBHXH = (props) => {
           ref={buyerRefs.phone}
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Số điện thoại"
-          maxLength={12}
+          maxLength={10}
           onChange={(e) => {
             let numberValue = e.target.value.replace(/\D/g, "");
             setPhone(numberValue);

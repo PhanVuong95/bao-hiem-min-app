@@ -27,8 +27,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
 
-        console.log(response.data.data[0]);
-
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
 
@@ -96,8 +94,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
             ]
           }
         }
-
-        console.log("user", storeage);
 
         setInsuranceOrder(storeage);
       })
@@ -170,20 +166,18 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const renderBackground = () => {
     switch (orderStatusId) {
       case PENDING:
-        return `#FAAD14`
+        return "bg-[#F4A460]"
       case CANCELED:
-        return `#F00`
+        return "bg-[#666666]"
       case DONE:
-        return `#00BA00`
-      default:
-        return `#FAAD14`
+        return "bg-[#00CD00]"
     }
   }
 
   const headerStatus = () => {
     return (
       <div
-        className={`bg-[${renderBackground()}] py-[12px] px-4 flex flex-row items-center justify-between`}
+        className={`${renderBackground()} py-[12px] px-4 flex flex-row items-center justify-between`}
       >
         <p className="text-white text-sm font-normal">Trạng thái</p>
         <p className="text-white text-sm font-semibold">

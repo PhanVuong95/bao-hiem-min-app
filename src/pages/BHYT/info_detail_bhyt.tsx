@@ -19,16 +19,14 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
   const DONE = 1002;
   const CANCELED = 1003;
 
-  const switchColor = (insuranceOrderStatusId) => {
+  const renderBackground = (insuranceOrderStatusId) => {
     switch (insuranceOrderStatusId) {
       case PENDING:
-        return '#FAAD14'
-      case DONE:
-        return '#00BA00'
+        return "bg-[#F4A460]"
       case CANCELED:
-        return '#F00'
-      default:
-        return '#FAAD14'
+        return "bg-[#666666]"
+      case DONE:
+        return "bg-[#00CD00]"
     }
   }
 
@@ -37,7 +35,6 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       .get("https://baohiem.dion.vn/insuranceorder/api/detail-by-vm/" + id)
       .then((response) => {
         const data = response.data.data[0]
-        console.log(data);
 
         setBillPay(data);
         setLoading(false);
@@ -126,8 +123,6 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           obj["vungLuongToiThieuId"] = item["vungLuongToiThieuId"];
           return obj;
         })
-
-        // console.log(registerInfoBHYT);
 
       })
       .catch((error) => {
@@ -468,7 +463,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         onBack={() => navigate('/list-history-bhyt')}
       />
 
-      <div className={`bg-[${switchColor(billPay?.insuranceOrderStatusId)}] h-11 flex justify-between px-4 items-center text-white text-base font-normal`}>
+      <div className={`${renderBackground(billPay?.insuranceOrderStatusId)} h-11 flex justify-between px-4 items-center text-white text-base font-normal`}>
         <div>Trạng thái</div>
         <div>{billPay?.insuranceOrderStatusName}</div>
       </div>

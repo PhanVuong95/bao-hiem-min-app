@@ -264,7 +264,6 @@ const RegisterBHYT = ({ }) => {
   }
 
   const validateForm = () => {
-    console.log(registerInfoBHYT);
 
     registerInfoBHYT['finalPrice'] = calculatePrice()
     registerInfoBHYT["insuranceId"] = state.data.insuranceTypeId
@@ -1159,7 +1158,6 @@ const RegisterBHYT = ({ }) => {
               ethnicLists={ethnicLists}
               provinces={provinces}
               onClose={(index) => {
-                console.log(index);
                 members.splice(index, 1);
                 setMembers([...members]);
 

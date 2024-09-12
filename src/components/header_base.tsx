@@ -17,23 +17,6 @@ const HeaderBase = (props: Props) => {
   const { isHome, title, onClose, onActions, onBack } = props;
   const navigate = useNavigate();
 
-  const closeMiniApp = async () => {
-    try {
-      closeApp({
-        success: () => {
-          console.log("Thoát app");
-        },
-        fail: (error) => {
-          // xử lý khi gọi api thất bại
-          console.log(error);
-        },
-      });
-    } catch (error) {
-      // xử lý khi gọi api thất bại
-      console.log(error);
-    }
-  };
-
   return (
     <div className="fixed top-0 z-10">
       <img src={backgroundHeader} />
