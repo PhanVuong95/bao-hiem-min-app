@@ -3,17 +3,28 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "../../components/header_base";
 import { useParams } from "react-router-dom";
-import { formatDate, formatMoneyVND, formatPhoneNumber, formatTime, isValidEmptyString, isValidString } from "../../utils/validateString";
+import {
+  formatDate,
+  formatMoneyVND,
+  formatPhoneNumber,
+  formatTime,
+  isValidEmptyString,
+  isValidString,
+} from "../../utils/validateString";
 import { registerInfoBHYT } from "./list_health_insurance";
-import logo from "../../../assets-src/logo1.png"
+import logo from "../../../assets-src/logo1.png";
+
+import { EventName, events, Payment } from "zmp-sdk";
+import * as _ from "lodash";
+import { createMacFE } from "../../services/payment";
 
 const InfoDetailBHYT: React.FunctionComponent = () => {
   const { id } = useParams();
   const [billPay, setBillPay] = useState<any>();
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [insuranceid, setInsuranceId] = useState(0)
-  const insurance = useRef()
+  const [insuranceid, setInsuranceId] = useState(0);
+  const insurance = useRef();
 
   const PENDING = 1001;
   const DONE = 1002;
@@ -22,19 +33,56 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
   const renderBackground = (insuranceOrderStatusId) => {
     switch (insuranceOrderStatusId) {
       case PENDING:
-        return "bg-[#F4A460]"
+        return "bg-[#F4A460]";
       case CANCELED:
-        return "bg-[#666666]"
+        return "bg-[#666666]";
       case DONE:
-        return "bg-[#00CD00]"
+        return "bg-[#00CD00]";
     }
-  }
+  };
+
+  useEffect(() => {
+    events.on(EventName.OnDataCallback, (resp) => {
+      const { eventType, data } = resp;
+      if (eventType === "PAY_BY_CUSTOM_METHOD") {
+        console.log(data);
+        navigate(`/buill-detail/${billPay.id}`);
+      }
+    });
+  }, []);
+
+  const createOrder = async () => {
+    let dataClone = _.cloneDeep(billPay);
+    const body: any = await {
+      amount: billPay.finalPrice,
+      desc: "Thanh toán gói bảo hiểm",
+      item: [
+        {
+          id: `#${billPay.accountId}`,
+          amount: billPay.finalPrice,
+        },
+      ],
+      method: JSON.stringify({
+        id: "vnpayqr",
+        isCustom: true,
+      }),
+    };
+
+    const mac = await createMacFE(body);
+
+    const { orderId } = await Payment.createOrder({
+      ...body,
+      mac: mac,
+    });
+
+    console.log("orderId", orderId);
+  };
 
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/detail-by-vm/" + id)
       .then((response) => {
-        const data = response.data.data[0]
+        const data = response.data.data[0];
 
         setBillPay(data);
         setLoading(false);
@@ -42,7 +90,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         setInsuranceId(data?.insuranceId);
         registerInfoBHYT["id"] = data?.id;
         registerInfoBHYT["insuranceId"] = data?.insuranceId;
-        registerInfoBHYT['accountId'] = data?.id;
+        registerInfoBHYT["accountId"] = data?.id;
         registerInfoBHYT["citizenId"] = data?.citizenId;
         registerInfoBHYT["fileUploadUrl"] = data?.fileUploadUrl;
         registerInfoBHYT["nhomLoaiDoiTuongId"] = data?.nhomLoaiDoiTuongId;
@@ -62,74 +110,87 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         registerInfoBHYT["finalPrice"] = data?.finalPrice;
         registerInfoBHYT["houseHold"]["id"] = data?.houseHold?.id;
         registerInfoBHYT["houseHold"]["chuHoTen"] = data?.houseHold?.chuHoTen;
-        registerInfoBHYT["houseHold"]["ksProvinceId"] = data?.houseHold?.ksProvinceId;
-        registerInfoBHYT["houseHold"]["ksDistrictId"] = data?.houseHold?.ksDistrictId;
+        registerInfoBHYT["houseHold"]["ksProvinceId"] =
+          data?.houseHold?.ksProvinceId;
+        registerInfoBHYT["houseHold"]["ksDistrictId"] =
+          data?.houseHold?.ksDistrictId;
         registerInfoBHYT["houseHold"]["ksWardId"] = data?.houseHold?.ksWardId;
-        registerInfoBHYT["houseHold"]["ksAddressDetail"] = data?.houseHold?.ksAddressDetail;
-        registerInfoBHYT["houseHold"]["hkAddressDetail"] = data?.houseHold?.hkAddressDetail;
-        registerInfoBHYT["houseHold"]["ttProvinceId"] = data?.houseHold?.ttProvinceId;
-        registerInfoBHYT["houseHold"]["ttDistrictId"] = data?.houseHold?.ttDistrictId;
+        registerInfoBHYT["houseHold"]["ksAddressDetail"] =
+          data?.houseHold?.ksAddressDetail;
+        registerInfoBHYT["houseHold"]["hkAddressDetail"] =
+          data?.houseHold?.hkAddressDetail;
+        registerInfoBHYT["houseHold"]["ttProvinceId"] =
+          data?.houseHold?.ttProvinceId;
+        registerInfoBHYT["houseHold"]["ttDistrictId"] =
+          data?.houseHold?.ttDistrictId;
         registerInfoBHYT["houseHold"]["ttWardId"] = data?.houseHold?.ttWardId;
-        registerInfoBHYT["houseHold"]["soGiayToCaNhan"] = data?.houseHold?.soGiayToCaNhan;
+        registerInfoBHYT["houseHold"]["soGiayToCaNhan"] =
+          data?.houseHold?.soGiayToCaNhan;
 
-        registerInfoBHYT["houseHold"]["houseHoldPeoples"] = data?.houseHold?.houseHoldPeoples.map(item => {
-          const obj = Object.assign({}, item);
-          obj["id"] = item["id"]
-          obj["name"] = item["name"]
-          obj["doB"] = item["doB"]
-          obj["gender"] = item["gender"]
-          obj["ethnicId"] = item["ethnicId"]
-          obj["relationShipId"] = item["relationShipId"]
-          obj["citizenId"] = item["citizenId"]
-          obj["houseHoldId"] = item["houseHoldId"]
-          obj["ksProvinceId"] = item["ksProvinceId"]
-          obj["ksDistrictId"] = item["ksDistrictId"]
-          obj["ksWardId"] = item["ksWardId"]
-          obj["ksAddressDetail"] = item["ksAddressDetail"]
-          return obj;
-        });
+        registerInfoBHYT["houseHold"]["houseHoldPeoples"] =
+          data?.houseHold?.houseHoldPeoples.map((item) => {
+            const obj = Object.assign({}, item);
+            obj["id"] = item["id"];
+            obj["name"] = item["name"];
+            obj["doB"] = item["doB"];
+            obj["gender"] = item["gender"];
+            obj["ethnicId"] = item["ethnicId"];
+            obj["relationShipId"] = item["relationShipId"];
+            obj["citizenId"] = item["citizenId"];
+            obj["houseHoldId"] = item["houseHoldId"];
+            obj["ksProvinceId"] = item["ksProvinceId"];
+            obj["ksDistrictId"] = item["ksDistrictId"];
+            obj["ksWardId"] = item["ksWardId"];
+            obj["ksAddressDetail"] = item["ksAddressDetail"];
+            return obj;
+          });
 
-        registerInfoBHYT["listInsuredPerson"] = data?.listInsuredPerson.map(item => {
-          const obj = Object.assign({}, item);
-          obj["id"] = item["id"]
-          obj["insuranceProvinceId"] = item["insuranceProvinceId"]
-          obj["medicalProvinceId"] = item["medicalProvinceId"]
-          obj["medicalDistrictId"] = item["medicalDistrictId"]
-          obj["socialInsuranceNumber"] = isValidString(item["socialInsuranceNumber"]);
-          obj["healthInsuranceNumber"] = isValidString(item["healthInsuranceNumber"]);
-          obj["citizenId"] = isValidString(item["citizenId"]);
-          obj["photoCitizenFront"] = isValidString(item["photoCitizenFront"]);
-          obj["photoCitizenBack"] = isValidString(item["photoCitizenBack"]);
-          obj["fullName"] = isValidString(item["fullName"]);
-          obj["doB"] = item["doB"];
-          obj["gender"] = item["gender"];
-          obj["wage"] = item["wage"];
-          obj["monthInsured"] = formatDate(item["monthInsured"]);
-          obj["newCardEndDate"] = formatDate(item["newCardEndDate"]);
-          obj["newCardStartDate"] = formatDate(item["newCardStartDate"]);
-          obj["oldCardEndDate"] = formatDate(item["oldCardEndDate"]);
-          obj["oldCardStartDate"] = formatDate(item["oldCardStartDate"]);
-          obj["price"] = formatDate(item["price"]);
-          obj["hospitalId"] = item["hospitalId"];
-          obj["provinceId"] = item["provinceId"];
-          obj["districtId"] = item["districtId"];
-          obj["wardId"] = item["wardId"];
-          obj["addressDetail"] = item["addressDetail"];
-          obj["ksXaPhuongMaksXaPhuongMa"] = item["ksXaPhuongMa"];
-          obj["ksQuanHuyenMa"] = item["ksQuanHuyenMa"];
-          obj["ksTinhThanhMa"] = item["ksTinhThanhMa"];
-          obj["ksDiaChi"] = item["ksDiaChi"];
-          obj["ethnicId"] = item["ethnicId"];
-          obj["vungLuongToiThieuId"] = item["vungLuongToiThieuId"];
-          return obj;
-        })
-
+        registerInfoBHYT["listInsuredPerson"] = data?.listInsuredPerson.map(
+          (item) => {
+            const obj = Object.assign({}, item);
+            obj["id"] = item["id"];
+            obj["insuranceProvinceId"] = item["insuranceProvinceId"];
+            obj["medicalProvinceId"] = item["medicalProvinceId"];
+            obj["medicalDistrictId"] = item["medicalDistrictId"];
+            obj["socialInsuranceNumber"] = isValidString(
+              item["socialInsuranceNumber"]
+            );
+            obj["healthInsuranceNumber"] = isValidString(
+              item["healthInsuranceNumber"]
+            );
+            obj["citizenId"] = isValidString(item["citizenId"]);
+            obj["photoCitizenFront"] = isValidString(item["photoCitizenFront"]);
+            obj["photoCitizenBack"] = isValidString(item["photoCitizenBack"]);
+            obj["fullName"] = isValidString(item["fullName"]);
+            obj["doB"] = item["doB"];
+            obj["gender"] = item["gender"];
+            obj["wage"] = item["wage"];
+            obj["monthInsured"] = formatDate(item["monthInsured"]);
+            obj["newCardEndDate"] = formatDate(item["newCardEndDate"]);
+            obj["newCardStartDate"] = formatDate(item["newCardStartDate"]);
+            obj["oldCardEndDate"] = formatDate(item["oldCardEndDate"]);
+            obj["oldCardStartDate"] = formatDate(item["oldCardStartDate"]);
+            obj["price"] = formatDate(item["price"]);
+            obj["hospitalId"] = item["hospitalId"];
+            obj["provinceId"] = item["provinceId"];
+            obj["districtId"] = item["districtId"];
+            obj["wardId"] = item["wardId"];
+            obj["addressDetail"] = item["addressDetail"];
+            obj["ksXaPhuongMaksXaPhuongMa"] = item["ksXaPhuongMa"];
+            obj["ksQuanHuyenMa"] = item["ksQuanHuyenMa"];
+            obj["ksTinhThanhMa"] = item["ksTinhThanhMa"];
+            obj["ksDiaChi"] = item["ksDiaChi"];
+            obj["ethnicId"] = item["ethnicId"];
+            obj["vungLuongToiThieuId"] = item["vungLuongToiThieuId"];
+            return obj;
+          }
+        );
       })
       .catch((error) => {
         console.error(error);
         setLoading(false);
       });
-  }, [id])
+  }, [id]);
 
   useEffect(() => {
     axios
@@ -137,10 +198,11 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         "https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002"
       )
       .then((response) => {
-        const data = response.data.data.filter((item) => item.id == insuranceid)[0]
+        const data = response.data.data.filter(
+          (item) => item.id == insuranceid
+        )[0];
 
         insurance.current = data;
-
       })
       .catch((error) => {
         console.error(error);
@@ -151,14 +213,11 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
     return (
       <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
         <div className="flex justify-between">
-          <h3 className="text-base font-medium text-[#0076B7]">
-            Mã đơn
-          </h3>
+          <h3 className="text-base font-medium text-[#0076B7]">Mã đơn</h3>
           <div className="text-black text-sm font-semibold max-w-[142px] text-right">
             #{billPay?.id}
           </div>
         </div>
-
 
         {line()}
         <div className="flex justify-between">
@@ -166,18 +225,19 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
             Người mua bảo hiểm
           </h3>
 
-          {billPay?.insuranceOrderStatusId == PENDING &&
+          {billPay?.insuranceOrderStatusId == PENDING && (
             <button
               onClick={() => {
-                navigate("/register-BHYT/", { state: { data: insurance.current, type: 'updated' } });
+                navigate("/register-BHYT/", {
+                  state: { data: insurance.current, type: "updated" },
+                });
               }}
               className="text-sm text-[#0076B7] underline"
             >
               Chỉnh sửa
             </button>
-          }
+          )}
         </div>
-
 
         <div className="flex flex-row justify-between w-full">
           <div>
@@ -203,13 +263,13 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
         <div className="flex flex-row justify-between w-full">
           <div>
-            <p className="text-[#646464] text-sm font-normal">
-              Số điện thoại
-            </p>
+            <p className="text-[#646464] text-sm font-normal">Số điện thoại</p>
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-              {billPay?.phone ? formatPhoneNumber(billPay?.phone.trim()) : "Đang tải"}
+              {billPay?.phone
+                ? formatPhoneNumber(billPay?.phone.trim())
+                : "Đang tải"}
             </p>
           </div>
         </div>
@@ -220,18 +280,25 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {`${billPay?.addressDetail ? billPay?.addressDetail.trim() : ""}, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${billPay?.districtName ? billPay?.districtName.trim() : ""} ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
+              {`${
+                billPay?.addressDetail ? billPay?.addressDetail.trim() : ""
+              }, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${
+                billPay?.districtName ? billPay?.districtName.trim() : ""
+              } ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
             </p>
           </div>
         </div>
 
-        {loading ? <div></div> :
+        {loading ? (
+          <div></div>
+        ) : (
           billPay.listInsuredPerson.map((item, index) => {
-            return boxBeneficiary(item, index)
-          })}
+            return boxBeneficiary(item, index);
+          })
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   const boxBeneficiary = (item, index) => {
     return (
@@ -248,7 +315,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-              {!isValidEmptyString(item?.fullName) ? "Chưa cập nhật" : item?.fullName.trim()}
+              {!isValidEmptyString(item?.fullName)
+                ? "Chưa cập nhật"
+                : item?.fullName.trim()}
             </p>
           </div>
         </div>
@@ -259,11 +328,12 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {!isValidEmptyString(item?.doB) ? "Chưa cập nhật" : item?.doB.trim()}
+              {!isValidEmptyString(item?.doB)
+                ? "Chưa cập nhật"
+                : item?.doB.trim()}
             </p>
           </div>
         </div>
-
 
         <div className="flex flex-row justify-between w-full">
           <div>
@@ -271,7 +341,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {!isValidEmptyString(item?.citizenId) ? "Chưa cập nhật" : item?.citizenId.trim()}
+              {!isValidEmptyString(item?.citizenId)
+                ? "Chưa cập nhật"
+                : item?.citizenId.trim()}
             </p>
           </div>
         </div>
@@ -282,7 +354,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {!isValidEmptyString(item?.gender) ? "Chưa cập nhật" : item?.gender.trim()}
+              {!isValidEmptyString(item?.gender)
+                ? "Chưa cập nhật"
+                : item?.gender.trim()}
             </p>
           </div>
         </div>
@@ -293,7 +367,23 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-              {!isValidEmptyString(item?.healthInsuranceNumber) ? "Chưa cập nhật" : item?.healthInsuranceNumber}
+              {!isValidEmptyString(item?.healthInsuranceNumber)
+                ? "Chưa cập nhật"
+                : item?.healthInsuranceNumber}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Số tháng đóng</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {!isValidEmptyString(item?.monthInsured)
+                ? "Chưa cập nhật"
+                : item?.monthInsured}{" "}
+              tháng
             </p>
           </div>
         </div>
@@ -301,24 +391,18 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         <div className="flex flex-row justify-between w-full">
           <div>
             <p className="text-[#646464] text-sm font-normal">
-              Số tháng đóng
+              Bệnh viện đăng ký
             </p>
-          </div>
-          <div>
-            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {!isValidEmptyString(item?.monthInsured) ? "Chưa cập nhật" : item?.monthInsured} tháng
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-row justify-between w-full">
-          <div>
-            <p className="text-[#646464] text-sm font-normal">Bệnh viện đăng ký</p>
           </div>
           <div>
             <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-              {!isValidEmptyString(item?.hospitalName) ? "Chưa cập nhật" : item?.hospitalName} -
-              {!isValidEmptyString(item?.medicalProvinceName) ? "Chưa cập nhật" : item?.medicalProvinceName}
+              {!isValidEmptyString(item?.hospitalName)
+                ? "Chưa cập nhật"
+                : item?.hospitalName}{" "}
+              -
+              {!isValidEmptyString(item?.medicalProvinceName)
+                ? "Chưa cập nhật"
+                : item?.medicalProvinceName}
             </p>
           </div>
         </div>
@@ -329,20 +413,18 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-              {item?.price == 0 ? "Chưa cập nhật" : formatMoneyVND(item?.price)} vnđ
+              {item?.price == 0 ? "Chưa cập nhật" : formatMoneyVND(item?.price)}{" "}
+              vnđ
             </p>
           </div>
         </div>
-      </div >
-    )
-  }
+      </div>
+    );
+  };
 
   const line = () => {
-    return (
-      <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
-    )
-  }
-
+    return <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>;
+  };
 
   const boxInfo = () => {
     return (
@@ -353,14 +435,21 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         <div className="flex gap-[10px]">
           <img src={logo} className="w-16 h-16" />
 
-
           <div className="title-product flex flex-col">
             <h3 className="text-[#0076B7] text-lg font-medium">
               {billPay?.insuranceOrderStatusName}
             </h3>
-            <p className="text-[#646464] text-sm font-normal">{billPay?.listInsuredPerson.length > 0 ? billPay?.listInsuredPerson[0].monthInsured : ''} tháng</p>
+            <p className="text-[#646464] text-sm font-normal">
+              {billPay?.listInsuredPerson.length > 0
+                ? billPay?.listInsuredPerson[0].monthInsured
+                : ""}{" "}
+              tháng
+            </p>
             <span className="text-[#0076B7] text-lg font-bold">
-              {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} vnđ
+              {billPay?.finalPrice
+                ? formatMoneyVND(billPay?.finalPrice)
+                : "Đang tải"}{" "}
+              vnđ
             </span>
           </div>
         </div>
@@ -383,13 +472,13 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
           <div className="flex flex-row justify-between w-full">
             <div>
-              <p className="text-[#646464] text-sm font-normal">
-                Ngày đăng ký
-              </p>
+              <p className="text-[#646464] text-sm font-normal">Ngày đăng ký</p>
             </div>
             <div>
               <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                {billPay?.createdTime ? formatTime(billPay?.createdTime) : 'Đang tải'}
+                {billPay?.createdTime
+                  ? formatTime(billPay?.createdTime)
+                  : "Đang tải"}
               </p>
             </div>
           </div>
@@ -408,8 +497,8 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div> */}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const boxFooterPayment = () => {
     return (
@@ -420,12 +509,18 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
               Tổng thanh toán:
             </p>
             <h3 className="text-base font-medium text-[#0076B7]">
-              {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} VND
+              {billPay?.finalPrice
+                ? formatMoneyVND(billPay?.finalPrice)
+                : "Đang tải"}{" "}
+              VND
             </h3>
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <Link
-              to={`/buill-detail/${id}`}
+              onClick={() => {
+                createOrder();
+              }}
+              // to={`/buill-detail/${id}`}
               className="px-[20px] py-2 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-lg font-normal text-white text-center"
             >
               Tiếp tục
@@ -433,8 +528,8 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const lookUpAgain = () => {
     return (
@@ -443,7 +538,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           <div className="flex flex-row content-center justify-center items-center">
             <button
               onClick={() => {
-                navigate("/register-BHYT/", { state: { data: insurance.current, type: 'updated' } });
+                navigate("/register-BHYT/", {
+                  state: { data: insurance.current, type: "updated" },
+                });
               }}
               className="px-[20px] py-2 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-lg font-normal text-white text-center"
             >
@@ -452,42 +549,38 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="pt-20">
       <HeaderBase
         isHome={false}
         title={"Thông tin chi tiết"}
-        onBack={() => navigate('/list-history-bhyt')}
+        onBack={() => navigate("/list-history-bhyt")}
       />
 
-      <div className={`${renderBackground(billPay?.insuranceOrderStatusId)} h-11 flex justify-between px-4 items-center text-white text-base font-normal`}>
+      <div
+        className={`${renderBackground(
+          billPay?.insuranceOrderStatusId
+        )} h-11 flex justify-between px-4 items-center text-white text-base font-normal`}
+      >
         <div>Trạng thái</div>
         <div>{billPay?.insuranceOrderStatusName}</div>
       </div>
 
       <div className="page-1 flex flex-col gap-4 mb-4">
-
         <div className="">
           {boxBuyer()}
           {line()}
-
-        </div >
+        </div>
 
         {boxInfo()}
-
       </div>
 
+      {billPay?.insuranceOrderStatusId == PENDING && boxFooterPayment()}
 
-      {billPay?.insuranceOrderStatusId == PENDING &&
-        boxFooterPayment()
-      }
-
-      {billPay?.insuranceOrderStatusId == CANCELED &&
-        lookUpAgain()
-      }
+      {billPay?.insuranceOrderStatusId == CANCELED && lookUpAgain()}
 
       {billPay?.insuranceOrderStatusId == DONE && (
         <div className="page-2 bg-white fixed bottom-0 w-[100%]">

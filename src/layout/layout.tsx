@@ -12,6 +12,8 @@ const LayoutPage: React.FunctionComponent = (props) => {
 
   const { userProfile, setUserProfile } = profieContext;
 
+  console.log("userProfile", userProfile);
+
   useEffect(() => {
     getSetting({
       success: (data) => {
@@ -23,7 +25,7 @@ const LayoutPage: React.FunctionComponent = (props) => {
 
               const user = await getUserInfo({
                 avatarType: "normal",
-              })
+              });
 
               setUserProfile(() => user);
             },
@@ -48,7 +50,7 @@ const LayoutPage: React.FunctionComponent = (props) => {
 
       const user = await getUserInfo({
         avatarType: "normal",
-      })
+      });
 
       setUserProfile(() => user);
 
@@ -75,7 +77,7 @@ const LayoutPage: React.FunctionComponent = (props) => {
   };
 
   if (!logged) {
-    login()
+    login();
   }
 
   return (
