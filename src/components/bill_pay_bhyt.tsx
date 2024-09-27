@@ -1,22 +1,68 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "./header_base";
 import { useParams } from "react-router-dom";
-import { formatDate, formatMoneyVND, formatPhoneNumber } from "../utils/validateString";
+import {
+  formatDate,
+  formatMoneyVND,
+  formatPhoneNumber,
+} from "../utils/validateString";
+import { createMacFE } from "../services/payment";
+import { EventName, events, Payment } from "zmp-sdk";
+import * as _ from "lodash";
 
 const BillPayBHYTPage: React.FunctionComponent = () => {
   const { id } = useParams();
   const [billPay, setBillPay] = useState<any>();
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   const [provinceName, setProvinceName] = useState("");
   const [districtName, setDistrictName] = useState("");
   const [wardeName, setWardeName] = useState("");
   const [selectedCheckbox, setSelectedCheckbox] = useState("");
 
+  const navigate = useNavigate();
+
   const handleCheckboxChange = (value) => {
     setSelectedCheckbox(value);
+  };
+
+  useEffect(() => {
+    events.on(EventName.OnDataCallback, (resp) => {
+      const { eventType, data } = resp;
+      if (eventType === "PAY_BY_CUSTOM_METHOD") {
+        console.log(data);
+        navigate(`/buill-detail/${billPay.id}`);
+      }
+    });
+  }, []);
+
+  const createOrder = async () => {
+    let dataClone = _.cloneDeep(billPay);
+    const body: any = await {
+      amount: billPay.finalPrice,
+      desc: "Thanh toán gói bảo hiểm",
+      item: [
+        {
+          id: `#${billPay.accountId}`,
+          amount: billPay.finalPrice,
+        },
+      ],
+      method: JSON.stringify({
+        id: "vnpayqr",
+        isCustom: true,
+      }),
+    };
+
+    const mac = await createMacFE(body);
+
+    const { orderId } = await Payment.createOrder({
+      ...body,
+      mac: mac,
+    });
+
+    console.log("orderId", orderId);
   };
 
   useEffect(() => {
@@ -30,7 +76,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
         console.error(error);
         setLoading(false);
       });
-  }, [])
+  }, []);
 
   // useEffect(() => {
   //   axios
@@ -96,13 +142,13 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
 
         <div className="flex flex-row justify-between w-full">
           <div>
-            <p className="text-[#646464] text-sm font-normal">
-              Số điện thoại
-            </p>
+            <p className="text-[#646464] text-sm font-normal">Số điện thoại</p>
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-              {billPay?.phone ? formatPhoneNumber(billPay?.phone.trim()) : "Đang tải"}
+              {billPay?.phone
+                ? formatPhoneNumber(billPay?.phone.trim())
+                : "Đang tải"}
             </p>
           </div>
         </div>
@@ -113,13 +159,17 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {`${billPay?.addressDetail ? billPay?.addressDetail.trim() : ""}, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${billPay?.districtName ? billPay?.districtName.trim() : ""} ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
+              {`${
+                billPay?.addressDetail ? billPay?.addressDetail.trim() : ""
+              }, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${
+                billPay?.districtName ? billPay?.districtName.trim() : ""
+              } ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
             </p>
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const boxBeneficiary = (item, index) => {
     return (
@@ -134,7 +184,9 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[190px] text-right">
-              {item?.fullName.trim() == "" ? "Chưa cập nhật" : item?.fullName.trim()}
+              {item?.fullName.trim() == ""
+                ? "Chưa cập nhật"
+                : item?.fullName.trim()}
             </p>
           </div>
         </div>
@@ -150,14 +202,15 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
         </div>
 
-
         <div className="flex flex-row justify-between w-full">
           <div>
             <p className="text-[#646464] text-sm font-normal">Số CCCD</p>
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.citizenId.trim() == "" ? "Chưa cập nhật" : item?.citizenId.trim()}
+              {item?.citizenId.trim() == ""
+                ? "Chưa cập nhật"
+                : item?.citizenId.trim()}
             </p>
           </div>
         </div>
@@ -168,7 +221,9 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.gender.trim() == "" ? "Chưa cập nhật" : item?.gender.trim()}
+              {item?.gender.trim() == ""
+                ? "Chưa cập nhật"
+                : item?.gender.trim()}
             </p>
           </div>
         </div>
@@ -179,7 +234,21 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[142px] text-right">
-              {item?.healthInsuranceNumber == "" ? "Chưa cập nhật" : item?.healthInsuranceNumber}
+              {item?.healthInsuranceNumber == ""
+                ? "Chưa cập nhật"
+                : item?.healthInsuranceNumber}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between w-full">
+          <div>
+            <p className="text-[#646464] text-sm font-normal">Số tháng đóng</p>
+          </div>
+          <div>
+            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
+              {item?.monthInsured == 0 ? "Chưa cập nhật" : item?.monthInsured}{" "}
+              tháng
             </p>
           </div>
         </div>
@@ -187,24 +256,15 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
         <div className="flex flex-row justify-between w-full">
           <div>
             <p className="text-[#646464] text-sm font-normal">
-              Số tháng đóng
+              Bệnh viện đăng ký
             </p>
-          </div>
-          <div>
-            <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {item?.monthInsured == 0 ? "Chưa cập nhật" : item?.monthInsured} tháng
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-row justify-between w-full">
-          <div>
-            <p className="text-[#646464] text-sm font-normal">Bệnh viện đăng ký</p>
           </div>
           <div>
             <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
               {item?.hospitalName == 0 ? "Chưa cập nhật" : item?.hospitalName} -
-              {item?.medicalProvinceName == 0 ? "Chưa cập nhật" : item?.medicalProvinceName}
+              {item?.medicalProvinceName == 0
+                ? "Chưa cập nhật"
+                : item?.medicalProvinceName}
             </p>
           </div>
         </div>
@@ -215,36 +275,34 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#0076B7] text-sm font-semibold max-w-[180px] text-right">
-              {item?.price == 0 ? "Chưa cập nhật" : formatMoneyVND(item?.price)} vnđ
+              {item?.price == 0 ? "Chưa cập nhật" : formatMoneyVND(item?.price)}{" "}
+              vnđ
             </p>
           </div>
         </div>
-      </div >
-    )
-  }
+      </div>
+    );
+  };
 
   const line = () => {
-    return (
-      <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
-    )
-  }
+    return <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>;
+  };
 
   return (
     <div className="pt-20">
-      <HeaderBase
-        isHome={false}
-        title={"BHYT tự nguyện"}
-      />
+      <HeaderBase isHome={false} title={"BHYT tự nguyện"} />
       <div className="page-1 flex flex-col gap-4 mb-4">
         <div className="">
           {boxBuyer()}
           {line()}
-          {loading ? <div></div> :
+          {loading ? (
+            <div></div>
+          ) : (
             billPay.listInsuredPerson.map((item, index) => {
-              return boxBeneficiary(item, index)
-            })}
-
-        </div >
+              return boxBeneficiary(item, index);
+            })
+          )}
+        </div>
 
         <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
           {/* <h3 className="text-[#0076B7] text-lg font-medium">
@@ -327,12 +385,18 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
               Tổng thanh toán:
             </p>
             <h3 className="text-base font-medium text-[#0076B7]">
-              {billPay?.finalPrice ? formatMoneyVND(billPay?.finalPrice) : 'Đang tải'} VND
+              {billPay?.finalPrice
+                ? formatMoneyVND(billPay?.finalPrice)
+                : "Đang tải"}{" "}
+              VND
             </h3>
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <Link
-              to={`/buill-detail/${id}`}
+              onClick={() => {
+                createOrder();
+              }}
+              // to={`/buill-detail/${id}`}
               className="px-[20px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
             >
               Tiếp tục

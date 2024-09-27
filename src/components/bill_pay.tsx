@@ -1,8 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Widthheight } from "../models";
+import * as _ from "lodash";
+import { createMacFE } from "../services/payment";
+import { EventName, events, Payment } from "zmp-sdk";
 import { SpecificContext } from "./specific_context";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "./header_base";
 
 const BillPayPage: React.FC<Widthheight> = ({ url }) => {
@@ -16,11 +19,51 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const handleCheckboxChange = (value) => {
     setSelectedCheckbox(value);
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    events.on(EventName.OnDataCallback, (resp) => {
+      const { eventType, data } = resp;
+      if (eventType === "PAY_BY_CUSTOM_METHOD") {
+        console.log(data);
+        navigate(`/buill-detail/${insuranceOrder.id}`);
+      }
+    });
+  }, []);
+
+  const createOrder = async () => {
+    let dataClone = _.cloneDeep(insuranceOrder);
+    const body: any = await {
+      amount: insuranceOrder.finalPrice,
+      desc: "Thanh toán gói bảo hiểm",
+      item: [
+        {
+          id: `#${insuranceOrder.accountId}`,
+          amount: insuranceOrder.finalPrice,
+        },
+      ],
+      method: JSON.stringify({
+        id: "vnpayqr",
+        isCustom: true,
+      }),
+    };
+
+    const mac = await createMacFE(body);
+
+    const { orderId } = await Payment.createOrder({
+      ...body,
+      mac: mac,
+    });
+
+    console.log("orderId", orderId);
+  };
+
   useEffect(() => {
     axios
       .get(
         "https://baohiem.dion.vn/province/api/detail/" +
-        insuranceOrder.provinceId
+          insuranceOrder.provinceId
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);
@@ -31,7 +74,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     axios
       .get(
         "https://baohiem.dion.vn/district/api/detail/" +
-        insuranceOrder.districtId
+          insuranceOrder.districtId
       )
       .then((response) => {
         setDistrictName(response.data.data[0].name);
@@ -305,7 +348,10 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
           </div>
           <div className="flex flex-row content-center justify-center items-center">
             <Link
-              to={"/buill-detail/" + insuranceOrder.id}
+              onClick={() => {
+                createOrder();
+              }}
+              // to={"/buill-detail/" + insuranceOrder.id}
               className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
             >
               Tiếp tục

@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as _ from "lodash";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,7 +7,10 @@ import { PulseLoader } from "react-spinners";
 import { formatDate } from "../utils/validateString";
 import HeaderBase from "./header_base";
 import { SpecificContext } from "./specific_context";
-import logo from "../../assets-src/logo1.png"
+import logo from "../../assets-src/logo1.png";
+import { Payment } from "zmp-sdk";
+import { events, EventName } from "zmp-sdk/apis";
+import { createMacFE } from "../services/payment";
 
 const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
@@ -15,17 +19,17 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const [insuredPerson, setInsuredPerson] = useState<any>();
   const [orderStatusId, setOrderStatusId] = useState<number>(0);
   const specificContext = useContext<any>(SpecificContext);
-  const {
-    insuranceOrder,
-    setInsuranceOrder,
-  } = specificContext;
+  const { insuranceOrder, setInsuranceOrder } = specificContext;
+
   const PENDING = 1001;
   const DONE = 1002;
   const CANCELED = 1003;
+
   useEffect(() => {
     axios
       .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
       .then((response) => {
+        // console.log(response.data.data[0]);
 
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
@@ -37,63 +41,67 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         delete storeage.fileUploadUrl;
         storeage.citizenId = 0;
 
-        delete storeage.insuranceOrderPaymentStatusName
-        delete storeage.provinceName
-        delete storeage.wardName
-        delete storeage.insuranceName
-        delete storeage.districtName
-        delete storeage.insurancePrice
-        delete storeage.insuranceOrderStatusId
-        delete storeage.insuranceOrderStatusName
-        delete storeage.createdTime
+        delete storeage.insuranceOrderPaymentStatusName;
+        delete storeage.provinceName;
+        delete storeage.wardName;
+        delete storeage.insuranceName;
+        delete storeage.districtName;
+        delete storeage.insurancePrice;
+        delete storeage.insuranceOrderStatusId;
+        delete storeage.insuranceOrderStatusName;
+        delete storeage.createdTime;
 
         delete storeage.listInsuredPerson[0].ethnic;
-        delete storeage.listInsuredPerson[0].oldCardStartDate
-        delete storeage.listInsuredPerson[0].oldCardEndDate
-        delete storeage.listInsuredPerson[0].newCardStartDate
-        delete storeage.listInsuredPerson[0].newCardEndDate
-        delete storeage.listInsuredPerson[0].price
-        delete storeage.listInsuredPerson[0].insuredPersonId
-        delete storeage.listInsuredPerson[0].healthInsuranceNumber
-        delete storeage.listInsuredPerson[0].hospitalName
-        storeage.listInsuredPerson[0].doB = formatDate(storeage.listInsuredPerson[0].doB)
-        delete storeage.listInsuredPerson[0].medicalProvinceName
+        delete storeage.listInsuredPerson[0].oldCardStartDate;
+        delete storeage.listInsuredPerson[0].oldCardEndDate;
+        delete storeage.listInsuredPerson[0].newCardStartDate;
+        delete storeage.listInsuredPerson[0].newCardEndDate;
+        delete storeage.listInsuredPerson[0].price;
+        delete storeage.listInsuredPerson[0].insuredPersonId;
+        delete storeage.listInsuredPerson[0].healthInsuranceNumber;
+        delete storeage.listInsuredPerson[0].hospitalName;
+        storeage.listInsuredPerson[0].doB = formatDate(
+          storeage.listInsuredPerson[0].doB
+        );
+        delete storeage.listInsuredPerson[0].medicalProvinceName;
 
         if (storeage.houseHold != null) {
-          storeage.houseHold.houseHoldPeoples.map(item => {
+          storeage.houseHold.houseHoldPeoples.map((item) => {
             delete item.createdTime;
             return item;
           });
         } else {
           storeage.houseHold = {
-            "id": 0,
-            "chuHoTen": "",
-            "ksProvinceId": 0,
-            "ksDistrictId": 0,
-            "ksWardId": 0,
-            "ksAddressDetail": "",
-            "hkAddressDetail": "",
-            "soGiayToCaNhan": "",
-            "ttProvinceId": 0,
-            "ttDistrictId": 0,
-            "ttWardId": 0,
-            "houseHoldPeoples": [
+            id: 0,
+            chuHoTen: "",
+            ksProvinceId: 0,
+            ksDistrictId: 0,
+            ksWardId: 0,
+            ksAddressDetail: "",
+            hkAddressDetail: "",
+            soGiayToCaNhan: "",
+            ttProvinceId: 0,
+            ttDistrictId: 0,
+            ttWardId: 0,
+            houseHoldPeoples: [
               {
-                "id": 0,
-                "name": "",
-                "doB": "",
-                "gender": "",
-                "ethnicId": 0,
-                "relationShipId": "",
-                "citizenId": "",
-                "ksProvinceId": 0,
-                "ksDistrictId": 0,
-                "ksWardId": 0,
-                "ksAddressDetail": ""
-              }
-            ]
-          }
+                id: 0,
+                name: "",
+                doB: "",
+                gender: "",
+                ethnicId: 0,
+                relationShipId: "",
+                citizenId: "",
+                ksProvinceId: 0,
+                ksDistrictId: 0,
+                ksWardId: 0,
+                ksAddressDetail: "",
+              },
+            ],
+          };
         }
+
+        // console.log("user", storeage);
 
         setInsuranceOrder(storeage);
       })
@@ -101,6 +109,8 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         console.error(error);
       });
   }, [id]);
+
+  // console.log("Order :", insuranceOrder);
 
   useEffect(() => {
     axios
@@ -114,6 +124,44 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         console.error(error);
       });
   }, [id]);
+
+  useEffect(() => {
+    events.on(EventName.OnDataCallback, (resp) => {
+      const { eventType, data } = resp;
+      if (eventType === "PAY_BY_CUSTOM_METHOD") {
+        console.log(data);
+        navigate(`/buill-detail/${id}`);
+      }
+    });
+  }, []);
+
+  const createOrder = async () => {
+    let dataClone = _.cloneDeep(insuranceOrder);
+    const body: any = await {
+      amount: insuranceOrder.finalPrice,
+      desc: "Thanh toán gói bảo hiểm",
+      item: [
+        {
+          id: `#${insuranceOrder.accountId}`,
+          amount: insuranceOrder.finalPrice,
+        },
+      ],
+      method: JSON.stringify({
+        id: "vnpayqr",
+        isCustom: true,
+      }),
+    };
+
+    const mac = await createMacFE(body);
+
+    const { orderId } = await Payment.createOrder({
+      ...body,
+      mac: mac,
+    });
+
+    console.log("orderId", orderId);
+  };
+
   function formatDateTime(dateTimeString) {
     const date = new Date(dateTimeString);
 
@@ -126,6 +174,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
 
     return `${hours}:${minutes} - ${day}/${month}/${year}`;
   }
+
   function formatDateString(dateString: string): string {
     // Chuyển chuỗi ngày tháng thành đối tượng Date
     const date = new Date(dateString);
@@ -166,26 +215,28 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const renderBackground = () => {
     switch (orderStatusId) {
       case PENDING:
-        return "bg-[#F4A460]"
+        return `#FAAD14`;
       case CANCELED:
-        return "bg-[#666666]"
+        return `#F00`;
       case DONE:
-        return "bg-[#00CD00]"
+        return `#00BA00`;
+      default:
+        return `#FAAD14`;
     }
-  }
+  };
 
   const headerStatus = () => {
     return (
       <div
-        className={`${renderBackground()} py-[12px] px-4 flex flex-row items-center justify-between`}
+        className={`bg-[${renderBackground()}] py-[12px] px-4 flex flex-row items-center justify-between`}
       >
         <p className="text-white text-sm font-normal">Trạng thái</p>
         <p className="text-white text-sm font-semibold">
           {orderDetail.insuranceOrderStatusName}
         </p>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div>
@@ -200,9 +251,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         <div className="page-1 flex flex-col gap-4 mb-4">
           <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
             <div className="flex justify-between">
-              <h3 className="text-base font-medium text-[#0076B7]">
-                Mã đơn
-              </h3>
+              <h3 className="text-base font-medium text-[#0076B7]">Mã đơn</h3>
               <div className="text-black text-sm font-semibold max-w-[142px] text-right">
                 #{orderDetail?.id}
               </div>
@@ -218,7 +267,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 <button
                   onClick={() => {
                     // navigate("/update-bhxh/" + id);
-                    navigate("/register-BHXH")
+                    navigate("/register-BHXH");
                   }}
                   className="text-sm text-[#0076B7] underline"
                 >
@@ -422,15 +471,12 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
             </div> */}
           </div>
 
-
-
           {/* --------------------------------------------- */}
           <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-[35%]">
             <h3 className="text-[#0076B7] text-lg font-medium">
               Danh mục sản phẩm
             </h3>
             <div className="flex gap-[10px]">
-
               <img src={logo} className="w-16 h-16" />
 
               <div className="title-product flex flex-col">
@@ -477,7 +523,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
           </div>
         </div>
 
-
         {!(orderStatusId == CANCELED || orderStatusId == DONE) && (
           <div className="page-2 bg-white fixed bottom-0 w-[100%]">
             <div className="flex flex-col gap-3">
@@ -491,7 +536,10 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
               </div>
               <div className="flex flex-row content-center justify-center items-center">
                 <Link
-                  to={"/buill-detail/" + id}
+                  // to={"/buill-detail/" + id}
+                  onClick={() => {
+                    createOrder();
+                  }}
                   className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
                 >
                   Tiếp tục
