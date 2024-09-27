@@ -5,7 +5,7 @@ import { FadeLoader } from "react-spinners";
 import Modal from 'react-modal';
 import { SpecificContext } from "./specific_context";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "./header_base";
 import imageQR from "../../assets-src/icon_qr.png";
 import {
@@ -29,6 +29,7 @@ import Lottie from "lottie-react";
 import lottieScanQR from "../../assets-src/lottie_scan_qr.json";
 import { BenefitLevevlList } from "../utils/constants";
 import CardMembersHouseHoldBHXH from "./card_members_house_hold_bhxh";
+import { openWebview } from "zmp-sdk";
 
 dayjs.locale("vi");
 dayjs.extend(customParseFormat);
@@ -154,6 +155,7 @@ const RegisterBHXH = (props) => {
   const lottieRef = useRef(null);
 
   const [isShowModalbenefitLevel, setIsShowModalbenefitLevel] = useState(false)
+  const [isShowModalPrivacyPolicy, setIsShowModalPrivacyPolicy] = useState(false)
 
   // Ref để scroll
   const participantRefs = {
@@ -3593,6 +3595,25 @@ const RegisterBHXH = (props) => {
     );
   }
 
+  const openUrlInWebview = async () => {
+    try {
+      await openWebview({
+        url: "https://drive.google.com/file/d/10FQuDmXwuuzGKzPOMbZlTpPpUc-1jtIP/view?usp=sharing",
+        config: {
+          style: "bottomSheet",
+          leftButton: "back"
+        }
+      });
+    } catch (error) {
+      // xử lý khi gọi api thất bại
+      console.log(error);
+    }
+  };
+
+  const openPdf = () => {
+    window.open('https://baohiem.dion.vn/dieukhoan.pdf', '_blank');
+  };
+
   const rendePrivacyPolicy = () => {
     return (
       <div className="flex mx-4 flex-col gap-2 pb-4">
@@ -3611,13 +3632,52 @@ const RegisterBHXH = (props) => {
             className="text-sm font-normal text-[#000] w-[96%]"
           >
             Tôi cam đoan rằng tất cả những lời khai trên là đúng và đã hiểu rõ
-            <strong className="text-[#0076B7] font-bold">
-              {" "}
-              Chính sách và điều khoản
-            </strong>
+            <Link to={"/privacy_policy"}>
+              <strong className="text-[#0076B7] font-bold">
+                {" "}
+                Chính sách và điều khoản
+              </strong>
+            </Link>
+
           </label>
+          <Modal
+            isOpen={isShowModalPrivacyPolicy}
+            onRequestClose={() => setIsShowModalPrivacyPolicy(false)}
+            style={{
+              content: {
+                top: '50%',
+                left: '50%',
+                right: 'auto',
+                bottom: 'auto',
+                marginRight: '-50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                border: 'none',
+                padding: 0,
+                width: '90%',
+                height: '75%',
+                overflow: 'auto',
+              },
+              overlay: {
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              },
+            }}
+          >
+
+            <iframe
+              src="https://baohiem.dion.vn/dieukhoan.pdf"
+              title="PDF Viewer"
+              style={{ width: '100%', height: '100%', border: 'none' }}
+            />
+
+
+          </Modal>
+
+
+
+
         </div>
-      </div>
+      </div >
     )
   }
 

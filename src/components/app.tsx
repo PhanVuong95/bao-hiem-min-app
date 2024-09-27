@@ -25,6 +25,7 @@ import { ProfileProvider } from "./user_profile_context";
 import splash from "../../assets-src/splash.png";
 import { closeLoading } from "zmp-sdk/apis";
 import CheckStatusProcedure from "../pages/check_status_procedure";
+import PrivacyPolicyPage from "./privacy_policy";
 
 const MyApp = () => {
   useEffect(() => {
@@ -94,6 +95,10 @@ const MyApp = () => {
                 <Route
                   path="/product-detail-1/:id"
                   element={<ProductDetailPage1 />}
+                />
+                <Route
+                  path="/privacy_policy/"
+                  element={<PrivacyPolicyPage />}
                 />
                 <Route
                   path="/buill-pay/:id"

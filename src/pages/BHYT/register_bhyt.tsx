@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "zmp-ui";
 import { Province } from "../../models";
@@ -960,10 +960,12 @@ const RegisterBHYT = ({ }) => {
               >
                 Tôi cam đoan rằng tất cả những lời khai trên là đúng và đã
                 hiểu rõ
-                <strong className="text-[#0076B7] font-bold">
-                  {" "}
-                  Chính sách và điều khoản
-                </strong>
+                <Link to={"/privacy_policy"}>
+                  <strong className="text-[#0076B7] font-bold">
+                    {" "}
+                    Chính sách và điều khoản
+                  </strong>
+                </Link>
               </label>
             </div>
           </div>
