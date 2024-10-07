@@ -18,7 +18,7 @@ import {
   isValidPhone,
 } from "../utils/validateString";
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
-import { Input, Select, DatePicker, Checkbox } from "antd";
+import { Input, Select, DatePicker, Checkbox, Slider, InputNumber } from "antd";
 import dayjs from "dayjs";
 import "../locale/vi";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -72,7 +72,8 @@ const RegisterBHXH = (props) => {
     useState(false);
   const [loading, setLoading] = useState(false);
   const [supportBudget, setSupportBudget] = useState<number>(0);
-  const wage = useRef<number>(0);
+  const wage = useRef<number>(1500000);
+  const [wageSlider, setWageSlider] = useState<number>(1500000);
   const monthCount = useRef<number>(0);
   const [frontImageUrl, setFrontImageUrl] = useState<string>("");
   const [backImageUrl, setBackImageUrl] = useState<string>("");
@@ -80,7 +81,7 @@ const RegisterBHXH = (props) => {
   const { handleSubmit } = useForm();
   const finalPrice = useRef<number>(0);
   const specificContext = useContext<any>(SpecificContext);
-  const [displayValue, setDisplayValue] = useState("");
+  const [displayValue, setDisplayValue] = useState("1.500.000");
   const [isChecked, setIsChecked] = useState(false);
   const [ethnic, setEthnic] = useState(0);
   const [ethnicLists, setEthnicLists] = useState([]);
@@ -92,6 +93,7 @@ const RegisterBHXH = (props) => {
   } = specificContext;
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
+  const [dateStr, setDateStr] = useState<String>("")
 
   // Hộ gia đình
   const createNewMember = () => (
@@ -157,6 +159,10 @@ const RegisterBHXH = (props) => {
   const [isShowModalbenefitLevel, setIsShowModalbenefitLevel] = useState(false)
   const [isShowModalPrivacyPolicy, setIsShowModalPrivacyPolicy] = useState(false)
 
+  const [isSearched, setIsSearched] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
+  const [isLoadingLuckUp, setIsLoadingLuckUp] = useState(false);
+
   // Ref để scroll
   const participantRefs = {
     uploadCCCD: useRef<any>(null),
@@ -204,6 +210,7 @@ const RegisterBHXH = (props) => {
   }
 
   const [isHadBHXH, setIsHadBHXH] = useState(false);
+
 
   // Load lại tất cả danh sách tỉnh thành
   useEffect(() => {
@@ -720,6 +727,9 @@ const RegisterBHXH = (props) => {
     )
       .toString()
       .padStart(2, "0")}/${dateObject.year()}`;
+
+    setDateStr(dateStr)
+
     setDateValue(dayjs(dateStr, dateFormat));
     setInsuranceOrder((prevOrder) => ({
       ...prevOrder,
@@ -877,11 +887,25 @@ const RegisterBHXH = (props) => {
       return false;
     }
 
-    if (Number(wage.current) == 0 || Number(wage.current) < 1000000) {
-      toast.warn("Mức lương không hợp lệ");
+    if (Number(wage.current) < 1500000) {
+      toast.warn("Mức lương tối thiếu phải là 1.500.000 vnđ");
       scrollToElement(participantRefs.salaryParticipant)
       return false;
     }
+
+    if (Number(wage.current) > 4680000) {
+      toast.warn("Mức lương tối đa phải là 46.800.000 vnđ");
+      scrollToElement(participantRefs.salaryParticipant)
+      return false;
+    }
+
+    if (Number(wage.current) / 50000 != 0) {
+      toast.warn("Mức lương phải chẵn 50.000 vnđ");
+      scrollToElement(participantRefs.salaryParticipant)
+      return false;
+    }
+
+
     if (Number(monthCount.current) == 0 || Number(monthCount.current) < 0) {
       toast.warn("Số tháng tham gia không hợp lệ");
       scrollToElement(participantRefs.monthcountParticipant)
@@ -1149,6 +1173,46 @@ const RegisterBHXH = (props) => {
     return true;
   };
 
+  const validateSearchCodeBHXH = () => {
+    if (!isValidEmptyString(personName)) {
+      toast.warn("Họ và tên người tham gia không được để trống");
+      scrollToElement(participantRefs.fullNameParticipants)
+      return false;
+    }
+
+    if (!isValidEmptyString(dateValue)) {
+      toast.warn("Ngày sinh không được để trống");
+      scrollToElement(participantRefs.dobParticipant)
+      return false;
+    }
+
+    if (!isValidEmptyString(gender)) {
+      toast.warn("Giới tính không được để trống");
+      scrollToElement(participantRefs.genderParticipant)
+      return false;
+    }
+
+    if (selectedKSProvince == 0) {
+      toast.warn("Địa chỉ tỉnh thành khai sinh không được để trống");
+      scrollToElement(participantRefs.ksProvinceParticipant)
+      return false;
+    }
+
+    if (selectedKSDistrict == 0) {
+      toast.warn("Địa chỉ quận huyện khai sinh không được để trống");
+      scrollToElement(participantRefs.ksDistrictParticipant)
+      return false;
+    }
+
+    if (selectedKSWard == 0) {
+      toast.warn("Địa chỉ phường xã khai sinh không được để trống");
+      scrollToElement(participantRefs.ksWardParticipant)
+      return false;
+    }
+
+    return true
+  }
+
   // const ()
   const onSubmit = (data: any) => {
     if (validate()) {
@@ -1238,6 +1302,57 @@ const RegisterBHXH = (props) => {
       console.error("Error uploading image:", error);
     }
   };
+
+  const onSubmitFormData = async () => {
+    setIsLoadingLuckUp(true)
+    const token = localStorage.token;
+    const data = {
+      "name": personName,
+      "doB": dateStr,
+      "Gender": gender,
+      "ProvinceId": selectedKSProvince,
+      "DistrictId": selectedKSDistrict,
+      "WardId": selectedKSWard
+    }
+    try {
+      const response = await axios.post(
+        "https://baohiem.dion.vn/InsuranceOrder/api/search-social-insurance-number",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.message == "SUCCESS") {
+        setSocialInsuranceId(response.data.data[0].maSoBhxh)
+        toast.success(
+          "Tra cứu mã bảo hiểm thành công",
+        );
+      }
+
+      if (response.data.message == "BAD_REQUEST") {
+        toast.warn(
+          "Không tìm thấy mã số BHXH",
+        );
+        setSocialInsuranceId("")
+      }
+
+      setIsSearched(true)
+
+      setIsLoadingLuckUp(false)
+
+    } catch (error) {
+      toast.error(
+        "Tra cứu mã bảo hiểm thất bại",
+      );
+      setSocialInsuranceId("")
+      setBtnLoading(false)
+      setIsLoadingLuckUp(false)
+    }
+  }
 
   const boxHeaderParticipants = () => {
     return (
@@ -1355,27 +1470,38 @@ const RegisterBHXH = (props) => {
         <label className="block text-sm font-normal text-gray-900 pb-2">
           Số BHXH
         </label>
-        <Input
-          type="text"
-          id="bhxh"
-          maxLength={15}
-          ref={participantRefs.bhxhParticipant}
-          value={socialInsuranceId}
-          className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Nhập số Bảo hiểm Xã hội"
-          onChange={(e) => {
-            setSocialInsuranceId(e.target.value);
-            setInsuranceOrder((prevOrder) => ({
-              ...prevOrder,
-              listInsuredPerson: prevOrder.listInsuredPerson.map(
-                (person, index) =>
-                  index === 0
-                    ? { ...person, socialInsuranceNumber: e.target.value }
-                    : person
-              ),
-            }));
-          }}
-        />
+        <div className="relative">
+          <Input
+            type="text"
+            id="bhxh"
+            maxLength={15}
+            ref={participantRefs.bhxhParticipant}
+            value={socialInsuranceId}
+            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Nhập số Bảo hiểm Xã hội"
+            onChange={(e) => {
+              setSocialInsuranceId(e.target.value);
+              setInsuranceOrder((prevOrder) => ({
+                ...prevOrder,
+                listInsuredPerson: prevOrder.listInsuredPerson.map(
+                  (person, index) =>
+                    index === 0
+                      ? { ...person, socialInsuranceNumber: e.target.value }
+                      : person
+                ),
+              }));
+            }}
+          />
+
+          <Link to={""} onClick={() => {
+            if (validateSearchCodeBHXH()) {
+              onSubmitFormData()
+            }
+
+          }} className="absolute inset-y-0 start-[79%] top-0 flex items-center">
+            <p className="text-base font-normal text-[#0076B7]">{!isLoadingLuckUp ? 'Tra cứu' : 'Đang tải...'}</p>
+          </Link>
+        </div>
       </div>
     )
   }
@@ -1486,19 +1612,56 @@ const RegisterBHXH = (props) => {
         <label className="block text-sm font-normal text-gray-900 pb-2">
           Mức lương làm căn cứ đóng <samp className="text-red-600">*</samp>
         </label>
+        <Slider
+          min={1500000}
+          max={46800000}
+          step={50000}
+          value={wageSlider}
+          onChange={(e) => {
+            wage.current = e;
+            setWageSlider(e)
+            // Cập nhật giá trị trong insuranceOrder
+            setInsuranceOrder((prevOrder) => ({
+              ...prevOrder,
+              listInsuredPerson: prevOrder.listInsuredPerson.map(
+                (person, index) =>
+                  index === 0
+                    ? {
+                      ...person,
+                      wage: wage.current,
+
+                    }
+                    : person
+              ),
+            }));
+
+            // Hiển thị giá trị định dạng với phân cách hàng nghìn
+            setDisplayValue(e.toLocaleString("vi-VN"));
+
+            // Tính toán giá cuối cùng
+            calculateFinalPrice();
+          }}
+        />
         <div className="relative">
           <Input
             type="text"
+            // disabled
             id="salary"
             value={displayValue}
             ref={participantRefs.salaryParticipant}
             className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Nhập mức lương"
             onChange={(e) => {
-              // Lấy giá trị từ input và loại bỏ dấu phân cách hàng nghìn (dấu chấm)
-              let rawValue = e.target.value.replace(/\D/g, "");
+
+              const numbers = e!.target.value.replace(/\D/g, "");
+
               // Chuyển đổi giá trị thành số, nếu rỗng thì đặt thành 0
-              let numericValue = rawValue !== "" ? Number(rawValue) : 0;
+              let numericValue = numbers != "" ? Number(numbers) : 0;
+              if (numericValue > 46800000) numericValue = 46800000
+
+
+              setWageSlider(numericValue)
+
               // Cập nhật giá trị wage
               wage.current = numericValue;
               // Cập nhật giá trị trong insuranceOrder
@@ -1889,7 +2052,7 @@ const RegisterBHXH = (props) => {
     return (
       <div>
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Phường xã <samp className="text-red-600">*</samp>
+          Phường xã<samp className="text-red-600">*</samp>
         </label>
         <Select
           size="large"
@@ -3734,7 +3897,7 @@ const RegisterBHXH = (props) => {
     return (
       <>
         <Modal
-          isOpen={isUploadingPhotoCitizenFont || isUploadingPhotoCitizenBack || loading}
+          isOpen={isUploadingPhotoCitizenFont || isUploadingPhotoCitizenBack || loading || isLoadingLuckUp}
           style={styleModal}
         >
           <div className="w-[400px] h-[750px] relative flex justify-center items-center">
@@ -3923,7 +4086,7 @@ const RegisterBHXH = (props) => {
       <HeaderBase isHome={false} title={"Đăng ký BHXH Tự nguyện"} />
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className=" flex flex-col gap-4 pt-[75px]"
+        className=" flex flex-col gap-4 pt-[100px]"
       >
         {/* Cập nhật căn cước công dân */}
         {uploadImage()}

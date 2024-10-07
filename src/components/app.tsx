@@ -26,6 +26,7 @@ import splash from "../../assets-src/splash.png";
 import { closeLoading } from "zmp-sdk/apis";
 import CheckStatusProcedure from "../pages/check_status_procedure";
 import PrivacyPolicyPage from "./privacy_policy";
+import LuckUpBHXH from "../pages/luckup_bhxh";
 
 const MyApp = () => {
   useEffect(() => {
@@ -152,6 +153,10 @@ const MyApp = () => {
                       <HistoryUnpaidPage />
                     </SpecificProvider>
                   }
+                />
+                <Route
+                  path="/luckup-bhxh"
+                  element={<LuckUpBHXH />}
                 />
               </Routes>
             </ZMPRouter>

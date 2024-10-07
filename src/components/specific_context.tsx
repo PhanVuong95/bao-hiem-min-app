@@ -116,7 +116,7 @@ export const SpecificProvider: React.FC<{ children: ReactNode }> = ({
         doB: "",
         gender: "",
         supportBudget: 0.0,
-        wage: 0,
+        wage: 1500000,
         monthInsured: 0,
         provinceId: 0,
         districtId: 0,
