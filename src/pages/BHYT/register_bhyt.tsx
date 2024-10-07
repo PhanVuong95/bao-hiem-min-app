@@ -935,7 +935,7 @@ const RegisterBHYT = ({ }) => {
           <hr className="border-dashed border-[1px] text-[#DEE7FE] "></hr>
 
           <div className="flex flex-col gap-2 pb-4">
-            <h3 className="text-[#0076B7] text-lg font-medium">
+            {/* <h3 className="text-[#0076B7] text-lg font-medium">
               Thông tin thẻ BHYT
             </h3>
             <div>
@@ -944,7 +944,7 @@ const RegisterBHYT = ({ }) => {
                 <strong className="text-[#0076B7] font-bold">VSSID </strong>
                 trong 15 ngày làm việc.
               </p>
-            </div>
+            </div> */}
             <div className="flex gap-2">
               <input
                 type="checkbox"

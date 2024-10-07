@@ -1877,9 +1877,9 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
         <li>
           <p className="text-sm font-normal">
             Tra cứu mã số BHXH bằng thông tin khai sinh{" "}
-            <span className="text-[#0076B7] font-semibold underline">
+            {/* <span className="text-[#0076B7] font-semibold underline">
               tại đây
-            </span>
+            </span> */}
           </p>
         </li>
       </ul>
