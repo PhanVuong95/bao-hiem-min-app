@@ -960,29 +960,7 @@ const RegisterBHXH = (props) => {
       return false;
     }
 
-    if (vungLuongToiThieuId == 0) {
-      toast.warn("Vùng lương tối thiểu không được để trống");
-      scrollToElement(participantRefs.areaSalaryParticipant)
-      return false;
-    }
-
-    // if (benefitLevel == "") {
-    //   toast.warn("Mức hưởng không được để trống");
-    //   scrollToElement(participantRefs.benefitLevelParticipant)
-    //   return false;
-    // }
-
-    if (selectedMedicalByProvinceParticipant == 0) {
-      toast.warn("Tỉnh thành khám chữa bệnh không được để trống");
-      scrollToElement(participantRefs.medicalByProvinceParticipant)
-      return false;
-    }
-
-    if (selectedMedicalByHospitalParticipant == 0) {
-      toast.warn("Bệnh viện khám chữa bệnh không được để trống");
-      scrollToElement(participantRefs.hospitalExaminationParticipant)
-      return false;
-    }
+    // Người tham gia có mã BHXH
     if (isHadBHXH) {
       if (
         !(
@@ -1124,6 +1102,32 @@ const RegisterBHXH = (props) => {
       }
     }
 
+    // Thông tin bảo hiểm
+    if (vungLuongToiThieuId == 0) {
+      toast.warn("Vùng lương tối thiểu không được để trống");
+      scrollToElement(participantRefs.areaSalaryParticipant)
+      return false;
+    }
+
+    // if (benefitLevel == "") {
+    //   toast.warn("Mức hưởng không được để trống");
+    //   scrollToElement(participantRefs.benefitLevelParticipant)
+    //   return false;
+    // }
+
+    if (selectedMedicalByProvinceParticipant == 0) {
+      toast.warn("Tỉnh thành khám chữa bệnh không được để trống");
+      scrollToElement(participantRefs.medicalByProvinceParticipant)
+      return false;
+    }
+
+    if (selectedMedicalByHospitalParticipant == 0) {
+      toast.warn("Bệnh viện khám chữa bệnh không được để trống");
+      scrollToElement(participantRefs.hospitalExaminationParticipant)
+      return false;
+    }
+
+    // Thông tin người mua
     if (!isValidPhone(phone)) {
       toast.warn("Số điện thoại không hợp lệ");
       scrollToElement(buyerRefs.phone)
@@ -3145,27 +3149,7 @@ const RegisterBHXH = (props) => {
           {inputTTAddressDetailParticipants()}
 
 
-          <h3 className="text-base font-semibold text-[#0076B7]">
-            Thông tin bảo hiểm{" "}
-          </h3>
 
-          {/* Vùng lương tối thiểu */}
-          {inputAreaSalaryParticipants()}
-
-          {/* Mức hưởng */}
-          {/* {inputBenefitLevelParticipants()} */}
-
-          {/* Tỉnh thành khám chữa bệnh */}
-          {inputMedicalByProvinceParticipants()}
-
-          {/* Quận huyện khám chữa bênh */}
-          {/* {inputExaminationByDistrictParticipants()} */}
-
-          {/* Bệnh viện khám chữa bệnh */}
-          {inputHospitalExaminationParticipants()}
-
-          {/* Mức đóng / Hệ số đóng */}
-          {inputClosingRateParticipants()}
 
           <Checkbox
             checked={isHadBHXH}
@@ -3286,6 +3270,29 @@ const RegisterBHXH = (props) => {
 
               {buttonAddMember()}
             </div>)}
+
+
+          <h3 className="text-base font-semibold text-[#0076B7]">
+            Thông tin bảo hiểm{" "}
+          </h3>
+
+          {/* Vùng lương tối thiểu */}
+          {inputAreaSalaryParticipants()}
+
+          {/* Mức hưởng */}
+          {/* {inputBenefitLevelParticipants()} */}
+
+          {/* Tỉnh thành khám chữa bệnh */}
+          {inputMedicalByProvinceParticipants()}
+
+          {/* Quận huyện khám chữa bênh */}
+          {/* {inputExaminationByDistrictParticipants()} */}
+
+          {/* Bệnh viện khám chữa bệnh */}
+          {inputHospitalExaminationParticipants()}
+
+          {/* Mức đóng / Hệ số đóng */}
+          {inputClosingRateParticipants()}
 
 
 
@@ -4086,7 +4093,7 @@ const RegisterBHXH = (props) => {
       <HeaderBase isHome={false} title={"Đăng ký BHXH Tự nguyện"} />
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className=" flex flex-col gap-4 pt-[100px]"
+        className=" flex flex-col gap-4 pt-[85px]"
       >
         {/* Cập nhật căn cước công dân */}
         {uploadImage()}

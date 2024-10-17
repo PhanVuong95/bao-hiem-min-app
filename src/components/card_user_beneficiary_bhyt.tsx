@@ -452,7 +452,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     return (
       <div className="flex items-center justify-between">
         <h3 className="text-[#0076B7] text-lg font-medium">
-          Thông tin người được bảo hiểm {index + 1}
+          Người tham gia BHYT HGD
         </h3>
         {index != 0 ?
           <button type="button"
