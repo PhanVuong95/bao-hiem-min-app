@@ -26,3 +26,11 @@ export const phoneState = atom({
   key: "phone",
   default: "",
 });
+
+export const referrerState = atom<{
+  referrerId?: string;
+  discountCode?: string;
+}>({
+  key: "referrer",
+  default: {},
+});

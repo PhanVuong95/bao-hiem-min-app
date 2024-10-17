@@ -17,7 +17,7 @@ export const createMacFE = async (body) => {
       .join("&");
     // biến môi trường ZALO_CHECKOUT_SECRET_KEY lấy ở bước 3
     const mac = cryptoJS
-      .HmacSHA256(dataMac, "cd83b5eb0040a6499a97e6a639c9ac2f")
+      .HmacSHA256(dataMac, "d3c499e3edde7bf86c21ae3d84f37340")
       .toString();
     return mac;
   } catch (e) {
