@@ -897,7 +897,7 @@ const RegisterBHXH = (props) => {
       return false;
     }
 
-    if (Number(wage.current) > 4680000) {
+    if (Number(wage.current) > 46800000) {
       toast.warn("Mức lương tối đa phải là 46.800.000 vnđ");
       scrollToElement(participantRefs.salaryParticipant)
       return false;
