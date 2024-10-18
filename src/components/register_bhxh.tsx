@@ -94,6 +94,10 @@ const RegisterBHXH = (props) => {
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
   const [dateStr, setDateStr] = useState<String>("")
+  const [salaryErrors, setSalaryErrors] = useState({
+    error1: true,
+    error2: true
+  });
 
   // Hộ gia đình
   const createNewMember = () => (
@@ -899,7 +903,7 @@ const RegisterBHXH = (props) => {
       return false;
     }
 
-    if (Number(wage.current) / 50000 != 0) {
+    if (Number(wage.current) % 50000 != 0) {
       toast.warn("Mức lương phải chẵn 50.000 vnđ");
       scrollToElement(participantRefs.salaryParticipant)
       return false;
@@ -1610,6 +1614,22 @@ const RegisterBHXH = (props) => {
     )
   }
 
+  const validateSalary = (salary) => {
+    const newErrors = { error1: true, error2: true };
+    if (salary % 50000 != 0) {
+      newErrors.error1 = false
+    }
+
+    if (salary == 0) {
+      newErrors.error1 = false
+    }
+    if (salary < 1500000 || salary > 46800000) {
+      newErrors.error2 = false
+    }
+    setSalaryErrors(newErrors)
+
+  }
+
   const inputSalaryParticipants = () => {
     return (
       <div>
@@ -1624,6 +1644,9 @@ const RegisterBHXH = (props) => {
           onChange={(e) => {
             wage.current = e;
             setWageSlider(e)
+
+            validateSalary(e)
+
             // Cập nhật giá trị trong insuranceOrder
             setInsuranceOrder((prevOrder) => ({
               ...prevOrder,
@@ -1663,6 +1686,8 @@ const RegisterBHXH = (props) => {
               let numericValue = numbers != "" ? Number(numbers) : 0;
               if (numericValue > 46800000) numericValue = 46800000
 
+              validateSalary(numericValue)
+
 
               setWageSlider(numericValue)
 
@@ -1677,7 +1702,6 @@ const RegisterBHXH = (props) => {
                       ? {
                         ...person,
                         wage: wage.current,
-
                       }
                       : person
                 ),
@@ -1696,6 +1720,13 @@ const RegisterBHXH = (props) => {
             </p>
           </div>
         </div>
+        <div className={`block text-sm font-normal ${salaryErrors['error2'] == true ? "text-green-600" : "text-red-600"}  pt-2`}>
+          - Mức lương phải nằm trong khoảng 1.500.000 - 46.800.0000 vnđ
+        </div>
+        <div className={`block text-sm font-normal ${salaryErrors['error1'] == true ? "text-green-600" : "text-red-600"}  pt-2`}>
+          - Mức lương phải là số chia hết cho 50.000.
+        </div>
+
       </div>
     )
   }

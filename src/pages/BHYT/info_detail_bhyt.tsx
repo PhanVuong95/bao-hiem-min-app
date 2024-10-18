@@ -280,11 +280,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {`${
-                billPay?.addressDetail ? billPay?.addressDetail.trim() : ""
-              }, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${
-                billPay?.districtName ? billPay?.districtName.trim() : ""
-              } ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
+              {`${billPay?.addressDetail ? billPay?.addressDetail.trim() : ""
+                }, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${billPay?.districtName ? billPay?.districtName.trim() : ""
+                } ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
             </p>
           </div>
         </div>
