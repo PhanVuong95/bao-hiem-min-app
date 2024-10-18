@@ -22,3 +22,19 @@ export interface District {
   id: number;
   name: string;
 }
+
+export interface IUser {
+  birthday: string;
+  fullName: string;
+  id: string;
+  zaloId?: string;
+  name: string;
+  avatar: string;
+  zaloOAId?: string;
+  phone?: string;
+  // roles?: EUserRole[];
+  email?: string;
+  password?: "pwd" | "";
+  commingSoonFeatures?: string[];
+  createdAt: Date;
+}
