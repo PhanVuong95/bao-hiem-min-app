@@ -28,7 +28,7 @@ const PrivacyPolicyPage: React.FunctionComponent = (props) => {
 
       {/* <div style={{ height: '100vh', width: '100%' }}>
         <iframe
-          src="https://docs.google.com/viewer?url=https://baohiem.dion.vn/dieukhoan.pdf&embedded=true"
+          src={`https://docs.google.com/viewer?url=${BASE_URL}/dieukhoan.pdf&embedded=true`}
           title="PDF Viewer"
           style={{ width: '100%', height: '100%', border: 'none' }}
           allowFullScreen

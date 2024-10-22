@@ -17,6 +17,7 @@ import logo from "../../../assets-src/logo1.png";
 import { EventName, events, Payment } from "zmp-sdk";
 import * as _ from "lodash";
 import { createMacFE } from "../../services/payment";
+import { BASE_URL } from "../../utils/constants";
 
 const InfoDetailBHYT: React.FunctionComponent = () => {
   const { id } = useParams();
@@ -31,13 +32,14 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
   const CANCELED = 1003;
 
   const renderBackground = (insuranceOrderStatusId) => {
+
     switch (insuranceOrderStatusId) {
       case PENDING:
-        return "bg-[#F4A460]";
+        return `bg-[#F4A460]`;
       case CANCELED:
-        return "bg-[#666666]";
+        return `bg-[#666666]`;
       case DONE:
-        return "bg-[#00CD00]";
+        return `bg-[#00CD00]`;
     }
   };
 
@@ -80,7 +82,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insuranceorder/api/detail-by-vm/" + id)
+      .get(`${BASE_URL}/insuranceorder/api/detail-by-vm/` + id)
       .then((response) => {
         const data = response.data.data[0];
 
@@ -195,7 +197,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
   useEffect(() => {
     axios
       .get(
-        "https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002"
+        `${BASE_URL}/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002`
       )
       .then((response) => {
         const data = response.data.data.filter(
@@ -426,7 +428,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
   const boxInfo = () => {
     return (
-      <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-32">
+      <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-1">
         <h3 className="text-[#0076B7] text-lg font-medium">
           Danh mục sản phẩm
         </h3>
@@ -435,7 +437,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
           <div className="title-product flex flex-col">
             <h3 className="text-[#0076B7] text-lg font-medium">
-              {billPay?.insuranceOrderStatusName}
+              {billPay?.insuranceName}
             </h3>
             <p className="text-[#646464] text-sm font-normal">
               {billPay?.listInsuredPerson.length > 0
@@ -480,20 +482,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
               </p>
             </div>
           </div>
-
-          {/* <div className="flex flex-row justify-between w-full">
-            <div>
-              <p className="text-[#646464] text-sm font-normal">
-                Ngày xét duyệt
-              </p>
-            </div>
-            <div>
-              <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-                10:00 - 12/07/2024
-              </p>
-            </div>
-          </div> */}
         </div>
+
+
       </div>
     );
   };
@@ -514,7 +505,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
             </h3>
           </div>
           <div className="flex flex-row content-center justify-center items-center">
-            <Link
+            <button
               onClick={() => {
                 createOrder();
               }}
@@ -522,7 +513,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
               className="px-[20px] py-2 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-lg font-normal text-white text-center"
             >
               Tiếp tục
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -536,8 +527,9 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
           <div className="flex flex-row content-center justify-center items-center">
             <button
               onClick={() => {
+
                 navigate("/register-BHYT/", {
-                  state: { data: insurance.current, type: "updated" },
+                  state: { data: insurance.current, type: "register" },
                 });
               }}
               className="px-[20px] py-2 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-lg font-normal text-white text-center"
@@ -559,12 +551,10 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       />
 
       <div
-        className={`${renderBackground(
-          billPay?.insuranceOrderStatusId
-        )} h-11 flex justify-between px-4 items-center text-white text-base font-normal`}
+        className={`${renderBackground(billPay?.insuranceOrderStatusId)} h-11 flex justify-between px-4 items-center text-white text-base font-normal`}
       >
         <div>Trạng thái</div>
-        <div>{billPay?.insuranceOrderStatusName}</div>
+        <div>{billPay?.insuranceOrderStatusName == "Đã mua" ? "Đã thanh toán" : billPay?.insuranceOrderStatusName}</div>
       </div>
 
       <div className="page-1 flex flex-col gap-4 mb-4">
@@ -574,6 +564,24 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         </div>
 
         {boxInfo()}
+
+        {
+          billPay?.insuranceOrderStatusId == DONE ? (
+            <div className="flex flex-row content-center justify-center items-center mb-[25%]">
+              <button
+                onClick={() => {
+                  registerInfoBHYT.id = 0
+                  navigate("/register-BHYT/", {
+                    state: { data: insurance.current, type: "register" },
+                  });
+                }}
+                className="px-[24px] py-3 bg-[#e9c058] w-full rounded-full text-base font-normal text-white text-center"
+              >
+                Tái hợp đồng bảo hiểm
+              </button>
+            </div>
+          ) : (<div className="mb-32"></div>)
+        }
       </div>
 
       {billPay?.insuranceOrderStatusId == PENDING && boxFooterPayment()}

@@ -4,6 +4,7 @@ import HeaderPage from "../components/header_page";
 import axios from "axios";
 import { authorize, closeApp, getSetting, getUserInfo } from "zmp-sdk/apis";
 import { ProfileContext } from "../components/user_profile_context";
+import { BASE_URL } from "../utils/constants";
 
 export let logged = false;
 
@@ -11,8 +12,6 @@ const LayoutPage: React.FunctionComponent = (props) => {
   const profieContext = useContext(ProfileContext);
 
   const { userProfile, setUserProfile } = profieContext;
-
-  console.log("userProfile", userProfile);
 
   useEffect(() => {
     getSetting({
@@ -57,7 +56,7 @@ const LayoutPage: React.FunctionComponent = (props) => {
       const userId = user.userInfo.id;
 
       const { data } = await axios.post(
-        `https://baohiem.dion.vn/account/api/login-mini-app`,
+        `${BASE_URL}/account/api/login-mini-app`,
         {
           Username: userId,
         }

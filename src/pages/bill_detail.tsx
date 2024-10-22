@@ -9,6 +9,7 @@ import { FadeLoader, PulseLoader } from "react-spinners";
 import { saveImageToGallery } from "zmp-sdk";
 import { Modal } from "zmp-ui";
 import warningIc from "../../assets-src/warning_icon.png";
+import { BASE_URL } from "../utils/constants";
 
 const BuillDetailPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
@@ -68,7 +69,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   };
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
+      .get(`${BASE_URL}/insuranceorder/api/Detail-By-VM/` + id)
       .then((response) => {
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
@@ -80,7 +81,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   // useEffect(() => {
   //   axios
   //     .get(
-  //       "https://baohiem.dion.vn/province/api/detail/" +
+  //       `${BASE_URL}/province/api/detail/` +
   //         insuranceOrder.provinceId
   //     )
   //     .then((response) => {
@@ -91,7 +92,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   //     });
   //   axios
   //     .get(
-  //       "https://baohiem.dion.vn/district/api/detail/" +
+  //       `${BASE_URL}/district/api/detail/` +
   //         insuranceOrder.districtId
   //     )
   //     .then((response) => {
@@ -101,7 +102,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   //       console.error(error);
   //     });
   //   axios
-  //     .get("https://baohiem.dion.vn/ward/api/detail/" + insuranceOrder.wardId)
+  //     .get(`${BASE_URL}/ward/api/detail/` + insuranceOrder.wardId)
   //     .then((response) => {
   //       setWardeName(response.data.data[0].name);
   //     })
@@ -115,7 +116,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     //   formData.append("file", file);
     try {
       const response = await axios.post(
-        "https://baohiem.dion.vn/insuranceorder/api/create-payment?orderId=" +
+        `${BASE_URL}/insuranceorder/api/create-payment?orderId=` +
         id,
         {
           headers: {
@@ -152,7 +153,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
     const interval = setInterval(() => {
       axios
         .get(
-          "https://baohiem.dion.vn/insuranceorder/api/check-order-status/" + id
+          `${BASE_URL}/insuranceorder/api/check-order-status/` + id
         )
         .then((response) => {
           if (response.data.data[0] === STATUS_DONE_ID) {
@@ -182,7 +183,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
   // useEffect(() => {
   //   axios
   //     .get(
-  //       "https://baohiem.dion.vn/insuranceorder/api/check-order-status/" + 1056
+  //       `${BASE_URL}/insuranceorder/api/check-order-status/` + 1056
   //     )
   //     .then((response) => {
   //       if (response.data.data[0] == STATUS_DONE_ID) {

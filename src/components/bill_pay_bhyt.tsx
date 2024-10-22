@@ -11,6 +11,7 @@ import {
 import { createMacFE } from "../services/payment";
 import { EventName, events, Payment } from "zmp-sdk";
 import * as _ from "lodash";
+import { BASE_URL } from "../utils/constants";
 
 const BillPayBHYTPage: React.FunctionComponent = () => {
   const { id } = useParams();
@@ -67,7 +68,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
 
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insuranceorder/api/detail-by-vm/" + id)
+      .get(`${BASE_URL}/insuranceorder/api/detail-by-vm/` + id)
       .then((response) => {
         setBillPay(response.data.data[0]);
         setLoading(false);
@@ -81,7 +82,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
   // useEffect(() => {
   //   axios
   //     .get(
-  //       "https://baohiem.dion.vn/province/api/detail/" +
+  //       `${BASE_URL}/province/api/detail/` +
   //       0
   //     )
   //     .then((response) => {
@@ -92,7 +93,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
   //     });
   //   axios
   //     .get(
-  //       "https://baohiem.dion.vn/district/api/detail/" +
+  //       `${BASE_URL}/district/api/detail/` +
   //       0
   //     )
   //     .then((response) => {
@@ -102,7 +103,7 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
   //       console.error(error);
   //     });
   //   axios
-  //     .get("https://baohiem.dion.vn/ward/api/detail/" + 0)
+  //     .get(`${BASE_URL}/ward/api/detail/` + 0)
   //     .then((response) => {
   //       setWardeName(response.data.data[0].name);
   //     })
@@ -159,11 +160,9 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
           </div>
           <div>
             <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
-              {`${
-                billPay?.addressDetail ? billPay?.addressDetail.trim() : ""
-              }, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${
-                billPay?.districtName ? billPay?.districtName.trim() : ""
-              } ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
+              {`${billPay?.addressDetail ? billPay?.addressDetail.trim() : ""
+                }, ${billPay?.wardName ? billPay?.wardName.trim() : ""}, ${billPay?.districtName ? billPay?.districtName.trim() : ""
+                } ,${billPay?.provinceName ? billPay?.provinceName.trim() : ""}`}
             </p>
           </div>
         </div>

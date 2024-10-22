@@ -1,3 +1,5 @@
+export const BASE_URL = "https://dev-baohiem.dion.vn"
+
 export const listEthnics = [
 
   { "name": "Kinh" },
@@ -120,3 +122,5 @@ export const BenefitLevevlList = [
   { value: "4", label: "Được quỹ BHYT thanh toán 80% chi phí KCB thuộc phạm vi chi trả BHYT (có giới hạn tỷ lệ thanh toán một số thuốc, hoá chất, vật tư y tế và dịch vụ kỹ thuật theo quy định của Bộ trưởng Bộ Y tế); 100% chi phí KCB tại tuyến xã và chi phí cho một lần KCB thấp hơn 15% tháng lương cơ sở, bao gồm các đối tượng hưởng có ký hiệu là: DN, HX, CH, NN, TK, HC, XK, TB, NO, CT, XB, TN, CS, XN, MS, HD, TQ, TA, TY, HG, LS, PV, HS, SV, GB, GD" },
   { value: "5", label: "Được quỹ BHYT thanh toán 100% chi phí KCB, kể cả chi phí KCB ngoài phạm vi được hưởng BHYT; chi phí vận chuyển, bao gồm các đối tượng hưởng có ký hiệu là QN, CA, CY" },
 ]
+
+

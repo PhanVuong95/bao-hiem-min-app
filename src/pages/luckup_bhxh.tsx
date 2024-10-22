@@ -13,6 +13,7 @@ import noData from "../../assets-src/no_data.png";
 import { FadeLoader } from "react-spinners";
 import Modal from 'react-modal';
 import icon from "../../assets-src/icon_coppy.png"
+import { BASE_URL } from "../utils/constants";
 
 const LuckUpBHXH = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,7 +38,7 @@ const LuckUpBHXH = () => {
   // Danh sách tỉnh thành
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/province/api/list")
+      .get(`${BASE_URL}/province/api/list`)
       .then((response) => {
         setProvinces(response.data.data);
       })
@@ -54,7 +55,7 @@ const LuckUpBHXH = () => {
 
   const fetchKSDistricts = () => {
     if (selectedKSProvince !== 0) {
-      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedKSProvince}`)
+      axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${selectedKSProvince}`)
         .then((response) => {
           ksDistricts.current = response.data.data;
 
@@ -79,7 +80,7 @@ const LuckUpBHXH = () => {
     if (selectedKSDistrict !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedKSDistrict}`
+          `${BASE_URL}/ward/api/list-by-districtId?districtId=${selectedKSDistrict}`
         )
         .then((response) => {
           ksWards.current = response.data.data;
@@ -340,7 +341,7 @@ const LuckUpBHXH = () => {
     }
     try {
       const response = await axios.post(
-        "https://baohiem.dion.vn/InsuranceOrder/api/search-social-insurance-number",
+        `${BASE_URL}/InsuranceOrder/api/search-social-insurance-number`,
         data,
         {
           headers: {

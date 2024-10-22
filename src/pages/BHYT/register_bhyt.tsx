@@ -14,6 +14,7 @@ import Modal from 'react-modal';
 import CardHouseHold from "../../components/card_house_hold";
 import CardMembersHouseHold from "../../components/card_members_house_hold";
 import CardObject from "../../components/card_object";
+import { BASE_URL } from "../../utils/constants";
 
 const RegisterBHYT = ({ }) => {
 
@@ -177,7 +178,7 @@ const RegisterBHYT = ({ }) => {
   useEffect(() => {
     axios
       .get(
-        `https://baohiem.dion.vn/ethnic/api/list`
+        `${BASE_URL}/ethnic/api/list`
       ).then((response) => {
         setEthnicLists(response.data.data)
       })
@@ -189,7 +190,7 @@ const RegisterBHYT = ({ }) => {
 
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/province/api/list")
+      .get(`${BASE_URL}/province/api/list`)
       .then((response) => {
         setProvinces(response.data.data);
       })
@@ -822,7 +823,7 @@ const RegisterBHYT = ({ }) => {
 
       try {
         const response = await axios.post(
-          "https://baohiem.dion.vn/account/api/upload-file",
+          `${BASE_URL}/account/api/upload-file`,
           formData,
           {
             headers: {
@@ -895,7 +896,7 @@ const RegisterBHYT = ({ }) => {
           {fileUpload && (
             <div className="flex items-center" >
               <img
-                src={`https://baohiem.dion.vn${fileUpload}`}
+                src={`${BASE_URL}${fileUpload}`}
                 alt="Ảnh "
                 className="w-[100%] object-center rounded-lg"
                 onClick={() => handleUploadFileClick(fileUploadUrl)}
@@ -976,7 +977,7 @@ const RegisterBHYT = ({ }) => {
 
   const onCreate = async (token) => {
     const response = await axios.post(
-      "https://baohiem.dion.vn/insuranceorder/api/add-order",
+      `${BASE_URL}/insuranceorder/api/add-order`,
       registerInfoBHYT,
       {
         headers: {
@@ -1010,7 +1011,7 @@ const RegisterBHYT = ({ }) => {
 
   const onUpdate = async (token) => {
     const response = await axios.post(
-      "https://baohiem.dion.vn/insuranceorder/api/update-insuranceOrder",
+      `${BASE_URL}/insuranceorder/api/update-insuranceOrder`,
       registerInfoBHYT,
       {
         headers: {

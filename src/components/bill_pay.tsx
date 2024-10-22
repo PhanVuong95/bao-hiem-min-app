@@ -7,6 +7,7 @@ import { EventName, events, Payment } from "zmp-sdk";
 import { SpecificContext } from "./specific_context";
 import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "./header_base";
+import { BASE_URL } from "../utils/constants";
 
 const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   const specificContext = useContext<any>(SpecificContext);
@@ -62,8 +63,8 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   useEffect(() => {
     axios
       .get(
-        "https://baohiem.dion.vn/province/api/detail/" +
-          insuranceOrder.provinceId
+        `${BASE_URL}/province/api/detail/` +
+        insuranceOrder.provinceId
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);
@@ -73,8 +74,8 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
       });
     axios
       .get(
-        "https://baohiem.dion.vn/district/api/detail/" +
-          insuranceOrder.districtId
+        `${BASE_URL}/district/api/detail/` +
+        insuranceOrder.districtId
       )
       .then((response) => {
         setDistrictName(response.data.data[0].name);
@@ -83,7 +84,7 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
         console.error(error);
       });
     axios
-      .get("https://baohiem.dion.vn/ward/api/detail/" + insuranceOrder.wardId)
+      .get(`${BASE_URL}/ward/api/detail/` + insuranceOrder.wardId)
       .then((response) => {
         setWardeName(response.data.data[0].name);
       })

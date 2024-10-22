@@ -5,16 +5,17 @@ import { Button, Page, Text } from "zmp-ui";
 import FlexBox from "../../components/FlexBox";
 import { ProfileContext } from "../../components/user_profile_context";
 import { dynamicApiCall } from "../../services/user";
+import { BASE_URL } from "../../utils/constants";
 import useHandleDeeplink from "./useHandleDeeplink";
 
 const LoginPortalPage: React.FunctionComponent = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<
     | {
-        id: string;
-        name: string;
-        avatar: string;
-      }
+      id: string;
+      name: string;
+      avatar: string;
+    }
     | undefined
   >(undefined);
 
@@ -67,7 +68,7 @@ const LoginPortalPage: React.FunctionComponent = () => {
       setLoading(true);
 
       const response = await fetch(
-        "https://baohiem.dion.vn/zalo/api/login-portal",
+        `${BASE_URL}/zalo/api/login-portal`,
         {
           method: "POST",
           headers: {

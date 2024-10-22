@@ -41,7 +41,7 @@ const CardMembersHouseHoldBHXH = (props: Props) => {
 
   const fetchMemberProvinces = () => {
     if (selectedMemberProvince !== 0) {
-      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedMemberProvince}`)
+      axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${selectedMemberProvince}`)
         .then((response) => {
           memberDistricts.current = response.data.data;
           memberWards.current = [];
@@ -64,7 +64,7 @@ const CardMembersHouseHoldBHXH = (props: Props) => {
     if (selectedMemberDistrict !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedMemberDistrict}`
+          `${BASE_URL}/ward/api/list-by-districtId?districtId=${selectedMemberDistrict}`
         )
         .then((response) => {
           memberWards.current = response.data.data;

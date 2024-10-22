@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Page } from "zmp-ui";
+import { BASE_URL } from "../utils/constants";
 import HeaderBase from "./header_base";
 import { SpecificContext } from "./specific_context";
 
@@ -14,7 +15,7 @@ const ProductDetailPage: React.FunctionComponent = (props) => {
 
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insurance/api/detail-viewmodel?id=1001")
+      .get(`${BASE_URL}/insurance/api/detail-viewmodel?id=1001`)
       .then((response) => {
         setInsurance(response.data.data[0]);
         setDetailSrcs(response.data.data[0].info);

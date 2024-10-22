@@ -5,6 +5,7 @@ import axios from "axios";
 import HeaderBase from "../components/header_base";
 import { PulseLoader } from "react-spinners";
 import logo from "../../assets-src/logo1.png"
+import { BASE_URL } from "../utils/constants";
 
 const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
   useEffect(() => {
     axios
       .get(
-        "https://baohiem.dion.vn/insuranceorder/api/list-by-insuranceId?insuranceId=1001",
+        `${BASE_URL}/insuranceorder/api/list-by-insuranceId?insuranceId=1001`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -111,7 +112,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
               className={`flex-1 py-2 px-[24px] rounded-md text-base focus:outline-none focus:shadow-outline-blue transition-all duration-300 ${openTab === 2 ? "bg-blue-600 text-white" : ""
                 }`}
             >
-              Đã mua
+              Đã thanh toán
             </button>
           </div>
 

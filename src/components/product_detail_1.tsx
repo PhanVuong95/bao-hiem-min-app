@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Page } from "zmp-ui";
+import { BASE_URL } from "../utils/constants";
 import HeaderBase from "./header_base";
 
 const ProductDetailPage1: React.FunctionComponent = (props) => {
@@ -12,15 +13,15 @@ const ProductDetailPage1: React.FunctionComponent = (props) => {
   useEffect(() => {
     // Gán giá trị imageSrcs trong useEffect
     setImageSrcs([
-      "https://baohiem.dion.vn/files/upload/account/1019/23397296-cdbe-4ee4-a94a-ddcbd9acdaf9.png",
-      "https://baohiem.dion.vn/files/upload/account/1019/1990eeec-efc5-4cff-8c6a-68055ce9652e.png",
+      `${BASE_URL}/files/upload/account/1019/23397296-cdbe-4ee4-a94a-ddcbd9acdaf9.png`,
+      `${BASE_URL}/files/upload/account/1019/1990eeec-efc5-4cff-8c6a-68055ce9652e.png`,
     ]);
   }, []);
 
   useEffect(() => {
     axios
       .get(
-        "https://baohiem.dion.vn/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002"
+        `${BASE_URL}/insurance/api/list-paging-viewmodel?pageIndex=1&pageSize=100&insuranceTypeId=1002`
       )
       .then((response) => {
         const data = response.data.data.filter((item) => item.id == 1002)[0]

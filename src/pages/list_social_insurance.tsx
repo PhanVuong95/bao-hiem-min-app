@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import HeaderBase from "../components/header_base";
 import { SpecificContext } from "../components/specific_context";
 import logo from "../../assets-src/logo1.png";
+import { BASE_URL } from "../utils/constants";
 
 const ListSocialInsurance = () => {
   const specificContext = useContext<any>(SpecificContext);
@@ -13,7 +14,7 @@ const ListSocialInsurance = () => {
 
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insurance/api/detail-viewmodel?id=1001")
+      .get(`${BASE_URL}/insurance/api/detail-viewmodel?id=1001`)
       .then((response) => {
         setInsurance(response.data.data[0]);
       })

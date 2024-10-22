@@ -11,6 +11,7 @@ import logo from "../../assets-src/logo1.png";
 import { Payment } from "zmp-sdk";
 import { events, EventName } from "zmp-sdk/apis";
 import { createMacFE } from "../services/payment";
+import { BASE_URL } from "../utils/constants";
 
 const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   const { id } = useParams();
@@ -27,9 +28,9 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
 
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/insuranceorder/api/Detail-By-VM/" + id)
+      .get(`${BASE_URL}/insuranceorder/api/Detail-By-VM/` + id)
       .then((response) => {
-        // console.log(response.data.data[0]);
+        console.log(response.data.data[0]);
 
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
@@ -39,7 +40,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
         delete storeage.price;
         delete storeage.discountPrice;
         delete storeage.fileUploadUrl;
-        storeage.citizenId = 0;
+        storeage.citizenId = '0';
 
         delete storeage.insuranceOrderPaymentStatusName;
         delete storeage.provinceName;
@@ -101,8 +102,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
           };
         }
 
-        // console.log("user", storeage);
-
         setInsuranceOrder(storeage);
       })
       .catch((error) => {
@@ -115,7 +114,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
   useEffect(() => {
     axios
       .get(
-        "https://baohiem.dion.vn/insuranceorder/api/check-order-status/" + id
+        `${BASE_URL}/insuranceorder/api/check-order-status/` + id
       )
       .then((response) => {
         setOrderStatusId(response.data.data[0]);
@@ -212,27 +211,26 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
     );
   }
 
-  const renderBackground = () => {
-    switch (orderStatusId) {
+  const renderBackground = (insuranceOrderStatusId) => {
+
+    switch (insuranceOrderStatusId) {
       case PENDING:
-        return `#FAAD14`;
+        return `bg-[#F4A460]`;
       case CANCELED:
-        return `#F00`;
+        return `bg-[#666666]`;
       case DONE:
-        return `#00BA00`;
-      default:
-        return `#FAAD14`;
+        return `bg-[#00CD00]`;
     }
   };
 
   const headerStatus = () => {
     return (
       <div
-        className={`bg-[${renderBackground()}] py-[12px] px-4 flex flex-row items-center justify-between`}
+        className={`${renderBackground(orderDetail?.insuranceOrderStatusId)} py-[12px] px-4 flex flex-row items-center justify-between`}
       >
         <p className="text-white text-sm font-normal">Trạng thái</p>
         <p className="text-white text-sm font-semibold">
-          {orderDetail.insuranceOrderStatusName}
+          {orderDetail?.insuranceOrderStatusName == "Đã mua" ? "Đã thanh toán" : orderDetail?.insuranceOrderStatusName}
         </p>
       </div>
     );
@@ -472,7 +470,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
           </div>
 
           {/* --------------------------------------------- */}
-          <div className="p-4 bg-white rounded-xl flex flex-col gap-4 mb-[35%]">
+          <div className="p-4 bg-white rounded-xl flex flex-col gap-4">
             <h3 className="text-[#0076B7] text-lg font-medium">
               Danh mục sản phẩm
             </h3>
@@ -512,17 +510,43 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                   <p className="text-[#646464] text-sm font-normal">
                     Ngày đăng ký
                   </p>
+
+
                 </div>
                 <div>
                   <p className="text-[#2E2E2E] text-sm font-semibold max-w-[180px] text-right">
                     {formatDateTime(orderDetail.createdTime)}
                   </p>
+
                 </div>
               </div>
             </div>
           </div>
-        </div>
+          {
+            orderStatusId == DONE ? (
+              <div className="flex flex-row content-center justify-center items-center mb-[25%]">
+                <button
+                  onClick={() => {
 
+                    setInsuranceOrder((prevOrder) => ({
+                      ...prevOrder,
+                      id: 0,
+                    }));
+                    setTimeout(() => {
+                      navigate('/register-BHXH')
+                    }, 100)
+
+                  }}
+                  className="px-[24px] py-3 bg-[#e9c058] w-full rounded-full text-base font-normal text-white text-center"
+                >
+                  Tái hợp đồng bảo hiểm
+                </button>
+              </div>
+
+            ) : (<div className="mb-32"></div>)
+          }
+
+        </div>
         {!(orderStatusId == CANCELED || orderStatusId == DONE) && (
           <div className="page-2 bg-white fixed bottom-0 w-[100%]">
             <div className="flex flex-col gap-3">
@@ -535,7 +559,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                 </h3>
               </div>
               <div className="flex flex-row content-center justify-center items-center">
-                <Link
+                <button
                   // to={"/buill-detail/" + id}
                   onClick={() => {
                     createOrder();
@@ -543,7 +567,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
                   className="px-[24px] py-3 bg-[#0076B7] w-full rounded-full bg-[#0076B7] text-base font-normal text-white text-center"
                 >
                   Tiếp tục
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -578,7 +602,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

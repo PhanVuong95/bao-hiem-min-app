@@ -14,21 +14,6 @@ const HomePage: React.FunctionComponent = () => {
   const profieContext = useContext<any>(ProfileContext);
   const { userProfile, setUserProfile } = profieContext;
 
-  const openUrlInWebview = async () => {
-    try {
-      await openWebview({
-        url: "https://happy-s.vn/",
-        config: {
-          style: "bottomSheet",
-          leftButton: "back"
-        }
-      });
-    } catch (error) {
-      // xử lý khi gọi api thất bại
-      console.log(error);
-    }
-  };
-
   return (
     <div className="home-page min-h-[100vh] pb-[120px] pt-[75px]">
       <div className="">

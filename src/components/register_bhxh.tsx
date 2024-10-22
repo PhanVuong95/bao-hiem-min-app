@@ -27,7 +27,7 @@ import iconClose from '../../assets-src/close_1.png'
 import { motion } from 'framer-motion';
 import Lottie from "lottie-react";
 import lottieScanQR from "../../assets-src/lottie_scan_qr.json";
-import { BenefitLevevlList } from "../utils/constants";
+import { BASE_URL, BenefitLevevlList } from "../utils/constants";
 import CardMembersHouseHoldBHXH from "./card_members_house_hold_bhxh";
 import { openWebview } from "zmp-sdk";
 
@@ -73,7 +73,7 @@ const RegisterBHXH = (props) => {
   const [loading, setLoading] = useState(false);
   const [supportBudget, setSupportBudget] = useState<number>(0);
   const wage = useRef<number>(1500000);
-  const [wageSlider, setWageSlider] = useState<number>(1500000);
+
   const monthCount = useRef<number>(0);
   const [frontImageUrl, setFrontImageUrl] = useState<string>("");
   const [backImageUrl, setBackImageUrl] = useState<string>("");
@@ -91,6 +91,11 @@ const RegisterBHXH = (props) => {
     insuranceOrder,
     setInsuranceOrder,
   } = specificContext;
+
+  const [wageSlider, setWageSlider] = useState<number>(insuranceOrder.listInsuredPerson[0].wage == 0 ? 1500000 : insuranceOrder.listInsuredPerson[0].wage);
+
+  console.log(insuranceOrder);
+
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
   const [dateStr, setDateStr] = useState<String>("")
@@ -219,7 +224,7 @@ const RegisterBHXH = (props) => {
   // Load lại tất cả danh sách tỉnh thành
   useEffect(() => {
     axios
-      .get("https://baohiem.dion.vn/province/api/list")
+      .get(`${BASE_URL}/province/api/list`)
       .then((response) => {
         // Load tỉnh thành người mua
         buyerProvinces.current = response.data.data;
@@ -253,7 +258,7 @@ const RegisterBHXH = (props) => {
 
   const fetchBuyerDistricts = () => {
     if (selectedBuyerProvince !== 0) {
-      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedBuyerProvince}`)
+      axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${selectedBuyerProvince}`)
         .then((response) => {
           buyerDistricts.current = response.data.data;
 
@@ -278,7 +283,7 @@ const RegisterBHXH = (props) => {
     if (selectedBuyerDistrict !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedBuyerDistrict}`
+          `${BASE_URL}/ward/api/list-by-districtId?districtId=${selectedBuyerDistrict}`
         )
         .then((response) => {
           buyerWards.current = response.data.data;
@@ -299,7 +304,7 @@ const RegisterBHXH = (props) => {
 
   const fetchKSDistricts = () => {
     if (selectedKSProvince !== 0) {
-      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedKSProvince}`)
+      axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${selectedKSProvince}`)
         .then((response) => {
           ksDistricts.current = response.data.data;
 
@@ -324,7 +329,7 @@ const RegisterBHXH = (props) => {
     if (selectedKSDistrict !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedKSDistrict}`
+          `${BASE_URL}/ward/api/list-by-districtId?districtId=${selectedKSDistrict}`
         )
         .then((response) => {
           ksWards.current = response.data.data;
@@ -345,7 +350,7 @@ const RegisterBHXH = (props) => {
 
   const fetchTTDistricts = () => {
     if (selectedTTProvince !== 0) {
-      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedTTProvince}`)
+      axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${selectedTTProvince}`)
         .then((response) => {
           ttDistricts.current = response.data.data;
           ttWards.current = [];
@@ -368,7 +373,7 @@ const RegisterBHXH = (props) => {
     if (selectedTTDistrict !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedTTDistrict}`
+          `${BASE_URL}/ward/api/list-by-districtId?districtId=${selectedTTDistrict}`
         )
         .then((response) => {
           ttWards.current = response.data.data;
@@ -391,7 +396,7 @@ const RegisterBHXH = (props) => {
     if (selectedMedicalByProvinceParticipant !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${selectedMedicalByProvinceParticipant}`
+          `${BASE_URL}/hospital/api/list-hospital-by-provinceId?provinceId=${selectedMedicalByProvinceParticipant}`
         ).then((response) => {
           infoInsuranceHospital.current = response.data.data;
           setTemp(!temp);
@@ -414,7 +419,7 @@ const RegisterBHXH = (props) => {
   //   if (selectedMeicalByDistrictParticipant != 0) {
   //     axios
   //       .get(
-  //         `https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${selectedMeicalByDistrictParticipant}`
+  //         `${BASE_URL}/hospital/api/list-hospital-by-provinceId?provinceId=${selectedMeicalByDistrictParticipant}`
   //       ).then((response) => {
   //         infoInsuranceHospital.current = response.data.data;
   //         console.log(infoInsuranceHospital.current);
@@ -436,7 +441,7 @@ const RegisterBHXH = (props) => {
 
   const fetchHouseholdProvinces = () => {
     if (selectedHouseholdProvince !== 0) {
-      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedHouseholdProvince}`)
+      axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${selectedHouseholdProvince}`)
         .then((response) => {
           householdDistricts.current = response.data.data;
           householdWards.current = [];
@@ -459,7 +464,7 @@ const RegisterBHXH = (props) => {
     if (selectedHouseholdDistrict !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedHouseholdDistrict}`
+          `${BASE_URL}/ward/api/list-by-districtId?districtId=${selectedHouseholdDistrict}`
         )
         .then((response) => {
           householdWards.current = response.data.data;
@@ -480,7 +485,7 @@ const RegisterBHXH = (props) => {
 
   const fetchTTHouseholdProvinces = () => {
     if (selectedTTHouseholdProvince !== 0) {
-      axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${selectedTTHouseholdProvince}`)
+      axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${selectedTTHouseholdProvince}`)
         .then((response) => {
           householdTTDistricts.current = response.data.data;
           householdTTWards.current = [];
@@ -503,7 +508,7 @@ const RegisterBHXH = (props) => {
     if (selectedTTHouseholdDistrict !== 0) {
       axios
         .get(
-          `https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${selectedTTHouseholdDistrict}`
+          `${BASE_URL}/ward/api/list-by-districtId?districtId=${selectedTTHouseholdDistrict}`
         )
         .then((response) => {
           householdTTWards.current = response.data.data;
@@ -521,7 +526,7 @@ const RegisterBHXH = (props) => {
   useEffect(() => {
     axios
       .get(
-        `https://baohiem.dion.vn/VungLuongToiThieu/api/List`
+        `${BASE_URL}/VungLuongToiThieu/api/List`
       )
       .then((response) => {
         setVungLuongToiThieuList(response.data.data)
@@ -534,127 +539,131 @@ const RegisterBHXH = (props) => {
   }, [])
 
 
-
   // Update BHXH
   useEffect(() => {
-    if (insuranceOrder.id != 0) {
-      const id1 = insuranceOrder.provinceId;
-      const id2 = insuranceOrder.districtId;
-      const id3 = insuranceOrder.listInsuredPerson[0].ksTinhThanhMa;
-      const id4 = insuranceOrder.listInsuredPerson[0].ksQuanHuyenMa;
-      const id5 = insuranceOrder.listInsuredPerson[0].provinceId;
-      const id6 = insuranceOrder.listInsuredPerson[0].districtId;
-      const id7 = insuranceOrder.listInsuredPerson[0].medicalProvinceId;
-      const id8 = insuranceOrder.houseHold.ksProvinceId;
-      const id9 = insuranceOrder.houseHold.ksDistrictId;
-      const id10 = insuranceOrder.houseHold.ttProvinceId;
-      const id11 = insuranceOrder.houseHold.ttDistrictId;
+    try {
+      if (insuranceOrder.insuranceId) {
+        const id1 = insuranceOrder.provinceId;
+        const id2 = insuranceOrder.districtId;
+        const id3 = insuranceOrder.listInsuredPerson[0].ksTinhThanhMa;
+        const id4 = insuranceOrder.listInsuredPerson[0].ksQuanHuyenMa;
+        const id5 = insuranceOrder.listInsuredPerson[0].provinceId;
+        const id6 = insuranceOrder.listInsuredPerson[0].districtId;
+        const id7 = insuranceOrder.listInsuredPerson[0].medicalProvinceId;
+        const id8 = insuranceOrder.houseHold.ksProvinceId;
+        const id9 = insuranceOrder.houseHold.ksDistrictId;
+        const id10 = insuranceOrder.houseHold.ttProvinceId;
+        const id11 = insuranceOrder.houseHold.ttDistrictId;
 
-      // Set thông tin người tham giá BHXH tự nguyện
-      const fetchData = async () => {
+        // Set thông tin người tham giá BHXH tự nguyện
+        const fetchData = async () => {
 
-        const [response1, response2, response3, response4, response5, response6, response7] = await Promise.all([
-          axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id1}`),
-          axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id2}`),
+          const [response1, response2, response3, response4, response5, response6, response7] = await Promise.all([
+            axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${id1}`),
+            axios.get(`${BASE_URL}/ward/api/list-by-districtId?districtId=${id2}`),
 
-          axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id3}`),
-          axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id4}`),
+            axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${id3}`),
+            axios.get(`${BASE_URL}/ward/api/list-by-districtId?districtId=${id4}`),
 
-          axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id5}`),
-          axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id6}`),
+            axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${id5}`),
+            axios.get(`${BASE_URL}/ward/api/list-by-districtId?districtId=${id6}`),
 
-          axios.get(`https://baohiem.dion.vn/hospital/api/list-hospital-by-provinceId?provinceId=${id7}`),
+            axios.get(`${BASE_URL}/hospital/api/list-hospital-by-provinceId?provinceId=${id7}`),
 
-        ]);
-
-        buyerDistricts.current = response1.data.data;
-        buyerWards.current = response2.data.data;
-
-        ksDistricts.current = response3.data.data;
-        ksWards.current = response4.data.data;
-
-        ttDistricts.current = response5.data.data;
-        ttWards.current = response6.data.data;
-
-        infoInsuranceHospital.current = response7.data.data;
-
-        if (insuranceOrder.houseHold.soGiayToCaNhan != "") {
-          const [response8, response9, response10, response11] = await Promise.all([
-            axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id8}`),
-            axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id9}`),
-
-
-            axios.get(`https://baohiem.dion.vn/district/api/list-by-provinceId?provinceId=${id10}`),
-            axios.get(`https://baohiem.dion.vn/ward/api/list-by-districtId?districtId=${id11}`),
           ]);
 
-          householdDistricts.current = response8.data.data;
-          householdWards.current = response9.data.data;
+          buyerDistricts.current = response1.data.data;
+          buyerWards.current = response2.data.data;
 
-          householdTTDistricts.current = response10.data.data;
-          householdTTWards.current = response11.data.data;
-        } else {
-          insuranceOrder.houseHold.soGiayToCaNhan = ""
+          ksDistricts.current = response3.data.data;
+          ksWards.current = response4.data.data;
+
+          ttDistricts.current = response5.data.data;
+          ttWards.current = response6.data.data;
+
+          infoInsuranceHospital.current = response7.data.data;
+
+          if (insuranceOrder.houseHold.soGiayToCaNhan != "") {
+            const [response8, response9, response10, response11] = await Promise.all([
+              axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${id8}`),
+              axios.get(`${BASE_URL}/ward/api/list-by-districtId?districtId=${id9}`),
+
+
+              axios.get(`${BASE_URL}/district/api/list-by-provinceId?provinceId=${id10}`),
+              axios.get(`${BASE_URL}/ward/api/list-by-districtId?districtId=${id11}`),
+            ]);
+
+            householdDistricts.current = response8.data.data;
+            householdWards.current = response9.data.data;
+
+            householdTTDistricts.current = response10.data.data;
+            householdTTWards.current = response11.data.data;
+          } else {
+            insuranceOrder.houseHold.soGiayToCaNhan = ""
+          }
+
+          setIsHadBHXH(insuranceOrder.houseHold.soGiayToCaNhan == "" ? true : false)
+
+          // Người tham gia
+          setPersonName(insuranceOrder.listInsuredPerson[0].fullName);
+          selectedInsuranceProvinceId.current = insuranceOrder.listInsuredPerson[0].insuranceProvinceId;
+          setCitizenId(insuranceOrder.listInsuredPerson[0].citizenId);
+          setSocialInsuranceId(insuranceOrder.listInsuredPerson[0].socialInsuranceNumber)
+          setDateValue(dayjs(insuranceOrder.listInsuredPerson[0].doB, dateFormat));
+          setGender(insuranceOrder.listInsuredPerson[0].gender);
+          setEthnic(insuranceOrder.listInsuredPerson[0].ethnicId)
+          wage.current = insuranceOrder.listInsuredPerson[0].wage;
+          monthCount.current = insuranceOrder.listInsuredPerson[0].monthInsured;
+          setSupportBudget(insuranceOrder.listInsuredPerson[0].supportBudget);
+          setSelectedKSProvince(insuranceOrder.listInsuredPerson[0].ksTinhThanhMa)
+          setSelectedKSDistrict(insuranceOrder.listInsuredPerson[0].ksQuanHuyenMa)
+          setSelectedKSWard(insuranceOrder.listInsuredPerson[0].ksXaPhuongMa)
+          setKSAddressDetail(insuranceOrder.listInsuredPerson[0].ksDiaChi)
+          setSelectedTTProvince(insuranceOrder.listInsuredPerson[0].provinceId)
+          setSelectedTTDistrict(insuranceOrder.listInsuredPerson[0].districtId)
+          setSelectedTTWard(insuranceOrder.listInsuredPerson[0].wardId)
+          setTTAddressDetail(insuranceOrder.listInsuredPerson[0].addressDetail)
+
+          // Thông tin bảo hiểm
+          setVungLuongToiThieuId(insuranceOrder.listInsuredPerson[0].vungLuongToiThieuId)
+          setBenefitLevel(insuranceOrder.listInsuredPerson[0].benefitLevel)
+          setSelectedMedicalByProvinceParticipant(insuranceOrder.listInsuredPerson[0].medicalProvinceId)
+          setSelectedMedicalByHospitalParticipant(insuranceOrder.listInsuredPerson[0].hospitalId)
+
+          //Thông tin chủ hộ 
+          if (insuranceOrder.houseHold.soGiayToCaNhan != "") {
+            setFullNamHouseHoldParticipant(insuranceOrder.houseHold.chuHoTen)
+            setSelectedHouseholdProvince(insuranceOrder.houseHold.ksProvinceId)
+            setSelectedHouseholdDistrict(insuranceOrder.houseHold.ksDistrictId)
+            setSelectedHouseholdWard(insuranceOrder.houseHold.ksWardId)
+            setAddressDetailHouseHoldParticipant(insuranceOrder.houseHold.ksAddressDetail)
+            setAddressDetailHKHouseHoldParticipant(insuranceOrder.houseHold.hkAddressDetail)
+            setCCCDHouseHoldParticipant(insuranceOrder.houseHold.soGiayToCaNhan)
+            setSelectedTTHouseholdProvince(insuranceOrder.houseHold.ttProvinceId)
+            setSelectedTTHouseholdDistrict(insuranceOrder.houseHold.ttDistrictId)
+            setSelectedTTHouseholdWard(insuranceOrder.houseHold.ttWardId)
+          }
+
+          // Người mua
+          setPhone(insuranceOrder.phone);
+          setBuyerName(insuranceOrder.fullName);
+          setEmail(insuranceOrder.email);
+          setSelectedBuyerProvince(insuranceOrder.provinceId);
+          setSelectedBuyerDistrict(insuranceOrder.districtId);
+          setSelectedBuyerWard(insuranceOrder.wardId);
+          setBuyerAddressDetail(insuranceOrder.addressDetail)
+
+          setDisplayValue(
+            insuranceOrder.listInsuredPerson[0].wage.toLocaleString("vi-VN")
+          );
+          finalPrice.current = Math.ceil(insuranceOrder.finalPrice);
         }
 
-        setIsHadBHXH(insuranceOrder.houseHold.soGiayToCaNhan == "" ? true : false)
-
-        // Người tham gia
-        setPersonName(insuranceOrder.listInsuredPerson[0].fullName);
-        selectedInsuranceProvinceId.current = insuranceOrder.listInsuredPerson[0].insuranceProvinceId;
-        setCitizenId(insuranceOrder.listInsuredPerson[0].citizenId);
-        setSocialInsuranceId(insuranceOrder.listInsuredPerson[0].socialInsuranceNumber)
-        setDateValue(dayjs(insuranceOrder.listInsuredPerson[0].doB, dateFormat));
-        setGender(insuranceOrder.listInsuredPerson[0].gender);
-        setEthnic(insuranceOrder.listInsuredPerson[0].ethnicId)
-        wage.current = insuranceOrder.listInsuredPerson[0].wage;
-        monthCount.current = insuranceOrder.listInsuredPerson[0].monthInsured;
-        setSupportBudget(insuranceOrder.listInsuredPerson[0].supportBudget);
-        setSelectedKSProvince(insuranceOrder.listInsuredPerson[0].ksTinhThanhMa)
-        setSelectedKSDistrict(insuranceOrder.listInsuredPerson[0].ksQuanHuyenMa)
-        setSelectedKSWard(insuranceOrder.listInsuredPerson[0].ksXaPhuongMa)
-        setKSAddressDetail(insuranceOrder.listInsuredPerson[0].ksDiaChi)
-        setSelectedTTProvince(insuranceOrder.listInsuredPerson[0].provinceId)
-        setSelectedTTDistrict(insuranceOrder.listInsuredPerson[0].districtId)
-        setSelectedTTWard(insuranceOrder.listInsuredPerson[0].wardId)
-        setTTAddressDetail(insuranceOrder.listInsuredPerson[0].addressDetail)
-
-        // Thông tin bảo hiểm
-        setVungLuongToiThieuId(insuranceOrder.listInsuredPerson[0].vungLuongToiThieuId)
-        setBenefitLevel(insuranceOrder.listInsuredPerson[0].benefitLevel)
-        setSelectedMedicalByProvinceParticipant(insuranceOrder.listInsuredPerson[0].medicalProvinceId)
-        setSelectedMedicalByHospitalParticipant(insuranceOrder.listInsuredPerson[0].hospitalId)
-
-        //Thông tin chủ hộ 
-        if (insuranceOrder.houseHold.soGiayToCaNhan != "") {
-          setFullNamHouseHoldParticipant(insuranceOrder.houseHold.chuHoTen)
-          setSelectedHouseholdProvince(insuranceOrder.houseHold.ksProvinceId)
-          setSelectedHouseholdDistrict(insuranceOrder.houseHold.ksDistrictId)
-          setSelectedHouseholdWard(insuranceOrder.houseHold.ksWardId)
-          setAddressDetailHouseHoldParticipant(insuranceOrder.houseHold.ksAddressDetail)
-          setAddressDetailHKHouseHoldParticipant(insuranceOrder.houseHold.hkAddressDetail)
-          setCCCDHouseHoldParticipant(insuranceOrder.houseHold.soGiayToCaNhan)
-          setSelectedTTHouseholdProvince(insuranceOrder.houseHold.ttProvinceId)
-          setSelectedTTHouseholdDistrict(insuranceOrder.houseHold.ttDistrictId)
-          setSelectedTTHouseholdWard(insuranceOrder.houseHold.ttWardId)
-        }
-
-        // Người mua
-        setPhone(insuranceOrder.phone);
-        setBuyerName(insuranceOrder.fullName);
-        setEmail(insuranceOrder.email);
-        setSelectedBuyerProvince(insuranceOrder.provinceId);
-        setSelectedBuyerDistrict(insuranceOrder.districtId);
-        setSelectedBuyerWard(insuranceOrder.wardId);
-        setBuyerAddressDetail(insuranceOrder.addressDetail)
-
-        setDisplayValue(
-          insuranceOrder.listInsuredPerson[0].wage.toLocaleString("vi-VN")
-        );
-        finalPrice.current = Math.ceil(insuranceOrder.finalPrice);
+        fetchData();
       }
 
-      fetchData();
+    } catch (error) {
+
     }
   }, []);
 
@@ -693,7 +702,7 @@ const RegisterBHXH = (props) => {
   useEffect(() => {
     axios
       .get(
-        `https://baohiem.dion.vn/ethnic/api/list`
+        `${BASE_URL}/ethnic/api/list`
       ).then((response) => {
         setEthnicLists(response.data.data)
       })
@@ -810,7 +819,7 @@ const RegisterBHXH = (props) => {
 
       try {
         const response = await axios.post(
-          "https://baohiem.dion.vn/account/api/upload-file",
+          `${BASE_URL}/account/api/upload-file`,
           formData,
           {
             headers: {
@@ -1237,7 +1246,7 @@ const RegisterBHXH = (props) => {
     const token = localStorage.token;
     try {
       const response = await axios.post(
-        "https://baohiem.dion.vn/insuranceorder/api/add-order",
+        `${BASE_URL}/insuranceorder/api/add-order`,
         insuranceOrder,
         {
           headers: {
@@ -1286,7 +1295,7 @@ const RegisterBHXH = (props) => {
     const token = localStorage.token;
     try {
       const response = await axios.post(
-        "https://baohiem.dion.vn/insuranceorder/api/update-order",
+        `${BASE_URL}/insuranceorder/api/update-order`,
         insuranceOrder,
         {
           headers: {
@@ -1324,7 +1333,7 @@ const RegisterBHXH = (props) => {
     }
     try {
       const response = await axios.post(
-        "https://baohiem.dion.vn/InsuranceOrder/api/search-social-insurance-number",
+        `${BASE_URL}/InsuranceOrder/api/search-social-insurance-number`,
         data,
         {
           headers: {
@@ -1336,6 +1345,15 @@ const RegisterBHXH = (props) => {
 
       if (response.data.message == "SUCCESS") {
         setSocialInsuranceId(response.data.data[0].maSoBhxh)
+        setInsuranceOrder((prevOrder) => ({
+          ...prevOrder,
+          listInsuredPerson: prevOrder.listInsuredPerson.map(
+            (person, index) =>
+              index === 0
+                ? { ...person, socialInsuranceNumber: response.data.data[0].maSoBhxh }
+                : person
+          ),
+        }));
         toast.success(
           "Tra cứu mã bảo hiểm thành công",
         );
@@ -1452,6 +1470,7 @@ const RegisterBHXH = (props) => {
           className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Nhập số CCCD"
           onChange={(e) => {
+
             // Lọc ra chỉ các ký tự số
             const filteredValue = e.target.value.replace(/\D/g, "");
 
@@ -3401,7 +3420,7 @@ const RegisterBHXH = (props) => {
                 <div className="icon-1">
                   {frontImageUrl ? (
                     <img
-                      src={`https://baohiem.dion.vn${frontImageUrl}`}
+                      src={`${BASE_URL}${frontImageUrl}`}
                       alt="Mặt trước"
                       className="w-[100%] h-[100px] object-center rounded-lg "
                     />
@@ -3480,7 +3499,7 @@ const RegisterBHXH = (props) => {
                 <div className="icon-1">
                   {backImageUrl ? (
                     <img
-                      src={`https://baohiem.dion.vn${backImageUrl}`}
+                      src={`${BASE_URL}${backImageUrl}`}
                       alt="Mặt sau"
                       className="w-[100%] h-[100px] object-center rounded-lg"
                     />
@@ -3812,7 +3831,7 @@ const RegisterBHXH = (props) => {
   };
 
   const openPdf = () => {
-    window.open('https://baohiem.dion.vn/dieukhoan.pdf', '_blank');
+    window.open(`${BASE_URL}/dieukhoan.pdf`, '_blank');
   };
 
   const rendePrivacyPolicy = () => {
@@ -3866,7 +3885,7 @@ const RegisterBHXH = (props) => {
           >
 
             <iframe
-              src="https://baohiem.dion.vn/dieukhoan.pdf"
+              src={`${BASE_URL}/dieukhoan.pdf`}
               title="PDF Viewer"
               style={{ width: '100%', height: '100%', border: 'none' }}
             />
