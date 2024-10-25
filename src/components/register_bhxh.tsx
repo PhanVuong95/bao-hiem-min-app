@@ -94,8 +94,6 @@ const RegisterBHXH = (props) => {
 
   const [wageSlider, setWageSlider] = useState<number>(insuranceOrder.listInsuredPerson[0].wage == 0 ? 1500000 : insuranceOrder.listInsuredPerson[0].wage);
 
-  console.log(insuranceOrder);
-
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
   const [dateStr, setDateStr] = useState<String>("")
@@ -103,6 +101,8 @@ const RegisterBHXH = (props) => {
     error1: true,
     error2: true
   });
+
+  console.log("data", insuranceOrder);
 
   // Hộ gia đình
   const createNewMember = () => (

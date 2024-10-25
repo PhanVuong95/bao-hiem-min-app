@@ -135,7 +135,7 @@ const ListHistoryBHYT = ({ }) => {
 
             {listOrder?.map((item, index) => {
               return (
-                <Link to={"/info-detail-bhyt/" + item.id} key={index}>
+                <Link to={"/info-detail-bhyt/" + item.id + "/" + item.insuranceOrderStatusName} key={index}>
                   <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
                     <div className="flex gap-[10px]">
                       <img src={logo} className="w-16 h-16" />

@@ -33,7 +33,7 @@ import LoginPortalPage from "../pages/LoginPortal/portal";
 const MyApp = () => {
   useEffect(() => {
     closeLoading({
-      success: (data) => {},
+      success: (data) => { },
       fail: (error) => {
         console.log(error);
       },
@@ -138,7 +138,7 @@ const MyApp = () => {
                     element={<ListsHistoryPage w={""} h={""} url={""} />}
                   />
                   <Route
-                    path="/info-detail-bhyt/:id"
+                    path="/info-detail-bhyt/:id/:statusName"
                     element={<InfoDetailBHYT />}
                   />
                   <Route
@@ -150,7 +150,7 @@ const MyApp = () => {
                     element={<CheckStatusProcedure />}
                   />
                   <Route
-                    path="/history-unpaid/:id"
+                    path="/history-unpaid/:id/:statusName"
                     element={
                       <SpecificProvider>
                         <HistoryUnpaidPage />

@@ -134,7 +134,7 @@ const ListsHistoryPage: React.FC<Widthheight> = ({ url }) => {
 
                 return (
 
-                  !loading ? <Link to={"/history-unpaid/" + item.id
+                  !loading ? <Link to={"/history-unpaid/" + item.id + "/" + item.insuranceOrderStatusName
                   } key={index} >
                     <div className="p-4 bg-white w-full rounded-xl flex flex-col gap-4">
                       <div className="flex gap-[10px]">

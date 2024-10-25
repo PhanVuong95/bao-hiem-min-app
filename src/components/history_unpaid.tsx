@@ -14,7 +14,7 @@ import { createMacFE } from "../services/payment";
 import { BASE_URL } from "../utils/constants";
 
 const HistoryUnpaidPage: React.FunctionComponent = (props) => {
-  const { id } = useParams();
+  const { id, statusName } = useParams();
   const navigate = useNavigate();
   const [orderDetail, setOrderDetail] = useState<any>();
   const [insuredPerson, setInsuredPerson] = useState<any>();
@@ -136,6 +136,12 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
 
   const createOrder = async () => {
     let dataClone = _.cloneDeep(insuranceOrder);
+
+    console.log({
+      id: `#${insuranceOrder.accountId}`,
+      amount: insuranceOrder.finalPrice,
+    });
+
     const body: any = await {
       amount: insuranceOrder.finalPrice,
       desc: "Thanh toán gói bảo hiểm",
@@ -523,7 +529,7 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
             </div>
           </div>
           {
-            orderStatusId == DONE ? (
+            (orderStatusId == DONE && statusName == "Thành công") ? (
               <div className="flex flex-row content-center justify-center items-center mb-[25%]">
                 <button
                   onClick={() => {

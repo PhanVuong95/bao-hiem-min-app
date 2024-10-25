@@ -63,8 +63,8 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
   useEffect(() => {
     axios
       .get(
-        `${BASE_URL}/province/api/detail/` +
-        insuranceOrder.provinceId
+        `${BASE_URL}/province/api/detail/${insuranceOrder.provinceId}`
+
       )
       .then((response) => {
         setProvinceName(response.data.data[0].name);

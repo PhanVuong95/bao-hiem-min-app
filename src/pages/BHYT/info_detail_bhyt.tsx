@@ -20,7 +20,7 @@ import { createMacFE } from "../../services/payment";
 import { BASE_URL } from "../../utils/constants";
 
 const InfoDetailBHYT: React.FunctionComponent = () => {
-  const { id } = useParams();
+  const { id, statusName } = useParams();
   const [billPay, setBillPay] = useState<any>();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -55,6 +55,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
 
   const createOrder = async () => {
     let dataClone = _.cloneDeep(billPay);
+
     const body: any = await {
       amount: billPay.finalPrice,
       desc: "Thanh toán gói bảo hiểm",
@@ -76,6 +77,8 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       ...body,
       mac: mac,
     });
+
+    console.log(body);
 
     console.log("orderId", orderId);
   };
@@ -566,7 +569,7 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
         {boxInfo()}
 
         {
-          billPay?.insuranceOrderStatusId == DONE ? (
+          (billPay?.insuranceOrderStatusId == DONE && statusName == "Thành công") ? (
             <div className="flex flex-row content-center justify-center items-center mb-[25%]">
               <button
                 onClick={() => {
