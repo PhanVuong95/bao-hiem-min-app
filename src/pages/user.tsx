@@ -69,26 +69,26 @@ const UserPage = () => {
             </div>
           </Link>
 
-          <div className="flex flex-row shadow-custom p-4 items-center">
+          <Link to="/register-collaborate" className="flex flex-row shadow-custom p-4 items-center">
             <img src={ic_collaborate} className="w-12 h-12" />
             <div className="ml-3 font-normal text-lg">
               Trở thành cộng tác viên
             </div>
-          </div>
+          </Link>
 
-          <div className="flex flex-row shadow-custom p-4 items-center">
+          <Link to="/guide" className="flex flex-row shadow-custom p-4 items-center">
             <img src={ic_guide} className="w-12 h-12" />
             <div className="ml-3 font-normal text-lg">
               Tài liệu hướng dẫn
             </div>
-          </div>
+          </Link>
 
-          <div className="flex flex-row shadow-custom p-4 items-center">
+          <Link to="/policy-terms" className="flex flex-row shadow-custom p-4 items-center">
             <img src={ic_policy_terms} className="w-12 h-12" />
             <div className="ml-3 font-normal text-lg">
               Điều kiện và điều khoản dịch vụ
             </div>
-          </div>
+          </Link>
 
           <div className="flex shadow-custom p-4 items-center">
             <img src={ic_zalo} className="w-12 h-12" />

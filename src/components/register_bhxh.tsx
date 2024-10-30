@@ -92,6 +92,9 @@ const RegisterBHXH = (props) => {
     setInsuranceOrder,
   } = specificContext;
 
+  console.log(insuranceOrder.listInsuredPerson[0].wage);
+
+
   const [wageSlider, setWageSlider] = useState<number>(insuranceOrder.listInsuredPerson[0].wage == 0 ? 1500000 : insuranceOrder.listInsuredPerson[0].wage);
 
   const frontImageInputRef = useRef<HTMLInputElement>(null);

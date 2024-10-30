@@ -27,7 +27,6 @@ const BillPayPage: React.FC<Widthheight> = ({ url }) => {
     events.on(EventName.OnDataCallback, (resp) => {
       const { eventType, data } = resp;
       if (eventType === "PAY_BY_CUSTOM_METHOD") {
-        console.log(data);
         navigate(`/buill-detail/${insuranceOrder.id}`);
       }
     });
