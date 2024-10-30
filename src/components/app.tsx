@@ -5,7 +5,6 @@ import { Route, Routes } from "react-router-dom";
 import { App, ZMPRouter, SnackbarProvider } from "zmp-ui";
 import HomePage from "../pages";
 import LayoutPage from "../layout/layout";
-import ContractPage from "../pages/contract_page";
 import HistoryPage from "../pages/history_page";
 import UserPage from "../pages/user";
 import ListSocialInsurance from "../pages/list_social_insurance";
@@ -29,6 +28,10 @@ import CheckStatusProcedure from "../pages/check_status_procedure";
 import PrivacyPolicyPage from "./privacy_policy";
 import LuckUpBHXH from "../pages/luckup_bhxh";
 import LoginPortalPage from "../pages/LoginPortal/portal";
+import ProfileDetailPage from "../pages/profile_detail_page";
+import GuidePage from "../pages/guide_page";
+import PolicyTermPage from "../pages/policy_terms_page";
+import RegisterCollaborate from "../pages/register_collaborate";
 
 const MyApp = () => {
   useEffect(() => {
@@ -72,7 +75,6 @@ const MyApp = () => {
                 <Routes>
                   <Route path="/" element={<LayoutPage key="layout" />}>
                     <Route index element={<HomePage />} />
-                    <Route path="contract" element={<ContractPage />} />
                     <Route path="history" element={<HistoryPage />} />
                     <Route path="user" element={<UserPage />} />
                   </Route>
@@ -162,6 +164,22 @@ const MyApp = () => {
                     path="/login/portal"
                     element={<LoginPortalPage />}
                   ></Route>
+                  <Route
+                    path="/user-detail"
+                    element={<ProfileDetailPage />}
+                  />
+                  <Route
+                    path="/guide"
+                    element={<GuidePage />}
+                  />
+                  <Route
+                    path="/policy-terms"
+                    element={<PolicyTermPage />}
+                  />
+                  <Route
+                    path="/register-collaborate"
+                    element={<RegisterCollaborate />}
+                  />
                 </Routes>
               </ZMPRouter>
             </SnackbarProvider>

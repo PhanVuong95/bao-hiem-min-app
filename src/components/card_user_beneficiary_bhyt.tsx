@@ -68,10 +68,15 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
     registerInfoBHYT["listInsuredPerson"][index].newCardEndDate == "" ? "" :
       dayjs(registerInfoBHYT["listInsuredPerson"][index].newCardEndDate.trim(), 'DD/MM/YYYY')
   );
+  // const [newCardStartDate, setNewCardStartDate] = useState<any>(
+  //   registerInfoBHYT["listInsuredPerson"][index].newCardStartDate == "" ? "" :
+  //     dayjs(registerInfoBHYT["listInsuredPerson"][index].newCardStartDate.trim(), 'DD/MM/YYYY')
+  // );
+
   const [newCardStartDate, setNewCardStartDate] = useState<any>(
-    registerInfoBHYT["listInsuredPerson"][index].newCardStartDate == "" ? "" :
-      dayjs(registerInfoBHYT["listInsuredPerson"][index].newCardStartDate.trim(), 'DD/MM/YYYY')
+    formatDate(new Date())
   );
+
   const frontImageInputRef = useRef<HTMLInputElement>(null);
   const backImageInputRef = useRef<HTMLInputElement>(null);
   const [medicalProvinceId, setMedicalProvinceId] = useState<any>(registerInfoBHYT["listInsuredPerson"][index].medicalProvinceId);
@@ -1141,7 +1146,7 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
                 registerInfoBHYT["listInsuredPerson"][index].oldCardStartDate = formatDate(value);
               }}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Chọn ngày sinh"
+              placeholder="Chọn ngày"
               required
             />
           </div>
@@ -1805,10 +1810,10 @@ const UserBeneficiaryBHYTPage = (props: Props) => {
       {/* Số BHYT người tham gia*/}
       {renderInputBHYT()}
 
-      {renderLine()}
+      {/* {renderLine()} */}
 
       {/* Thẻ mới */}
-      {renderBoxNewCard()}
+      {/* {renderBoxNewCard()} */}
 
       {renderLine()}
 

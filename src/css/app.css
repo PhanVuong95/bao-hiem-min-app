@@ -178,6 +178,15 @@ body::-webkit-scrollbar {
     0px 2px 2px 0px rgba(13, 22, 35, 0.06);
 }
 
+.shadow-custom {
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--Grey-white, #fff);
+  box-shadow: 0px 0px 2px 0px rgba(13, 22, 35, 0.14),
+    0px 2px 2px 0px rgba(13, 22, 35, 0.06);
+}
+
 .custom-select-arrow {
   appearance: none;
   background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>')

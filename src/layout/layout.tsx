@@ -59,6 +59,8 @@ const LayoutPage: React.FunctionComponent = (props) => {
         `${BASE_URL}/account/api/login-mini-app`,
         {
           Username: userId,
+          fullName: user.userInfo.name,
+          photo: user.userInfo.avatar
         }
       );
 
