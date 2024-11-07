@@ -30,7 +30,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
     axios
       .get(`${BASE_URL}/insuranceorder/api/Detail-By-VM/` + id)
       .then((response) => {
-        console.log(response.data.data[0]);
 
         setOrderDetail(response.data.data[0]);
         setInsuredPerson(response.data.data[0].listInsuredPerson[0]);
@@ -128,7 +127,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
     events.on(EventName.OnDataCallback, (resp) => {
       const { eventType, data } = resp;
       if (eventType === "PAY_BY_CUSTOM_METHOD") {
-        console.log(data);
         navigate(`/buill-detail/${id}`);
       }
     });
@@ -136,11 +134,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
 
   const createOrder = async () => {
     let dataClone = _.cloneDeep(insuranceOrder);
-
-    console.log({
-      id: `#${insuranceOrder.accountId}`,
-      amount: insuranceOrder.finalPrice,
-    });
 
     const body: any = await {
       amount: insuranceOrder.finalPrice,
@@ -164,7 +157,6 @@ const HistoryUnpaidPage: React.FunctionComponent = (props) => {
       mac: mac,
     });
 
-    console.log("orderId", orderId);
   };
 
   function formatDateTime(dateTimeString) {

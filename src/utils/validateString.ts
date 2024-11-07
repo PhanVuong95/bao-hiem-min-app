@@ -63,7 +63,6 @@ export const formatTime = (dates: string) => {
       return `${time[0]}:${time[1]} - ${date[2]}/${date[1]}/${date[0]}`
     }
   } catch (error) {
-    console.log(error);
     return ''
   }
 }
@@ -77,7 +76,6 @@ export const formatTime1 = (dates: string) => {
       return ` ${date[2]}/${date[1]}/${date[0]}`
     }
   } catch (error) {
-    console.log(error);
     return ''
   }
 }
@@ -216,6 +214,15 @@ export const convertListToSelectVungLuong = (data, placeholer) => {
   list.push({ value: 0, label: placeholer });
   data.forEach(element => {
     list.push({ value: element.id, label: element.vungLttTen });
+  });
+  return list
+}
+
+export const convertListToSelectBanks = (data, placeholer) => {
+  let list: typeSelect[] = [];
+  list.push({ value: 0, label: placeholer });
+  data.forEach(element => {
+    list.push({ value: element.bin, label: element.name });
   });
   return list
 }

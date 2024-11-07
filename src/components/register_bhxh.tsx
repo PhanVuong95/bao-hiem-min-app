@@ -92,9 +92,6 @@ const RegisterBHXH = (props) => {
     setInsuranceOrder,
   } = specificContext;
 
-  console.log(insuranceOrder.listInsuredPerson[0].wage);
-
-
   const [wageSlider, setWageSlider] = useState<number>(insuranceOrder.listInsuredPerson[0].wage == 0 ? 1500000 : insuranceOrder.listInsuredPerson[0].wage);
 
   const frontImageInputRef = useRef<HTMLInputElement>(null);
@@ -104,8 +101,6 @@ const RegisterBHXH = (props) => {
     error1: true,
     error2: true
   });
-
-  console.log("data", insuranceOrder);
 
   // Hộ gia đình
   const createNewMember = () => (
@@ -3405,7 +3400,7 @@ const RegisterBHXH = (props) => {
 
   const uploadImage = () => {
     return (
-      <div className="p-4 mx-4 mt-4 bg-white rounded-xl border border-[#B9BDC1] flex flex-col gap-3">
+      <div className="p-4 mx-4 mt-4 bg-white rounded-xl flex flex-col gap-3">
         <div className="flex justify-between">
           <h3 className="text-[#0076B7] text-lg font-medium">
             Chụp ảnh giấy tờ tuỳ thân

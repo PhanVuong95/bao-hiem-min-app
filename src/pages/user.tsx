@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Avatar,
   List,
@@ -15,6 +15,7 @@ import ic_guide from "../../assets-src/image-guide.png";
 import ic_policy_terms from "../../assets-src/image-policy-terms.png";
 import ic_zalo from "../../assets-src/image-zalo.png";
 import { Link } from "react-router-dom";
+import { RoleAccount } from "../utils/constants";
 
 const UserPage = () => {
 
@@ -69,12 +70,16 @@ const UserPage = () => {
             </div>
           </Link>
 
-          <Link to="/register-collaborate" className="flex flex-row shadow-custom p-4 items-center">
-            <img src={ic_collaborate} className="w-12 h-12" />
-            <div className="ml-3 font-normal text-lg">
-              Trở thành cộng tác viên
-            </div>
-          </Link>
+          {localStorage.roleId !== RoleAccount['CTV'] && (
+            <Link to="/partnership-terms" className="flex flex-row shadow-custom p-4 items-center">
+              <img src={ic_collaborate} className="w-12 h-12" />
+              <div className="ml-3 font-normal text-lg">
+                Trở thành cộng tác viên
+              </div>
+            </Link>
+          )
+          }
+
 
           <Link to="/guide" className="flex flex-row shadow-custom p-4 items-center">
             <img src={ic_guide} className="w-12 h-12" />
@@ -93,7 +98,7 @@ const UserPage = () => {
           <div className="flex shadow-custom p-4 items-center">
             <img src={ic_zalo} className="w-12 h-12" />
             <div className="ml-3 font-normal text-lg">
-              Zalo
+              Chat với chúng tôi
             </div>
           </div>
         </div>

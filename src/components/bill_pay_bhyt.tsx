@@ -33,7 +33,6 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
     events.on(EventName.OnDataCallback, (resp) => {
       const { eventType, data } = resp;
       if (eventType === "PAY_BY_CUSTOM_METHOD") {
-        console.log(data);
         navigate(`/buill-detail/${id}`);
       }
     });
@@ -62,8 +61,6 @@ const BillPayBHYTPage: React.FunctionComponent = () => {
       ...body,
       mac: mac,
     });
-
-    console.log("orderId", orderId);
   };
 
   useEffect(() => {

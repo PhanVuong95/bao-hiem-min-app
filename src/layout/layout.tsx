@@ -5,6 +5,7 @@ import axios from "axios";
 import { authorize, closeApp, getSetting, getUserInfo } from "zmp-sdk/apis";
 import { ProfileContext } from "../components/user_profile_context";
 import { BASE_URL } from "../utils/constants";
+import { isValidString } from "../utils/validateString";
 
 export let logged = false;
 
@@ -70,6 +71,7 @@ const LayoutPage: React.FunctionComponent = (props) => {
       // Saving token to local storage
       localStorage.setItem("token", data.resources.accessToken);
       localStorage.setItem("profile", JSON.stringify(data.resources.profile));
+      localStorage.setItem("roleId", data.resources.profile?.roleId.toString())
 
       console.log("Đăng nhập - đăng ký thành công!!");
     } catch (error) {
@@ -77,8 +79,41 @@ const LayoutPage: React.FunctionComponent = (props) => {
     }
   };
 
+
+
+  const decodeState = () => {
+    const url = window.location.href;
+
+    // Tách tham số 'state' từ URL
+    const urlParams = new URLSearchParams(new URL(url).search);
+    const state = urlParams.get("state");
+
+    if (state) {
+      // Giải mã base64
+      const decodedState = atob(state);
+
+      try {
+        // Parse JSON từ chuỗi đã giải mã
+        const jsonState = JSON.parse(decodedState);
+        return jsonState;
+      } catch (error) {
+        console.error("Lỗi khi parse JSON:", error);
+        return null;
+      }
+    }
+
+    return null;
+  };
+
   if (!logged) {
+    // Login
     login();
+
+    // Lấy referrerCode
+    const stateJson = decodeState();
+
+    const referrerCode = isValidString(stateJson?.data.body.referrerCode)
+    localStorage.setItem("referrerCode", referrerCode);
   }
 
   return (

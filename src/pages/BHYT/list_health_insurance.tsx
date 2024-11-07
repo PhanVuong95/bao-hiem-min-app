@@ -8,6 +8,7 @@ import { BASE_URL } from "../../utils/constants";
 
 export let registerInfoBHYT = {
   "id": 0,
+  "referrerCode": localStorage.referrerCode != "" ? localStorage.referrerCode : null,
   "insuranceId": 0,
   "accountId": 0,
   "citizenId": 0,
@@ -97,6 +98,7 @@ const ListHealthInsurance: React.FunctionComponent = () => {
   useEffect(() => {
     registerInfoBHYT = {
       "id": 0,
+      "referrerCode": localStorage.referrerCode != "" ? localStorage.referrerCode : null,
       "insuranceId": 0,
       "accountId": 0,
       "citizenId": 0,

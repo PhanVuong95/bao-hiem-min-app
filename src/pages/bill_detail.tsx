@@ -55,8 +55,7 @@ const BuillDetailPage: React.FunctionComponent = (props) => {
           toast.success("Lưu ảnh thành công!");
         },
         fail: (error) => {
-          // Handle failure
-          console.log("Error saving image:", error);
+          // Handle failur
           toast.warn(
             "Lưu ảnh không thành công. Vui lòng chụp ảnh màn hình đơn!"
           );

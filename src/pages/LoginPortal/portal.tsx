@@ -21,8 +21,6 @@ const LoginPortalPage: React.FunctionComponent = () => {
 
   const navigate = useNavigate();
 
-  console.log("url:", window.location.href);
-
   const decodeState = () => {
     const url = window.location.href;
 
@@ -61,8 +59,6 @@ const LoginPortalPage: React.FunctionComponent = () => {
     fetchUserInfo();
   }, []);
 
-  console.log(user?.id);
-
   const handleConfirm = async () => {
     try {
       setLoading(true);
@@ -76,12 +72,14 @@ const LoginPortalPage: React.FunctionComponent = () => {
           },
           body: JSON.stringify({
             connectionId: stateJson?.data.body.clientId,
-            zaloId: user.id,
+            zaloId: user?.id,
+            fullName: user?.name,
+            photo: user?.avatar
           }),
         }
       );
       const { message } = await response.json();
-      setTimeout(closeApp, 1000);
+      // setTimeout(closeApp, 1000);
       navigate("/");
     } catch (error) {
       console.log(error);

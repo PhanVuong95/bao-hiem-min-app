@@ -34,7 +34,6 @@ const ProfileDetailPage = () => {
           })
             .then(response => response.json())
             .then(data => {
-              console.log(data);
               setPhone(data.data.number)
             })
             .catch(error => {
@@ -100,6 +99,7 @@ const ProfileDetailPage = () => {
             <div className="text-[17px] font-normal text-[#797D77]">Điện thoại</div>
             <div className="ml-4">{phone ? phone : "Chưa rõ"}</div>
           </div>
+
 
         </div>
       </Page >

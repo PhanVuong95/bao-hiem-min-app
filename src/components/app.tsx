@@ -31,12 +31,21 @@ import LoginPortalPage from "../pages/LoginPortal/portal";
 import ProfileDetailPage from "../pages/profile_detail_page";
 import GuidePage from "../pages/guide_page";
 import PolicyTermPage from "../pages/policy_terms_page";
-import RegisterCollaborate from "../pages/register_collaborate";
+import RegisterCollaborate from "../pages/register_collaborate_page";
+import PartnerPage from "../pages/partner_page";
+import PartnerTermsPage from "../pages/partnership_terms_page";
+import IntroducingPartnersPage from "../pages/introducing_partners_page";
+import ProfilePartnerDetailPage from "../pages/profile_partner_detail_page";
+import BankInfoPage from "../pages/bank_info";
+import ReportPartnerPage from "../pages/report_partner_page";
+import ListCollabrorates from "../pages/list_collabrorate_page";
+import ProfileCollaborateDetailPage from "../pages/profile_collaborate_detail_page";
+import ScrollToTop from "../utils/hock";
 
 const MyApp = () => {
   useEffect(() => {
     closeLoading({
-      success: (data) => { },
+
       fail: (error) => {
         console.log(error);
       },
@@ -75,9 +84,11 @@ const MyApp = () => {
                 <Routes>
                   <Route path="/" element={<LayoutPage key="layout" />}>
                     <Route index element={<HomePage />} />
+                    <Route path="partner" element={<PartnerPage />} />
                     <Route path="history" element={<HistoryPage />} />
                     <Route path="user" element={<UserPage />} />
                   </Route>
+
                   <Route
                     path="/social-insurance"
                     element={
@@ -86,10 +97,12 @@ const MyApp = () => {
                       </SpecificProvider>
                     }
                   />
+
                   <Route
                     path="/health-insurance"
                     element={<ListHealthInsurance />}
                   />
+
                   <Route
                     path="/product-detail/:id"
                     element={
@@ -98,14 +111,17 @@ const MyApp = () => {
                       </SpecificProvider>
                     }
                   />
+
                   <Route
                     path="/product-detail-1/:id"
                     element={<ProductDetailPage1 />}
                   />
+
                   <Route
                     path="/privacy_policy/"
                     element={<PrivacyPolicyPage />}
                   />
+
                   <Route
                     path="/buill-pay/:id"
                     element={
@@ -114,10 +130,12 @@ const MyApp = () => {
                       </SpecificProvider>
                     }
                   />
+
                   <Route
                     path="/bill-pay-bhyt/:id"
                     element={<BillPayBHYTPage />}
                   />
+
                   <Route
                     path="/buill-detail/:id"
                     element={
@@ -126,6 +144,7 @@ const MyApp = () => {
                       </SpecificProvider>
                     }
                   />
+
                   <Route
                     path="/register-BHXH"
                     element={
@@ -134,23 +153,31 @@ const MyApp = () => {
                       </SpecificProvider>
                     }
                   />
-                  <Route path="/register-BHYT/" element={<RegisterBHYT />} />
+
+                  <Route path="/register-BHYT/"
+                    element={<RegisterBHYT />} />
+
                   <Route
                     path="/lists-history"
                     element={<ListsHistoryPage w={""} h={""} url={""} />}
                   />
+
                   <Route
                     path="/info-detail-bhyt/:id/:statusName"
                     element={<InfoDetailBHYT />}
                   />
+
                   <Route
                     path="/list-history-bhyt"
                     element={<ListHistoryBHYT />}
                   />
+
                   <Route
                     path="/check-status-procedure/:id"
                     element={<CheckStatusProcedure />}
                   />
+
+
                   <Route
                     path="/history-unpaid/:id/:statusName"
                     element={
@@ -159,26 +186,82 @@ const MyApp = () => {
                       </SpecificProvider>
                     }
                   />
-                  <Route path="/luckup-bhxh" element={<LuckUpBHXH />} />
+
+                  {/* Tra cứu bảo hiểm xã hội  */}
+                  <Route path="/luckup-bhxh"
+                    element={<LuckUpBHXH />} />
+
+                  {/* Login web  */}
                   <Route
                     path="/login/portal"
                     element={<LoginPortalPage />}
-                  ></Route>
+                  />
+
+                  {/* Chi tiết thông tin tài khoản */}
                   <Route
                     path="/user-detail"
                     element={<ProfileDetailPage />}
                   />
+
+                  {/* Tài liệu hướng đẫn*/}
                   <Route
                     path="/guide"
                     element={<GuidePage />}
                   />
+
+                  {/* Điều kiện và điều khoản sử dụng dịch vụ */}
                   <Route
                     path="/policy-terms"
                     element={<PolicyTermPage />}
                   />
+
+                  {/* Điều khoản đối tác */}
+                  <Route
+                    path="/partnership-terms"
+                    element={<PartnerTermsPage />}
+                  />
+
+                  {/* Đăng ký công tác viên */}
                   <Route
                     path="/register-collaborate"
                     element={<RegisterCollaborate />}
+                  />
+
+                  {/* Thông tin giới thiệu đối tác */}
+                  <Route
+                    path="/introducing-partners"
+                    element={<IntroducingPartnersPage />}
+                  />
+
+
+                  {/* Thông tin giới thiệu đối tác */}
+                  <Route
+                    path="/profile-partner-detail"
+                    element={<ProfilePartnerDetailPage />}
+                  />
+
+                  {/* Thông tin ngân hàng */}
+                  <Route
+                    path="/bank-info"
+                    element={<BankInfoPage />}
+                  />
+
+                  {/* Báo cáo thống kê */}
+                  <Route
+                    path="/report-partner"
+                    element={<ReportPartnerPage />}
+                  />
+
+                  {/* Danh sách cộng tác viên*/}
+                  <Route
+                    path="/list-collabrorate"
+                    element={<ListCollabrorates />}
+                  />
+
+                  {/* Danh sách cộng tác viên*/}
+                  <Route
+                    path="/profile-collaborate-detail/:id"
+                    element={<ProfileCollaborateDetailPage />}
                   />
                 </Routes>
               </ZMPRouter>

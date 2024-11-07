@@ -47,7 +47,6 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
     events.on(EventName.OnDataCallback, (resp) => {
       const { eventType, data } = resp;
       if (eventType === "PAY_BY_CUSTOM_METHOD") {
-        console.log(billPay.id);
         navigate(`/buill-detail/` + id);
       }
     });
@@ -78,9 +77,6 @@ const InfoDetailBHYT: React.FunctionComponent = () => {
       mac: mac,
     });
 
-    console.log(body);
-
-    console.log("orderId", orderId);
   };
 
   useEffect(() => {

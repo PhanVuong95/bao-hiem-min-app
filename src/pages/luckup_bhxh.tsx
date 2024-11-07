@@ -477,7 +477,6 @@ const LuckUpBHXH = () => {
           </div>
           <div
             onClick={() => {
-              console.log('abc');
               navigator.clipboard.writeText(socialInsuranceCode)
             }
             }

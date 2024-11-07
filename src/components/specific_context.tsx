@@ -15,7 +15,7 @@ interface Member {
 }
 
 interface InsuredPerson {
-  id: number,
+  id: number
   insuranceProvinceId: number;
   socialInsuranceNumber?: string;
   citizenId: string;
@@ -49,6 +49,7 @@ interface InsuredPerson {
 
 interface InsuranceOrder {
   id: number;
+  referrerCode: string;
   insuranceId: number;
   accountId: number;
   citizenId: number;
@@ -91,6 +92,7 @@ export const SpecificProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [insuranceOrder, setInsuranceOrder] = useState<InsuranceOrder>({
     id: 0,
+    referrerCode: localStorage.referrerCode != "" ? localStorage.referrerCode : null,
     insuranceId: 0,
     accountId: 0,
     citizenId: 0,

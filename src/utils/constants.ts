@@ -124,4 +124,10 @@ export const BenefitLevevlList = [
   { value: "5", label: "Được quỹ BHYT thanh toán 100% chi phí KCB, kể cả chi phí KCB ngoài phạm vi được hưởng BHYT; chi phí vận chuyển, bao gồm các đối tượng hưởng có ký hiệu là QN, CA, CY" },
 ]
 
+export const RoleAccount = {
+  "ADM": '1001',
+  "USER": '1002',
+  "CTV": '1003',
+}
+
 

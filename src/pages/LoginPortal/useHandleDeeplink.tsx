@@ -40,10 +40,8 @@ const useHandleDeeplink = () => {
     state: string | DeepLinkStateType,
     stateName?: string
   ) => {
-    console.log(state, "deep Link");
 
     if (typeof state == "object") {
-      console.log("contentData", state);
       return state;
     }
 

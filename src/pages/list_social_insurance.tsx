@@ -27,6 +27,7 @@ const ListSocialInsurance = () => {
     setInsuranceOrder(() => ({
       id: 0,
       insuranceId: 0,
+      referrerCode: localStorage.referrerCode != "" ? localStorage.referrerCode : null,
       accountId: 0,
       citizenId: 0,
       photoCitizenFront: "",
