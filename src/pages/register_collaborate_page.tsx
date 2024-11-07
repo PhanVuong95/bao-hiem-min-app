@@ -70,7 +70,7 @@ const RegisterCollaborate = () => {
     return (
       <div className="mt-4">
         <label className="block text-sm font-normal text-gray-900 pb-2">
-          Họ tên chủ hộ <samp className="text-red-600">*</samp>
+          Họ và tên <samp className="text-red-600">*</samp>
         </label>
         <Input
           type="text"

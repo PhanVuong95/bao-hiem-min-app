@@ -190,7 +190,7 @@ const IntroducingPartnersPage = () => {
             toast.success("Coppy đường dẫn thành công!");
           }} className="flex justify-center items-center py-2 bg-white rounded-lg w-[100%]">
             <img src={ic_share} className="w-10 h-10" />
-            <div className="ml-3">Coppy link</div>
+            <div className="ml-3">Copy link</div>
           </div>
           <div className="w-7"></div>
           <div onClick={async () => {
