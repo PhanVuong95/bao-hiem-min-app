@@ -86,9 +86,9 @@ const ReportPartnerPage = () => {
 
 
 
-            {ItemInfo({ image: wallet, "title": "Lượt mua", "value": formatMoneyVND(report?.personalTotalOrder), "subtitle": "Đơn thành công" })}
+            {ItemInfo({ image: wallet, "title": "Lượt mua", "value": formatMoneyVND(report?.personalTotalOrderSuccess), "subtitle": "Đơn thành công" })}
 
-            {ItemInfo({ image: add, "title": "Lượt tạo", "value": formatMoneyVND(report?.personalTotalOrderSuccess), "subtitle": "Tạo thành công" })}
+            {ItemInfo({ image: add, "title": "Lượt tạo", "value": formatMoneyVND(report?.personalTotalOrder), "subtitle": "Tạo thành công" })}
 
           </div>
 
