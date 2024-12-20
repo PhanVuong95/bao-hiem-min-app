@@ -43,7 +43,7 @@ const CheckStatusProcedure = () => {
       <>
         <HeaderBase
           isHome={false}
-          title={"Thông tin chi tiết"}
+          title={"Kiểm tra trạng thái thủ tục"}
         />
         <div className="fixed inset-0 flex items-center justify-center">
           <PulseLoader size={15} loading={true} color="#0076B7" />
