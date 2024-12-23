@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import UserCard from "../components/user_card";
 import HeaderPage from "../components/header_page";
@@ -275,7 +275,8 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="/tool-support">
+        <Link
+          to="/tool-support">
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">

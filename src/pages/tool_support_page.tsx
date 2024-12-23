@@ -8,9 +8,7 @@ import iconCloseRate from "../../assets-src/icon/ic_close_rate.svg";
 import iconCloseRateBlue from "../../assets-src/icon/ic_close_rate_blue.svg";
 import iconCalculate from "../../assets-src/icon/ic_calculate.svg";
 import iconCalculateBlue from "../../assets-src/icon/ic_calculate_blue.svg";
-import PensionCalculation from "../components/pension_calculation";
-import WithdrawBHXH from "../components/withdraw_bhxh";
-import CloseRateBXH from "../components/close_rate_bhxh";
+import { useNavigate } from "react-router";
 
 interface itemProps {
   icon: string;
@@ -20,14 +18,32 @@ interface itemProps {
   title: string;
 }
 
+export let indexToolSupport = -1;
+
 const ToolSupportPage = () => {
 
-  const [indexSelected, setIndexSelected] = useState(0);
+  const [indexSelected, setIndexSelected] = useState(indexToolSupport);
+
+  const navigate = useNavigate();
 
   const ItemMenu = (item: itemProps) => {
     return (
       <div
         onClick={() => {
+          switch (item.indexSelected) {
+            case 0:
+              navigate('/pension-calculation')
+              break;
+            case 1:
+              navigate('/withdraw-bhxh')
+              break;
+            case 2:
+              navigate('/close-rate-bhxh')
+              break;
+            default:
+              break;
+          }
+          indexToolSupport = item.indexSelected
           setIndexSelected(item.indexSelected);
         }}
         className={`flex flex-row bg-[${indexSelected == item.index ? "#0077D5" : "white"
@@ -96,25 +112,6 @@ const ToolSupportPage = () => {
       <Page className="page mt-20">
         <div className=" rounded-br-[10px] rounded-bl-[10px]">
           {menu()}
-
-          <div
-            className="mt-4"
-            style={{ display: indexSelected === 0 ? "block" : "none" }}
-          >
-            <PensionCalculation />
-          </div>
-          <div
-            className="mt-4"
-            style={{ display: indexSelected === 1 ? "block" : "none" }}
-          >
-            <WithdrawBHXH />
-          </div>
-          <div
-            className="mt-4"
-            style={{ display: indexSelected === 2 ? "block" : "none" }}
-          >
-            <CloseRateBXH />
-          </div>
         </div>
       </Page>
     </div>
