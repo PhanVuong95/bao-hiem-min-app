@@ -41,6 +41,7 @@ import ReportPartnerPage from "../pages/report_partner_page";
 import ListCollabrorates from "../pages/list_collabrorate_page";
 import ProfileCollaborateDetailPage from "../pages/profile_collaborate_detail_page";
 import ScrollToTop from "../utils/hock";
+import ToolSupportPage from "../pages/tool_support_page";
 
 const MyApp = () => {
   useEffect(() => {
@@ -262,6 +263,11 @@ const MyApp = () => {
                   <Route
                     path="/profile-collaborate-detail/:id"
                     element={<ProfileCollaborateDetailPage />}
+                  />
+
+                  <Route
+                    path="/tool-support"
+                    element={<ToolSupportPage />}
                   />
                 </Routes>
               </ZMPRouter>

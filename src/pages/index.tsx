@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { openWebview } from "zmp-sdk/apis";
 import UserCard from "../components/user_card";
 import HeaderPage from "../components/header_page";
 import CardNewPage from "../components/card_new";
@@ -69,7 +68,7 @@ const HomePage: React.FunctionComponent = () => {
               </div>
             </div>
             <div>
-              <p className="text-center text-sm">Khai báo BHXH tự nguyện</p>
+              <p className="text-center text-sm">Mua BHXH tự nguyện</p>
             </div>
           </div>
         </Link>
@@ -235,7 +234,7 @@ const HomePage: React.FunctionComponent = () => {
                     stroke-width="2"
                     mask="url(#path-1-inside-1_6616_34742)"
                   />
-                </svg>{" "}
+                </svg>
               </div>
               <div className="icon-2">
                 <svg
@@ -276,11 +275,7 @@ const HomePage: React.FunctionComponent = () => {
           </div>
         </Link>
 
-        <Link to="" onClick={() => {
-          toast.info(
-            "Tính năng này đang phát triển",
-          );
-        }}>
+        <Link to="/tool-support">
           <div className="flex flex-col justify-center items-center w-[100px] gap-[10px]">
             <div className="icon-category">
               <div className="icon-1">
@@ -327,7 +322,7 @@ const HomePage: React.FunctionComponent = () => {
             </div>
             <div>
               <p className="text-center text-sm">
-                Tài liệu <br /> BHXH
+                Công cụ <br /> Hỗ trợ
               </p>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { PulseLoader } from "react-spinners";
 import HeaderBase from "../components/header_base";
 import { BASE_URL } from "../utils/constants";
-import { formatDate, formatDateByTime, formatTime, formatTime1 } from "../utils/validateString";
+import { formatDate, formatDateByTime, formatTime, formatTime1 } from "../utils/validate_string";
 
 const CheckStatusProcedure = () => {
   const { id } = useParams();
