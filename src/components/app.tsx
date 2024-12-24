@@ -45,6 +45,7 @@ import ToolSupportPage from "../pages/tool_support_page";
 import WithdrawBHXH from "./withdraw_bhxh";
 import CloseRateBXH from "./close_rate_bhxh";
 import PensionCalculation from "./pension_calculation";
+import CardNewDetailPage from "./card_new_detail_page"
 
 const MyApp = () => {
   useEffect(() => {
@@ -290,6 +291,9 @@ const MyApp = () => {
                     path="/close-rate-bhxh"
                     element={<CloseRateBXH />}
                   />
+
+                  {/* Chi tiết tin tức */}
+                  <Route path="new-detail/:id" element={<CardNewDetailPage />} />
                 </Routes>
               </ZMPRouter>
             </SnackbarProvider>

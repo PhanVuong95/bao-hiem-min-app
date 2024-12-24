@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import UserCard from "../components/user_card";
 import HeaderPage from "../components/header_page";
@@ -9,9 +9,52 @@ import { ProfileContext } from "../components/user_profile_context";
 import banner from '../../assets-src/banner.png'
 import { toast } from "react-toastify";
 
+export interface Post {
+  insuranceName: string;
+  postStatusName: string;
+  name: string;
+  description: string;
+  text: string;
+  publishedTime: string;
+  url: string;
+  id: number;
+}
+
+
 const HomePage: React.FunctionComponent = () => {
   const profieContext = useContext<any>(ProfileContext);
   const { userProfile, setUserProfile } = profieContext;
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://baohiem.dion.vn/post/api/listPaging-post?pageIndex=${pageIndex}&pageSize=${pageSize}`
+        );
+        const jsonData = await response.json();
+
+        const data = jsonData.data?.[0] || [];
+        setPosts(data);
+
+        // Giả sử API trả về số tổng trang
+        setTotalPages(5); // Cập nhật số trang giả lập (nếu API không trả về, sửa lại)
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchData();
+  }, [pageIndex]);
+
+  const handlePageChange = (newPageIndex: number) => {
+    if (newPageIndex > 0 && newPageIndex <= totalPages) {
+      setPageIndex(newPageIndex);
+    }
+  };
 
   return (
     <div className="home-page min-h-[100vh] pb-[120px] pt-[75px]">
@@ -352,33 +395,15 @@ const HomePage: React.FunctionComponent = () => {
             }}
             className="mySwiper"
           >
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
-            <SwiperSlide>
-              <CardNewPage />
-            </SwiperSlide>
+            {posts.length > 0 ? (
+              posts.map((post, index) => (
+                <SwiperSlide>
+                  <CardNewPage post={post} index={index + 1} />
+                </SwiperSlide>
+              ))
+            ) : (
+              <p>Không có bài đăng nào.</p>
+            )}
           </Swiper>
         </div>
       </div>
